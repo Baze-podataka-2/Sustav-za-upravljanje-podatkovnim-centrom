@@ -36,6 +36,7 @@ CREATE TABLE racuni_prema_klijentima(
     FOREIGN KEY (id_usluga_klijent) REFERENCES usluge_klijenata(id_usluga_klijent)
 );
 
+
 CREATE TABLE troskovi_datacentra (
     id_troskovi_datacentra INT PRIMARY KEY AUTO_INCREMENT,
     id_potrosnja INT,
@@ -85,3 +86,120 @@ INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge
 
 
 -- Mario KRAJ
+
+
+-- Ronan START
+
+
+-- Kreiranje tablica
+CREATE TABLE Server (
+    id_server INT AUTO_INCREMENT PRIMARY KEY,
+    id_konfiguracija INT NOT NULL,
+    id_rack INT NOT NULL,
+    id_smjestaj INT NOT NULL,
+    kategorija VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Monitoring (
+    id_monitoring INT AUTO_INCREMENT PRIMARY KEY,
+    id_server INT NOT NULL,
+    vrsta VARCHAR(50) NOT NULL,
+    FOREIGN KEY (id_server) REFERENCES Server(id_server) 
+);
+
+CREATE TABLE Incidenti (
+    id_incidenta INT AUTO_INCREMENT PRIMARY KEY,
+    datum DATE NOT NULL,
+    opis TEXT NOT NULL,
+    id_server INT NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    FOREIGN KEY (id_server) REFERENCES Server(id_server) 
+);
+
+CREATE TABLE Logovi (
+    id_log INT AUTO_INCREMENT PRIMARY KEY,
+    id_server INT NOT NULL,
+    akcija VARCHAR(100) NOT NULL,
+    datum DATETIME NOT NULL,
+    user VARCHAR(50) NOT NULL,
+    FOREIGN KEY (id_server) REFERENCES Server(id_server) 
+);
+
+-- Server
+INSERT INTO Server (id_konfiguracija, id_rack, id_smjestaj, kategorija) VALUES
+(101, 201, 301, 'Web poslužitelj'),
+(102, 202, 302, 'Baza podataka'),
+(103, 203, 303, 'Aplikacijski poslužitelj'),
+(104, 204, 304, 'Proxy poslužitelj'),
+(105, 205, 305, 'Backup poslužitelj'),
+(106, 206, 306, 'DNS poslužitelj'),
+(107, 207, 307, 'Mail poslužitelj'),
+(108, 208, 308, 'FTP poslužitelj'),
+(109, 209, 309, 'Virtualizacijski poslužitelj'),
+(110, 210, 310, 'Streaming poslužitelj'),
+(111, 211, 311, 'VoIP poslužitelj'),
+(112, 212, 312, 'IoT Gateway'),
+(113, 213, 313, 'Load Balancer'),
+(114, 214, 314, 'Cache poslužitelj'),
+(115, 215, 315, 'Testni poslužitelj');
+
+-- Monitoring
+INSERT INTO Monitoring (id_server, vrsta) VALUES
+(1, 'Praćenje performansi'),
+(2, 'Praćenje sigurnosti'),
+(3, 'Praćenje mreže'),
+(4, 'Praćenje dostupnosti'),
+(5, 'Praćenje kapaciteta'),
+(6, 'Praćenje logova'),
+(7, 'Praćenje učitavanja'),
+(8, 'Praćenje propusnosti'),
+(9, 'Praćenje grešaka'),
+(10, 'Praćenje upotrebe diska'),
+(11, 'Praćenje odziva'),
+(12, 'Praćenje SSL certifikata'),
+(13, 'Praćenje CPU-a'),
+(14, 'Praćenje mrežnih portova'),
+(15, 'Praćenje usluga');
+
+-- Incidenti
+INSERT INTO Incidenti (datum, opis, id_server, status) VALUES
+('2025-01-01', 'Neočekivano ponovno pokretanje', 1, 'Riješen'),
+('2025-01-02', 'Visoka upotreba memorije', 2, 'U tijeku'),
+('2025-01-03', 'Problemi s mrežnom povezivošću', 3, 'Otvoreno'),
+('2025-01-04', 'Disk je gotovo pun', 4, 'Riješen'),
+('2025-01-05', 'Ažuriranje nije uspjelo', 5, 'U tijeku'),
+('2025-01-06', 'Neautorizirani pristup', 6, 'Otvoreno'),
+('2025-01-07', 'Hardverski kvar', 7, 'Riješen'),
+('2025-01-08', 'Povećano kašnjenje', 8, 'U tijeku'),
+('2025-01-09', 'Neispravan kabel', 9, 'Otvoreno'),
+('2025-01-10', 'Problemi s SSL certifikatom', 10, 'Riješen'),
+('2025-01-11', 'Problemi s DNS-om', 11, 'U tijeku'),
+('2025-01-12', 'Neispravni podaci u bazi', 12, 'Otvoreno'),
+('2025-01-13', 'Greška u aplikaciji', 13, 'Riješen'),
+('2025-01-14', 'Nedostupnost mreže', 14, 'Otvoreno'),
+('2025-01-15', 'Backup nije uspješan', 15, 'U tijeku');
+
+-- Logovi
+INSERT INTO Logovi (id_server, akcija, datum, user) VALUES
+(1, 'Ponovno pokretanje poslužitelja', '2025-01-01 12:00:00', 'admin'),
+(2, 'Ažuriranje postavki vatrozida', '2025-01-02 15:30:00', 'network_admin'),
+(3, 'Implementacija nove verzije aplikacije', '2025-01-03 09:00:00', 'devops_team'),
+(4, 'Provjera sigurnosnih kopija', '2025-01-04 10:00:00', 'backup_admin'),
+(5, 'Optimizacija baze podataka', '2025-01-05 14:45:00', 'db_admin'),
+(6, 'Dodavanje novog korisnika', '2025-01-06 11:00:00', 'hr_admin'),
+(7, 'Resetiranje lozinke', '2025-01-07 13:00:00', 'it_support'),
+(8, 'Ažuriranje softvera', '2025-01-08 16:00:00', 'sys_admin'),
+(9, 'Brisanje starih logova', '2025-01-09 08:30:00', 'cleanup_task'),
+(10, 'Konfiguracija mrežnih postavki', '2025-01-10 18:00:00', 'network_admin'),
+(11, 'Provjera mrežne dostupnosti', '2025-01-11 10:30:00', 'net_ops'),
+(12, 'Migracija podataka', '2025-01-12 22:00:00', 'migration_team'),
+(13, 'Prijenos podataka na backup server', '2025-01-13 03:00:00', 'backup_admin'),
+(14, 'Otvaranje novog korisničkog računa', '2025-01-14 09:15:00', 'user_support'),
+(15, 'Ponovno učitavanje usluge', '2025-01-15 17:20:00', 'service_admin');
+
+
+select * from Logovi;
+select * from Server;
+select * from Incidenti;
+select * from Monitoring;
+-- Ronan END
