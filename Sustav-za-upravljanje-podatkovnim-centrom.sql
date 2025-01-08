@@ -83,9 +83,90 @@ INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge
                                                     (13, 3, STR_TO_DATE('2023-07-13', '%Y-%m-%d'), STR_TO_DATE('2023-10-08', '%Y-%m-%d')),
                                                     (14, 4, STR_TO_DATE('2024-03-21', '%Y-%m-%d'), STR_TO_DATE('2024-06-10', '%Y-%m-%d')),
                                                     (15, 5, STR_TO_DATE('2024-12-09', '%Y-%m-%d'), STR_TO_DATE('2025-02-28', '%Y-%m-%d'));
+-- -------------------
+
+-- Mario FUNKCIJE I OSTALO --
+
+-- ------------------- STATS -> Br.Procedura: 1, Br.Funkcija: 2
+
+-- 1. Procedrua - azurira / mijenja cijenu usluge prema prosljeđenom ID-u
+
+
+DELIMITER //
+
+CREATE PROCEDURE PromjenaCijeneUsluge(IN ID INT, IN n_cijena FLOAT)
+BEGIN
+    DECLARE c FLOAT;
+    SELECT cijena INTO c FROM usluge WHERE id_usluga = ID;
+    IF c < n_cijena THEN
+        UPDATE usluge
+        SET cijena = n_cijena
+        WHERE id_usluga = ID;
+    ELSE
+        SIGNAL SQLSTATE '50000' SET MESSAGE_TEXT = 'Nova cijena nemože biti manja od stare!';
+    END IF;
+END //
+DELIMITER ;
+
+SELECT * FROM usluge;
+
+-- Procedura izbacuje grešku jer želimo unijeti manju cijenu od postojece.
+    CALL PromjenaCijeneUsluge(5,91.00);
+
+-- Procedura radi jer je nova cijena veca od postojece
+
+    CALL PromjenaCijeneUsluge(5,119.99);
+    SELECT * FROM usluge;
+
+-- 2. Funkcija vraca ukupan broji dana trajanja usluge nekog klijenta ( sa recenicom za bolje korisnicko iskustvo )
+
+DELIMITER //
+
+CREATE FUNCTION BrojDanaR(ID int) RETURNS VARCHAR(100)
+    DETERMINISTIC
+    BEGIN
+        DECLARE br INT;
+        DECLARE recenica VARCHAR(100);
+        SELECT  DATEDIFF(usluge_klijenata.kraj_usluge,usluge_klijenata.pocetak_usluge) INTO br FROM usluge_klijenata
+                WHERE id_usluga_klijent=id;
+        SET recenica = CONCAT('Broj dana koliko je klijent koristio uslugu: ',br);
+        RETURN recenica;
+END //
+DELIMITER ;
+
+SELECT * FROM usluge_klijenata;
+
+-- Vraca broj dana koristenja usluge od strane klijenta sa ID 1
+
+    SELECT BrojDanaR(1);
+
+-- 3. Funkcija BrojDana samo vraca INT u svrhu njezine inkomporacije u druge dijelove projekta
+
+DELIMITER //
+
+CREATE FUNCTION BrojDana(ID int) RETURNS INT
+    DETERMINISTIC
+    BEGIN
+        DECLARE br INT;
+        SELECT  DATEDIFF(usluge_klijenata.kraj_usluge,usluge_klijenata.pocetak_usluge) INTO br FROM usluge_klijenata
+                WHERE id_usluga_klijent=id;
+        RETURN br;
+END //
+DELIMITER ;
+
+SELECT BrojDana(1);
+
+
+
+
+
+
 
 
 -- Mario KRAJ
+
+
+-- --- --- --- --- --- --- --- --- --- ---
 
 
 -- Ronan START
@@ -104,7 +185,7 @@ CREATE TABLE Monitoring (
     id_monitoring INT AUTO_INCREMENT PRIMARY KEY,
     id_server INT NOT NULL,
     vrsta VARCHAR(50) NOT NULL,
-    FOREIGN KEY (id_server) REFERENCES Server(id_server) 
+    FOREIGN KEY (id_server) REFERENCES Server(id_server)
 );
 
 CREATE TABLE Incidenti (
@@ -113,7 +194,7 @@ CREATE TABLE Incidenti (
     opis TEXT NOT NULL,
     id_server INT NOT NULL,
     status VARCHAR(20) NOT NULL,
-    FOREIGN KEY (id_server) REFERENCES Server(id_server) 
+    FOREIGN KEY (id_server) REFERENCES Server(id_server)
 );
 
 CREATE TABLE Logovi (
@@ -122,7 +203,7 @@ CREATE TABLE Logovi (
     akcija VARCHAR(100) NOT NULL,
     datum DATETIME NOT NULL,
     user VARCHAR(50) NOT NULL,
-    FOREIGN KEY (id_server) REFERENCES Server(id_server) 
+    FOREIGN KEY (id_server) REFERENCES Server(id_server)
 );
 
 -- Server
