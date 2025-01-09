@@ -87,7 +87,7 @@ INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge
 
 -- Mario FUNKCIJE I OSTALO --
 
--- ------------------- STATS -> Br.Procedura: 1, Br.Funkcija: 2
+-- ------------------- STATS -> Br.Procedura: 1, Br.Funkcija: 2, Br.Trigger: 2
 
 -- 1. Procedrua - azurira / mijenja cijenu usluge prema prosljeđenom ID-u
 
@@ -156,6 +156,57 @@ DELIMITER ;
 
 SELECT BrojDana(1);
 
+
+-- 4. Trigger koji sprijecava upis datuma kraja koristenja usluge koji je se dogodio prije pocetka usluge.
+
+DELIMITER //
+CREATE TRIGGER KontrolaDatuma
+BEFORE INSERT ON usluge_klijenata
+FOR EACH ROW
+BEGIN
+   IF NEW.kraj_usluge < NEW.pocetak_usluge THEN
+      SIGNAL SQLSTATE '50000' SET MESSAGE_TEXT  = 'Datum kraja usluge ne može biti prije datuma početka.';
+   END IF ;
+
+END //
+DELIMITER ;
+
+    -- Test Triggera
+
+    INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge) VALUES
+    ( 4,1, STR_TO_DATE('2024-04-10', '%Y-%m-%d'), STR_TO_DATE('2024-01-15', '%Y-%m-%d')); -- Ne prolazi
+
+    INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge) VALUES
+    (4, 3, STR_TO_DATE('2024-04-10', '%Y-%m-%d'), STR_TO_DATE('2024-05-15', '%Y-%m-%d')); -- Prolazi
+
+    SELECT * FROM usluge_klijenata;
+
+
+-- 5. Trigger koji izračun iznos računa te isti inserta u tablicu racuni_prema_klijentima + inserta trenutni datum
+
+DELIMITER //
+CREATE TRIGGER IznosRacuna
+BEFORE INSERT ON racuni_prema_klijentima
+FOR EACH ROW
+BEGIN
+    DECLARE broj_dana INT;
+    DECLARE cijena_usluge FLOAT;
+
+    SELECT DATEDIFF(usluge_klijenata.kraj_usluge, usluge_klijenata.pocetak_usluge), usluge.cijena
+    INTO broj_dana, cijena_usluge FROM usluge_klijenata
+    JOIN usluge ON usluge_klijenata.id_usluga = usluge.id_usluga
+    WHERE usluge_klijenata.id_usluga_klijent = NEW.id_usluga_klijent;
+
+    SET NEW.ukupan_iznos = (broj_dana / 30) * cijena_usluge; -- dogovoreno kao 1mj = 30 dana
+    SET NEW.datum_izdavanja = CURDATE();
+END //
+DELIMITER ;
+
+
+-- Provjera triggera
+
+INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES(15);
+SELECT * FROM racuni_prema_klijentima;
 
 
 
