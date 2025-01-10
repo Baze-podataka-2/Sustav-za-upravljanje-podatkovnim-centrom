@@ -224,59 +224,75 @@ SELECT * FROM racuni_prema_klijentima;
 
 
 -- Kreiranje tablica
-CREATE TABLE Server (
-    id_server INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE Posluzitelj (
+    id_posluzitelj INT AUTO_INCREMENT PRIMARY KEY,
     id_konfiguracija INT NOT NULL,
     id_rack INT NOT NULL,
     id_smjestaj INT NOT NULL,
     kategorija VARCHAR(50) NOT NULL
 );
-
+drop table  Posluzitelj;
 CREATE TABLE Monitoring (
     id_monitoring INT AUTO_INCREMENT PRIMARY KEY,
-    id_server INT NOT NULL,
+    id_posluzitelj INT NOT NULL,
     vrsta VARCHAR(50) NOT NULL,
-    FOREIGN KEY (id_server) REFERENCES Server(id_server)
+    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
 CREATE TABLE Incidenti (
     id_incidenta INT AUTO_INCREMENT PRIMARY KEY,
     datum DATE NOT NULL,
     opis TEXT NOT NULL,
-    id_server INT NOT NULL,
+    id_posluzitelj INT NOT NULL,
     status VARCHAR(20) NOT NULL,
-    FOREIGN KEY (id_server) REFERENCES Server(id_server)
+    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
 CREATE TABLE Logovi (
     id_log INT AUTO_INCREMENT PRIMARY KEY,
-    id_server INT NOT NULL,
+    id_posluzitelj INT NOT NULL,
     akcija VARCHAR(100) NOT NULL,
     datum DATETIME NOT NULL,
     user VARCHAR(50) NOT NULL,
-    FOREIGN KEY (id_server) REFERENCES Server(id_server)
+    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
 -- Server
-INSERT INTO Server (id_konfiguracija, id_rack, id_smjestaj, kategorija) VALUES
-(101, 201, 301, 'Web poslužitelj'),
-(102, 202, 302, 'Baza podataka'),
-(103, 203, 303, 'Aplikacijski poslužitelj'),
+
+INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, kategorija) VALUES
+(101, 201, 301, 'Web Hosting poslužitelj'),
+(102, 202, 302, 'Storage poslužitelj'),
+(103, 203, 303, 'Machine Learning poslužitelj'),
 (104, 204, 304, 'Proxy poslužitelj'),
 (105, 205, 305, 'Backup poslužitelj'),
 (106, 206, 306, 'DNS poslužitelj'),
 (107, 207, 307, 'Mail poslužitelj'),
 (108, 208, 308, 'FTP poslužitelj'),
-(109, 209, 309, 'Virtualizacijski poslužitelj'),
+(109, 209, 309, 'Hypervisor Tip 1'),
 (110, 210, 310, 'Streaming poslužitelj'),
 (111, 211, 311, 'VoIP poslužitelj'),
-(112, 212, 312, 'IoT Gateway'),
-(113, 213, 313, 'Load Balancer'),
+(112, 212, 312, 'IoT Gateway poslužitelj'),
+(113, 213, 313, 'Load Balancer poslužitelj'),
 (114, 214, 314, 'Cache poslužitelj'),
-(115, 215, 315, 'Testni poslužitelj');
+(115, 215, 315, 'Testni poslužitelj'),
+(116, 216, 316, 'Web poslužitelj'),
+(117, 217, 317, 'Baza podataka'),
+(118, 218, 318, 'Aplikacijski poslužitelj'),
+(119, 219, 319, 'Big Data poslužitelj'),
+(120, 220, 320, 'Firewall poslužitelj'),
+(121, 221, 321, 'Data Warehouse poslužitelj'),
+(122, 222, 322, 'Streaming Media poslužitelj'),
+(123, 223, 323, 'Raspberry Pi Cluster poslužitelj'),
+(124, 224, 324, 'VPN Gateway poslužitelj'),
+(125, 225, 325, 'File Server poslužitelj'),
+(126, 226, 326, 'Analytics poslužitelj'),
+(127, 227, 327, 'Edge Computing poslužitelj'),
+(128, 228, 328, 'CI/CD Pipeline poslužitelj'),
+(129, 229, 329, 'Log Management poslužitelj'),
+(130, 230, 330, 'Hybrid Cloud poslužitelj');
 
 -- Monitoring
-INSERT INTO Monitoring (id_server, vrsta) VALUES
+INSERT INTO Monitoring (id_posluzitelj, vrsta) VALUES
 (1, 'Praćenje performansi'),
 (2, 'Praćenje sigurnosti'),
 (3, 'Praćenje mreže'),
@@ -291,10 +307,25 @@ INSERT INTO Monitoring (id_server, vrsta) VALUES
 (12, 'Praćenje SSL certifikata'),
 (13, 'Praćenje CPU-a'),
 (14, 'Praćenje mrežnih portova'),
-(15, 'Praćenje usluga');
+(15, 'Praćenje usluga'),
+(16, 'Praćenje memorije'),
+(17, 'Praćenje temperature'),
+(18, 'Praćenje ventilatora'),
+(19, 'Praćenje RAID statusa'),
+(20, 'Praćenje I/O operacija'),
+(21, 'Praćenje baze podataka'),
+(22, 'Praćenje aplikacijskih logova'),
+(23, 'Praćenje vremena zastoja'),
+(24, 'Praćenje sigurnosnih zakrpa'),
+(25, 'Praćenje mrežnih latencija'),
+(26, 'Praćenje DNS zahtjeva'),
+(27, 'Praćenje e-pošte'),
+(28, 'Praćenje virtualnih strojeva'),
+(29, 'Praćenje mrežnih protokola'),
+(30, 'Praćenje udaljenih veza');
 
 -- Incidenti
-INSERT INTO Incidenti (datum, opis, id_server, status) VALUES
+INSERT INTO Incidenti (datum, opis, id_posluzitelj, status) VALUES
 ('2025-01-01', 'Neočekivano ponovno pokretanje', 1, 'Riješen'),
 ('2025-01-02', 'Visoka upotreba memorije', 2, 'U tijeku'),
 ('2025-01-03', 'Problemi s mrežnom povezivošću', 3, 'Otvoreno'),
@@ -309,10 +340,25 @@ INSERT INTO Incidenti (datum, opis, id_server, status) VALUES
 ('2025-01-12', 'Neispravni podaci u bazi', 12, 'Otvoreno'),
 ('2025-01-13', 'Greška u aplikaciji', 13, 'Riješen'),
 ('2025-01-14', 'Nedostupnost mreže', 14, 'Otvoreno'),
-('2025-01-15', 'Backup nije uspješan', 15, 'U tijeku');
+('2025-01-15', 'Backup nije uspješan', 15, 'U tijeku'),
+('2025-01-16', 'Visoka upotreba CPU-a', 16, 'Otvoreno'),
+('2025-01-17', 'Problemi s virtualizacijom', 17, 'Riješen'),
+('2025-01-18', 'Neispravno preusmjeravanje portova', 18, 'U tijeku'),
+('2025-01-19', 'Povećana latencija u mreži', 19, 'Otvoreno'),
+('2025-01-20', 'Nedostupnost usluga', 20, 'Riješen'),
+('2025-01-21', 'Problemi s sigurnosnim zakrpama', 21, 'U tijeku'),
+('2025-01-22', 'Greška u konfiguraciji sustava', 22, 'Otvoreno'),
+('2025-01-23', 'Pregrijavanje uređaja', 23, 'Riješen'),
+('2025-01-24', 'Greška u sinkronizaciji podataka', 24, 'U tijeku'),
+('2025-01-25', 'Neispravni sigurnosni certifikati', 25, 'Otvoreno'),
+('2025-01-26', 'Pad aplikacijskog servisa', 26, 'Riješen'),
+('2025-01-27', 'Propusnost mreže je niska', 27, 'U tijeku'),
+('2025-01-28', 'Problemi s pohranom podataka', 28, 'Otvoreno'),
+('2025-01-29', 'Nedostupnost backup servera', 29, 'Riješen'),
+('2025-01-30', 'Problemi s autentifikacijom', 30, 'U tijeku');
 
 -- Logovi
-INSERT INTO Logovi (id_server, akcija, datum, user) VALUES
+INSERT INTO Logovi (id_posluzitelj, akcija, datum, user) VALUES
 (1, 'Ponovno pokretanje poslužitelja', '2025-01-01 12:00:00', 'admin'),
 (2, 'Ažuriranje postavki vatrozida', '2025-01-02 15:30:00', 'network_admin'),
 (3, 'Implementacija nove verzije aplikacije', '2025-01-03 09:00:00', 'devops_team'),
@@ -327,11 +373,27 @@ INSERT INTO Logovi (id_server, akcija, datum, user) VALUES
 (12, 'Migracija podataka', '2025-01-12 22:00:00', 'migration_team'),
 (13, 'Prijenos podataka na backup server', '2025-01-13 03:00:00', 'backup_admin'),
 (14, 'Otvaranje novog korisničkog računa', '2025-01-14 09:15:00', 'user_support'),
-(15, 'Ponovno učitavanje usluge', '2025-01-15 17:20:00', 'service_admin');
+(15, 'Ponovno učitavanje usluge', '2025-01-15 17:20:00', 'service_admin'),
+(16, 'Testiranje novog API-ja', '2025-01-16 14:00:00', 'api_team'),
+(17, 'Postavljanje SSL certifikata', '2025-01-17 11:30:00', 'security_admin'),
+(18, 'Pregled sistemskih resursa', '2025-01-18 09:45:00', 'sys_monitor'),
+(19, 'Arhiviranje starih podataka', '2025-01-19 16:00:00', 'archive_team'),
+(20, 'Ažuriranje korisničkog profila', '2025-01-20 12:15:00', 'user_support'),
+(21, 'Praćenje mrežnog prometa', '2025-01-21 10:20:00', 'net_ops'),
+(22, 'Nadogradnja virtualnog poslužitelja', '2025-01-22 13:30:00', 'cloud_admin'),
+(23, 'Optimizacija performansi aplikacije', '2025-01-23 15:10:00', 'devops_team'),
+(24, 'Dodavanje nove domene', '2025-01-24 09:50:00', 'dns_admin'),
+(25, 'Provjera dnevnika grešaka', '2025-01-25 14:25:00', 'error_handling'),
+(26, 'Resetiranje mrežnih uređaja', '2025-01-26 17:40:00', 'network_admin'),
+(27, 'Izrada novog sigurnosnog pravila', '2025-01-27 08:10:00', 'security_team'),
+(28, 'Promjena konfiguracije servisa', '2025-01-28 11:55:00', 'service_admin'),
+(29, 'Testiranje redundancije sustava', '2025-01-29 19:00:00', 'redundancy_ops'),
+(30, 'Povrat podataka iz sigurnosne kopije', '2025-01-30 03:30:00', 'backup_admin');
+
 
 
 select * from Logovi;
-select * from Server;
+select * from Posluzitelj;
 select * from Incidenti;
 select * from Monitoring;
 -- Ronan END
