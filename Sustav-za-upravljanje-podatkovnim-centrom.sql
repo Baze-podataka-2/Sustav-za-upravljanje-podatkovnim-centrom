@@ -231,7 +231,13 @@ CREATE TABLE Posluzitelj (
     id_rack INT NOT NULL,
     id_smjestaj INT NOT NULL,
     naziv VARCHAR(50) NOT NULL,
-    kategorija VARCHAR(50) NOT NULL
+    kategorija VARCHAR(50) NOT NULL,
+	FOREIGN KEY(konfiguracija_uredjaja) REFERENCES konfiguracija_uredjaja(id)
+    -- -----------------------------------------------------
+    -- FOREIGN KEY (id_rack) REFERENCES rack(id),            }
+	-- 														 }  Za ovo cekam Marka P.
+    -- FOREIGN KEY (id_smjestaj) REFERENCES smjestaj(id)     }
+    -- -----------------------------------------------------
 );
 
 CREATE TABLE Monitoring (
