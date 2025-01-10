@@ -1,3 +1,4 @@
+
 DROP DATABASE IF EXISTS datacentar;
 CREATE DATABASE datacentar;
 USE datacentar;
@@ -229,9 +230,10 @@ CREATE TABLE Posluzitelj (
     id_konfiguracija INT NOT NULL,
     id_rack INT NOT NULL,
     id_smjestaj INT NOT NULL,
+    naziv VARCHAR(50) NOT NULL,
     kategorija VARCHAR(50) NOT NULL
 );
-drop table  Posluzitelj;
+
 CREATE TABLE Monitoring (
     id_monitoring INT AUTO_INCREMENT PRIMARY KEY,
     id_posluzitelj INT NOT NULL,
@@ -259,37 +261,38 @@ CREATE TABLE Logovi (
 
 -- Server
 
-INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, kategorija) VALUES
-(101, 201, 301, 'Web Hosting poslužitelj'),
-(102, 202, 302, 'Storage poslužitelj'),
-(103, 203, 303, 'Machine Learning poslužitelj'),
-(104, 204, 304, 'Proxy poslužitelj'),
-(105, 205, 305, 'Backup poslužitelj'),
-(106, 206, 306, 'DNS poslužitelj'),
-(107, 207, 307, 'Mail poslužitelj'),
-(108, 208, 308, 'FTP poslužitelj'),
-(109, 209, 309, 'Hypervisor Tip 1'),
-(110, 210, 310, 'Streaming poslužitelj'),
-(111, 211, 311, 'VoIP poslužitelj'),
-(112, 212, 312, 'IoT Gateway poslužitelj'),
-(113, 213, 313, 'Load Balancer poslužitelj'),
-(114, 214, 314, 'Cache poslužitelj'),
-(115, 215, 315, 'Testni poslužitelj'),
-(116, 216, 316, 'Web poslužitelj'),
-(117, 217, 317, 'Baza podataka'),
-(118, 218, 318, 'Aplikacijski poslužitelj'),
-(119, 219, 319, 'Big Data poslužitelj'),
-(120, 220, 320, 'Firewall poslužitelj'),
-(121, 221, 321, 'Data Warehouse poslužitelj'),
-(122, 222, 322, 'Streaming Media poslužitelj'),
-(123, 223, 323, 'Raspberry Pi Cluster poslužitelj'),
-(124, 224, 324, 'VPN Gateway poslužitelj'),
-(125, 225, 325, 'File Server poslužitelj'),
-(126, 226, 326, 'Analytics poslužitelj'),
-(127, 227, 327, 'Edge Computing poslužitelj'),
-(128, 228, 328, 'CI/CD Pipeline poslužitelj'),
-(129, 229, 329, 'Log Management poslužitelj'),
-(130, 230, 330, 'Hybrid Cloud poslužitelj');
+INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, naziv, kategorija) VALUES
+(1, 1, 1, 'HP', 'Web Hosting'),
+(2, 1, 2, 'DELL', 'Mail Server'),
+(3, 2, 3, 'Lenovo', 'DNS Server'),
+(4, 3, 4, 'HP', 'DHCP Server'),
+(5, 4, 5, 'DELL', 'Proxy Server'),
+(6, 5, 6, 'Lenovo', 'Machine Learning Server'),
+(7, 1, 7, 'HP', 'Web Hosting'),
+(8, 2, 8, 'DELL', 'Mail Server'),
+(9, 3, 9, 'Lenovo', 'DNS Server'),
+(10, 4, 10, 'HP', 'DHCP Server'),
+(11, 5, 11, 'DELL', 'Proxy Server'),
+(12, 1, 12, 'Lenovo', 'Machine Learning Server'),
+(13, 2, 13, 'HP', 'Web Hosting'),
+(14, 3, 14, 'DELL', 'Mail Server'),
+(15, 4, 15, 'Lenovo', 'DNS Server'),
+(16, 5, 16, 'HP', 'DHCP Server'),
+(17, 1, 17, 'DELL', 'Proxy Server'),
+(18, 2, 18, 'Lenovo', 'Machine Learning Server'),
+(19, 3, 19, 'HP', 'Web Hosting'),
+(20, 4, 20, 'DELL', 'Mail Server'),
+(21, 5, 21, 'Lenovo', 'DNS Server'),
+(22, 1, 22, 'HP', 'DHCP Server'),
+(23, 2, 23, 'DELL', 'Proxy Server'),
+(24, 3, 24, 'Lenovo', 'Machine Learning Server'),
+(25, 4, 25, 'HP', 'Web Hosting'),
+(26, 5, 26, 'DELL', 'Mail Server'),
+(27, 1, 27, 'Lenovo', 'DNS Server'),
+(28, 2, 28, 'HP', 'DHCP Server'),
+(29, 3, 29, 'DELL', 'Proxy Server'),
+(30, 4, 30, 'Lenovo', 'Machine Learning Server');
+
 
 -- Monitoring
 INSERT INTO Monitoring (id_posluzitelj, vrsta) VALUES
