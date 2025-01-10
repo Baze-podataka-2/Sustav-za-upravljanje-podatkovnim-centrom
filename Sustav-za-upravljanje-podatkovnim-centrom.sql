@@ -39,10 +39,10 @@ CREATE TABLE racuni_prema_klijentima(
 
 
 CREATE TABLE troskovi_datacentra (
-    id_troskovi_datacentra INT PRIMARY KEY AUTO_INCREMENT,
-    id_potrosnja INT,
-    id_licenca VARCHAR(50)
-    -- FOREIGN KEY (id_potrosnja) REFRENCES potrosnja(id_potrosnja)
+    id_troskovi_datacentra INT PRIMARY KEY ,
+    id_potrosnja SERIAL,
+    id_licenca VARCHAR(50),
+    FOREIGN KEY (id_potrosnja) REFERENCES potrosnja(id)
 );
 
 INSERT INTO usluge (vrsta, cijena) VALUES     ("FREE" ,0.0 ),
@@ -88,7 +88,7 @@ INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge
 
 -- Mario FUNKCIJE I OSTALO --
 
--- ------------------- STATS -> Br.Procedura: 1, Br.Funkcija: 2, Br.Trigger: 2
+-- ------------------- STATS -> Br.Procedura: 1, Br.Funkcija: 2, Br.Trigger: 2, Br.Pogled: 2
 
 -- 1. Procedrua - azurira / mijenja cijenu usluge prema prosljeđenom ID-u
 
@@ -209,6 +209,53 @@ DELIMITER ;
 INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES(15);
 SELECT * FROM racuni_prema_klijentima;
 
+-- 6. Pogled koji radi privremenu tablicu sa svim korsinicima te prikazuje oni koji su "najvjerniji" korisnic, te one koji nisu -> Statistika korisnika
+
+CREATE VIEW StatistikaKorisnika AS
+SELECT
+    klijenti.id_klijent,
+    klijenti.ime,
+    klijenti.prezime,
+    usluge_klijenata.id_usluga_klijent,
+    usluge_klijenata.pocetak_usluge,
+    usluge_klijenata.kraj_usluge,
+    DATEDIFF(usluge_klijenata.kraj_usluge, usluge_klijenata.pocetak_usluge) AS broj_dana_koristenja,
+    CASE
+        WHEN DATEDIFF(usluge_klijenata.kraj_usluge, usluge_klijenata.pocetak_usluge) > 80 THEN 'Izuzetno vjeran korisnik'
+        WHEN DATEDIFF(usluge_klijenata.kraj_usluge, usluge_klijenata.pocetak_usluge) < 80 THEN 'Vjeran korisnik'
+        WHEN DATEDIFF(usluge_klijenata.kraj_usluge, usluge_klijenata.pocetak_usluge) < 30 THEN 'Obican korisnik'
+    END AS statistika_korisnika
+FROM
+    klijenti
+JOIN
+    usluge_klijenata ON klijenti.id_klijent = usluge_klijenata.id_klijent;
+
+
+-- Testiranje pogleda
+
+    SELECT * FROM StatistikaKorisnika;
+
+-- 6. Pogled koji vraca raspodjelu kategorija ( pogled StatistikaKorisnika ) prema razini preplate iz tablice usluge
+DROP VIEW StatistikaUsluga;
+
+CREATE VIEW StatistikaUsluga AS
+SELECT
+    usluge.vrsta AS 'Vrsta usluge',
+    StatistikaKorisnika.statistika_korisnika,
+    COUNT(*) AS 'Broj korisnika'
+FROM
+    StatistikaKorisnika
+JOIN
+    usluge_klijenata ON StatistikaKorisnika.id_usluga_klijent = usluge_klijenata.id_usluga_klijent
+JOIN
+    usluge ON usluge_klijenata.id_usluga = usluge.id_usluga
+GROUP BY
+    usluge.vrsta, StatistikaKorisnika.statistika_korisnika;
+
+
+SELECT * FROM StatistikaUsluga ORDER BY 'Broj korisnika' DESC;
+
+
 
 
 
@@ -216,7 +263,6 @@ SELECT * FROM racuni_prema_klijentima;
 
 
 -- Mario KRAJ
-
 
 -- --- --- --- --- --- --- --- --- --- ---
 
