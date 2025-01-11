@@ -1,4 +1,3 @@
-
 DROP DATABASE IF EXISTS datacentar;
 CREATE DATABASE datacentar;
 USE datacentar;
@@ -39,10 +38,10 @@ CREATE TABLE racuni_prema_klijentima(
 
 
 CREATE TABLE troskovi_datacentra (
-    id_troskovi_datacentra INT PRIMARY KEY ,
-    id_potrosnja SERIAL,
-    id_licenca VARCHAR(50),
-    FOREIGN KEY (id_potrosnja) REFERENCES potrosnja(id)
+    id_troskovi_datacentra INT PRIMARY KEY AUTO_INCREMENT,
+    id_potrosnja INT,
+    id_licenca VARCHAR(50)
+    -- FOREIGN KEY (id_potrosnja) REFRENCES potrosnja(id_potrosnja)
 );
 
 INSERT INTO usluge (vrsta, cijena) VALUES     ("FREE" ,0.0 ),
@@ -88,7 +87,7 @@ INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge
 
 -- Mario FUNKCIJE I OSTALO --
 
--- ------------------- STATS -> Br.Procedura: 1, Br.Funkcija: 2, Br.Trigger: 2, Br.Pogled: 2
+-- ------------------- STATS -> Br.Procedura: 1, Br.Funkcija: 2, Br.Trigger: 2
 
 -- 1. Procedrua - azurira / mijenja cijenu usluge prema prosljeđenom ID-u
 
@@ -209,53 +208,6 @@ DELIMITER ;
 INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES(15);
 SELECT * FROM racuni_prema_klijentima;
 
--- 6. Pogled koji radi privremenu tablicu sa svim korsinicima te prikazuje oni koji su "najvjerniji" korisnic, te one koji nisu -> Statistika korisnika
-
-CREATE VIEW StatistikaKorisnika AS
-SELECT
-    klijenti.id_klijent,
-    klijenti.ime,
-    klijenti.prezime,
-    usluge_klijenata.id_usluga_klijent,
-    usluge_klijenata.pocetak_usluge,
-    usluge_klijenata.kraj_usluge,
-    DATEDIFF(usluge_klijenata.kraj_usluge, usluge_klijenata.pocetak_usluge) AS broj_dana_koristenja,
-    CASE
-        WHEN DATEDIFF(usluge_klijenata.kraj_usluge, usluge_klijenata.pocetak_usluge) > 80 THEN 'Izuzetno vjeran korisnik'
-        WHEN DATEDIFF(usluge_klijenata.kraj_usluge, usluge_klijenata.pocetak_usluge) < 80 THEN 'Vjeran korisnik'
-        WHEN DATEDIFF(usluge_klijenata.kraj_usluge, usluge_klijenata.pocetak_usluge) < 30 THEN 'Obican korisnik'
-    END AS statistika_korisnika
-FROM
-    klijenti
-JOIN
-    usluge_klijenata ON klijenti.id_klijent = usluge_klijenata.id_klijent;
-
-
--- Testiranje pogleda
-
-    SELECT * FROM StatistikaKorisnika;
-
--- 6. Pogled koji vraca raspodjelu kategorija ( pogled StatistikaKorisnika ) prema razini preplate iz tablice usluge
-DROP VIEW StatistikaUsluga;
-
-CREATE VIEW StatistikaUsluga AS
-SELECT
-    usluge.vrsta AS 'Vrsta usluge',
-    StatistikaKorisnika.statistika_korisnika,
-    COUNT(*) AS 'Broj korisnika'
-FROM
-    StatistikaKorisnika
-JOIN
-    usluge_klijenata ON StatistikaKorisnika.id_usluga_klijent = usluge_klijenata.id_usluga_klijent
-JOIN
-    usluge ON usluge_klijenata.id_usluga = usluge.id_usluga
-GROUP BY
-    usluge.vrsta, StatistikaKorisnika.statistika_korisnika;
-
-
-SELECT * FROM StatistikaUsluga ORDER BY 'Broj korisnika' DESC;
-
-
 
 
 
@@ -264,6 +216,7 @@ SELECT * FROM StatistikaUsluga ORDER BY 'Broj korisnika' DESC;
 
 -- Mario KRAJ
 
+
 -- --- --- --- --- --- --- --- --- --- ---
 
 
@@ -271,83 +224,59 @@ SELECT * FROM StatistikaUsluga ORDER BY 'Broj korisnika' DESC;
 
 
 -- Kreiranje tablica
-CREATE TABLE Posluzitelj (
-    id_posluzitelj INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE Server (
+    id_server INT AUTO_INCREMENT PRIMARY KEY,
     id_konfiguracija INT NOT NULL,
     id_rack INT NOT NULL,
     id_smjestaj INT NOT NULL,
-    naziv VARCHAR(50) NOT NULL,
-    kategorija VARCHAR(50) NOT NULL,
-	FOREIGN KEY(konfiguracija_uredjaja) REFERENCES konfiguracija_uredjaja(id)
-    -- -----------------------------------------------------
-    -- FOREIGN KEY (id_rack) REFERENCES rack(id),            }
-	-- 														 }  Za ovo cekam Marka P.
-    -- FOREIGN KEY (id_smjestaj) REFERENCES smjestaj(id)     }
-    -- -----------------------------------------------------
+    kategorija VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Monitoring (
     id_monitoring INT AUTO_INCREMENT PRIMARY KEY,
-    id_posluzitelj INT NOT NULL,
+    id_server INT NOT NULL,
     vrsta VARCHAR(50) NOT NULL,
-    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
+    FOREIGN KEY (id_server) REFERENCES Server(id_server)
 );
 
 CREATE TABLE Incidenti (
     id_incidenta INT AUTO_INCREMENT PRIMARY KEY,
     datum DATE NOT NULL,
     opis TEXT NOT NULL,
-    id_posluzitelj INT NOT NULL,
+    id_server INT NOT NULL,
     status VARCHAR(20) NOT NULL,
-    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
+    FOREIGN KEY (id_server) REFERENCES Server(id_server)
 );
 
 CREATE TABLE Logovi (
     id_log INT AUTO_INCREMENT PRIMARY KEY,
-    id_posluzitelj INT NOT NULL,
+    id_server INT NOT NULL,
     akcija VARCHAR(100) NOT NULL,
     datum DATETIME NOT NULL,
     user VARCHAR(50) NOT NULL,
-    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
+    FOREIGN KEY (id_server) REFERENCES Server(id_server)
 );
 
 -- Server
-
-INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, naziv, kategorija) VALUES
-(1, 1, 1, 'HP', 'Web Hosting'),
-(2, 1, 2, 'DELL', 'Mail Server'),
-(3, 2, 3, 'Lenovo', 'DNS Server'),
-(4, 3, 4, 'HP', 'DHCP Server'),
-(5, 4, 5, 'DELL', 'Proxy Server'),
-(6, 5, 6, 'Lenovo', 'Machine Learning Server'),
-(7, 1, 7, 'HP', 'Web Hosting'),
-(8, 2, 8, 'DELL', 'Mail Server'),
-(9, 3, 9, 'Lenovo', 'DNS Server'),
-(10, 4, 10, 'HP', 'DHCP Server'),
-(11, 5, 11, 'DELL', 'Proxy Server'),
-(12, 1, 12, 'Lenovo', 'Machine Learning Server'),
-(13, 2, 13, 'HP', 'Web Hosting'),
-(14, 3, 14, 'DELL', 'Mail Server'),
-(15, 4, 15, 'Lenovo', 'DNS Server'),
-(16, 5, 16, 'HP', 'DHCP Server'),
-(17, 1, 17, 'DELL', 'Proxy Server'),
-(18, 2, 18, 'Lenovo', 'Machine Learning Server'),
-(19, 3, 19, 'HP', 'Web Hosting'),
-(20, 4, 20, 'DELL', 'Mail Server'),
-(21, 5, 21, 'Lenovo', 'DNS Server'),
-(22, 1, 22, 'HP', 'DHCP Server'),
-(23, 2, 23, 'DELL', 'Proxy Server'),
-(24, 3, 24, 'Lenovo', 'Machine Learning Server'),
-(25, 4, 25, 'HP', 'Web Hosting'),
-(26, 5, 26, 'DELL', 'Mail Server'),
-(27, 1, 27, 'Lenovo', 'DNS Server'),
-(28, 2, 28, 'HP', 'DHCP Server'),
-(29, 3, 29, 'DELL', 'Proxy Server'),
-(30, 4, 30, 'Lenovo', 'Machine Learning Server');
-
+INSERT INTO Server (id_konfiguracija, id_rack, id_smjestaj, kategorija) VALUES
+(101, 201, 301, 'Web poslužitelj'),
+(102, 202, 302, 'Baza podataka'),
+(103, 203, 303, 'Aplikacijski poslužitelj'),
+(104, 204, 304, 'Proxy poslužitelj'),
+(105, 205, 305, 'Backup poslužitelj'),
+(106, 206, 306, 'DNS poslužitelj'),
+(107, 207, 307, 'Mail poslužitelj'),
+(108, 208, 308, 'FTP poslužitelj'),
+(109, 209, 309, 'Virtualizacijski poslužitelj'),
+(110, 210, 310, 'Streaming poslužitelj'),
+(111, 211, 311, 'VoIP poslužitelj'),
+(112, 212, 312, 'IoT Gateway'),
+(113, 213, 313, 'Load Balancer'),
+(114, 214, 314, 'Cache poslužitelj'),
+(115, 215, 315, 'Testni poslužitelj');
 
 -- Monitoring
-INSERT INTO Monitoring (id_posluzitelj, vrsta) VALUES
+INSERT INTO Monitoring (id_server, vrsta) VALUES
 (1, 'Praćenje performansi'),
 (2, 'Praćenje sigurnosti'),
 (3, 'Praćenje mreže'),
@@ -362,25 +291,10 @@ INSERT INTO Monitoring (id_posluzitelj, vrsta) VALUES
 (12, 'Praćenje SSL certifikata'),
 (13, 'Praćenje CPU-a'),
 (14, 'Praćenje mrežnih portova'),
-(15, 'Praćenje usluga'),
-(16, 'Praćenje memorije'),
-(17, 'Praćenje temperature'),
-(18, 'Praćenje ventilatora'),
-(19, 'Praćenje RAID statusa'),
-(20, 'Praćenje I/O operacija'),
-(21, 'Praćenje baze podataka'),
-(22, 'Praćenje aplikacijskih logova'),
-(23, 'Praćenje vremena zastoja'),
-(24, 'Praćenje sigurnosnih zakrpa'),
-(25, 'Praćenje mrežnih latencija'),
-(26, 'Praćenje DNS zahtjeva'),
-(27, 'Praćenje e-pošte'),
-(28, 'Praćenje virtualnih strojeva'),
-(29, 'Praćenje mrežnih protokola'),
-(30, 'Praćenje udaljenih veza');
+(15, 'Praćenje usluga');
 
 -- Incidenti
-INSERT INTO Incidenti (datum, opis, id_posluzitelj, status) VALUES
+INSERT INTO Incidenti (datum, opis, id_server, status) VALUES
 ('2025-01-01', 'Neočekivano ponovno pokretanje', 1, 'Riješen'),
 ('2025-01-02', 'Visoka upotreba memorije', 2, 'U tijeku'),
 ('2025-01-03', 'Problemi s mrežnom povezivošću', 3, 'Otvoreno'),
@@ -395,25 +309,10 @@ INSERT INTO Incidenti (datum, opis, id_posluzitelj, status) VALUES
 ('2025-01-12', 'Neispravni podaci u bazi', 12, 'Otvoreno'),
 ('2025-01-13', 'Greška u aplikaciji', 13, 'Riješen'),
 ('2025-01-14', 'Nedostupnost mreže', 14, 'Otvoreno'),
-('2025-01-15', 'Backup nije uspješan', 15, 'U tijeku'),
-('2025-01-16', 'Visoka upotreba CPU-a', 16, 'Otvoreno'),
-('2025-01-17', 'Problemi s virtualizacijom', 17, 'Riješen'),
-('2025-01-18', 'Neispravno preusmjeravanje portova', 18, 'U tijeku'),
-('2025-01-19', 'Povećana latencija u mreži', 19, 'Otvoreno'),
-('2025-01-20', 'Nedostupnost usluga', 20, 'Riješen'),
-('2025-01-21', 'Problemi s sigurnosnim zakrpama', 21, 'U tijeku'),
-('2025-01-22', 'Greška u konfiguraciji sustava', 22, 'Otvoreno'),
-('2025-01-23', 'Pregrijavanje uređaja', 23, 'Riješen'),
-('2025-01-24', 'Greška u sinkronizaciji podataka', 24, 'U tijeku'),
-('2025-01-25', 'Neispravni sigurnosni certifikati', 25, 'Otvoreno'),
-('2025-01-26', 'Pad aplikacijskog servisa', 26, 'Riješen'),
-('2025-01-27', 'Propusnost mreže je niska', 27, 'U tijeku'),
-('2025-01-28', 'Problemi s pohranom podataka', 28, 'Otvoreno'),
-('2025-01-29', 'Nedostupnost backup servera', 29, 'Riješen'),
-('2025-01-30', 'Problemi s autentifikacijom', 30, 'U tijeku');
+('2025-01-15', 'Backup nije uspješan', 15, 'U tijeku');
 
 -- Logovi
-INSERT INTO Logovi (id_posluzitelj, akcija, datum, user) VALUES
+INSERT INTO Logovi (id_server, akcija, datum, user) VALUES
 (1, 'Ponovno pokretanje poslužitelja', '2025-01-01 12:00:00', 'admin'),
 (2, 'Ažuriranje postavki vatrozida', '2025-01-02 15:30:00', 'network_admin'),
 (3, 'Implementacija nove verzije aplikacije', '2025-01-03 09:00:00', 'devops_team'),
@@ -428,27 +327,11 @@ INSERT INTO Logovi (id_posluzitelj, akcija, datum, user) VALUES
 (12, 'Migracija podataka', '2025-01-12 22:00:00', 'migration_team'),
 (13, 'Prijenos podataka na backup server', '2025-01-13 03:00:00', 'backup_admin'),
 (14, 'Otvaranje novog korisničkog računa', '2025-01-14 09:15:00', 'user_support'),
-(15, 'Ponovno učitavanje usluge', '2025-01-15 17:20:00', 'service_admin'),
-(16, 'Testiranje novog API-ja', '2025-01-16 14:00:00', 'api_team'),
-(17, 'Postavljanje SSL certifikata', '2025-01-17 11:30:00', 'security_admin'),
-(18, 'Pregled sistemskih resursa', '2025-01-18 09:45:00', 'sys_monitor'),
-(19, 'Arhiviranje starih podataka', '2025-01-19 16:00:00', 'archive_team'),
-(20, 'Ažuriranje korisničkog profila', '2025-01-20 12:15:00', 'user_support'),
-(21, 'Praćenje mrežnog prometa', '2025-01-21 10:20:00', 'net_ops'),
-(22, 'Nadogradnja virtualnog poslužitelja', '2025-01-22 13:30:00', 'cloud_admin'),
-(23, 'Optimizacija performansi aplikacije', '2025-01-23 15:10:00', 'devops_team'),
-(24, 'Dodavanje nove domene', '2025-01-24 09:50:00', 'dns_admin'),
-(25, 'Provjera dnevnika grešaka', '2025-01-25 14:25:00', 'error_handling'),
-(26, 'Resetiranje mrežnih uređaja', '2025-01-26 17:40:00', 'network_admin'),
-(27, 'Izrada novog sigurnosnog pravila', '2025-01-27 08:10:00', 'security_team'),
-(28, 'Promjena konfiguracije servisa', '2025-01-28 11:55:00', 'service_admin'),
-(29, 'Testiranje redundancije sustava', '2025-01-29 19:00:00', 'redundancy_ops'),
-(30, 'Povrat podataka iz sigurnosne kopije', '2025-01-30 03:30:00', 'backup_admin');
-
+(15, 'Ponovno učitavanje usluge', '2025-01-15 17:20:00', 'service_admin');
 
 
 select * from Logovi;
-select * from Posluzitelj;
+select * from Server;
 select * from Incidenti;
 select * from Monitoring;
 -- Ronan END
