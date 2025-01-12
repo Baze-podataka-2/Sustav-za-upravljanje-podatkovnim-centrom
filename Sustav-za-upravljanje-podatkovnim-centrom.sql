@@ -2,6 +2,8 @@ DROP DATABASE IF EXISTS datacentar;
 CREATE DATABASE datacentar;
 USE datacentar;
 
+-- GENERAL STATS -> Br.Procedura: 1, Br.Funkcija: 2, Br.Trigger: 2, Br.Pogled: 4
+
 -- Mario
 
 CREATE TABLE usluge (
@@ -38,10 +40,10 @@ CREATE TABLE racuni_prema_klijentima(
 
 
 CREATE TABLE troskovi_datacentra (
-    id_troskovi_datacentra INT PRIMARY KEY AUTO_INCREMENT,
-    id_potrosnja INT,
-    id_licenca VARCHAR(50)
-    -- FOREIGN KEY (id_potrosnja) REFRENCES potrosnja(id_potrosnja)
+    id_troskovi_datacentra INT PRIMARY KEY ,
+    id_potrosnja SERIAL,
+    id_licenca VARCHAR(50),
+    FOREIGN KEY (id_potrosnja) REFERENCES potrosnja(id)
 );
 
 INSERT INTO usluge (vrsta, cijena) VALUES     ("FREE" ,0.0 ),
@@ -50,50 +52,118 @@ INSERT INTO usluge (vrsta, cijena) VALUES     ("FREE" ,0.0 ),
                                               ("PRO+" ,39.99 ),
                                               ("ENTERPRISE", 99.99);
 
-INSERT INTO klijenti (ime, prezime, oib) VALUES     ('Ivan', 'Horvat', 12345678901),
-                                                    ('Ana', 'Kovač', 23456789012),
-                                                    ('Marko', 'Novak', 34567890123),
-                                                    ('Marija', 'Babić', 45678901234),
-                                                    ('Petar', 'Jurić', 56789012345),
-                                                    ('Luka', 'Savić', 67890123456),
-                                                    ('Maja', 'Pavlić', 78901234567),
-                                                    ('Tina', 'Matić', 89012345678),
-                                                    ('Dino', 'Grgić', 90123456789),
-                                                    ('Sara', 'Kralj', 11234567890),
-                                                    ('Nina', 'Vuković', 22345678901),
-                                                    ('Tomislav', 'Šarić', 33456789012),
-                                                    ('Katarina', 'Zorić', 44567890123),
-                                                    ('Andrej', 'Križ', 55678901234),
-                                                    ('Jelena', 'Rogić', 66789012345);
+
+INSERT INTO klijenti (ime, prezime, oib) VALUES
+                                                ('Ivan', 'Horvat', 12345678901),
+                                                ('Ana', 'Kovač', 23456789012),
+                                                ('Marko', 'Novak', 34567890123),
+                                                ('Marija', 'Babić', 45678901234),
+                                                ('Petar', 'Jurić', 56789012345),
+                                                ('Luka', 'Savić', 67890123456),
+                                                ('Maja', 'Pavlić', 78901234567),
+                                                ('Tina', 'Matić', 89012345678),
+                                                ('Dino', 'Grgić', 90123456789),
+                                                ('Sara', 'Kralj', 11234567890),
+                                                ('Nina', 'Vuković', 22345678901),
+                                                ('Tomislav', 'Šarić', 33456789012),
+                                                ('Katarina', 'Zorić', 44567890123),
+                                                ('Andrej', 'Križ', 55678901234),
+                                                ('Jelena', 'Rogić', 66789012345),
+                                                ('Filip', 'Tomić', 77890123456),
+                                                ('Lana', 'Pavić', 88901234567),
+                                                ('Davor', 'Kovačević', 99012345678),
+                                                ('Ema', 'Blažević', 10123456789),
+                                                ('Roko', 'Milić', 11123456780),
+                                                ('Lea', 'Vlahović', 12123456781),
+                                                ('Toni', 'Križan', 13123456782),
+                                                ('Marta', 'Soldo', 14123456783),
+                                                ('Viktor', 'Pavlović', 15123456784),
+                                                ('Nika', 'Grgurić', 16123456785),
+                                                ('Milan', 'Šeparović', 17123456786),
+                                                ('Klara', 'Banić', 18123456787),
+                                                ('Ruža', 'Kovačić', 19123456788),
+                                                ('Ingrid', 'Trava', 12356547889);
+
 
 
 INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge) VALUES
-                                                    (1, 1, STR_TO_DATE('2024-01-15', '%Y-%m-%d'), STR_TO_DATE('2024-04-10', '%Y-%m-%d')),
-                                                    (2, 2, STR_TO_DATE('2023-03-20', '%Y-%m-%d'), STR_TO_DATE('2023-06-12', '%Y-%m-%d')),
-                                                    (3, 3, STR_TO_DATE('2024-05-03', '%Y-%m-%d'), STR_TO_DATE('2024-07-25', '%Y-%m-%d')),
-                                                    (4, 4, STR_TO_DATE('2024-02-28', '%Y-%m-%d'), STR_TO_DATE('2024-05-17', '%Y-%m-%d')),
-                                                    (5, 5, STR_TO_DATE('2025-01-22', '%Y-%m-%d'), STR_TO_DATE('2025-04-19', '%Y-%m-%d')),
-                                                    (6, 1, STR_TO_DATE('2023-06-11', '%Y-%m-%d'), STR_TO_DATE('2023-08-27', '%Y-%m-%d')),
-                                                    (7, 2, STR_TO_DATE('2024-09-14', '%Y-%m-%d'), STR_TO_DATE('2024-12-01', '%Y-%m-%d')),
-                                                    (8, 3, STR_TO_DATE('2025-02-08', '%Y-%m-%d'), STR_TO_DATE('2025-04-22', '%Y-%m-%d')),
-                                                    (9, 4, STR_TO_DATE('2024-07-19', '%Y-%m-%d'), STR_TO_DATE('2024-10-04', '%Y-%m-%d')),
-                                                    (10, 5, STR_TO_DATE('2024-11-02', '%Y-%m-%d'), STR_TO_DATE('2025-01-15', '%Y-%m-%d')),
-                                                    (11, 1, STR_TO_DATE('2023-04-07', '%Y-%m-%d'), STR_TO_DATE('2023-06-30', '%Y-%m-%d')),
-                                                    (12, 2, STR_TO_DATE('2024-10-05', '%Y-%m-%d'), STR_TO_DATE('2025-01-01', '%Y-%m-%d')),
-                                                    (13, 3, STR_TO_DATE('2023-07-13', '%Y-%m-%d'), STR_TO_DATE('2023-10-08', '%Y-%m-%d')),
-                                                    (14, 4, STR_TO_DATE('2024-03-21', '%Y-%m-%d'), STR_TO_DATE('2024-06-10', '%Y-%m-%d')),
-                                                    (15, 5, STR_TO_DATE('2024-12-09', '%Y-%m-%d'), STR_TO_DATE('2025-02-28', '%Y-%m-%d'));
+                                          (1, 1, STR_TO_DATE('2024-01-15', '%Y-%m-%d'), STR_TO_DATE('2024-04-10', '%Y-%m-%d')),
+                                          (2, 3, STR_TO_DATE('2023-03-20', '%Y-%m-%d'), STR_TO_DATE('2023-06-12', '%Y-%m-%d')),
+                                          (3, 3, STR_TO_DATE('2024-05-03', '%Y-%m-%d'), STR_TO_DATE('2024-07-25', '%Y-%m-%d')),
+                                          (4, 4, STR_TO_DATE('2024-02-28', '%Y-%m-%d'), STR_TO_DATE('2024-05-17', '%Y-%m-%d')),
+                                          (5, 1, STR_TO_DATE('2025-01-22', '%Y-%m-%d'), STR_TO_DATE('2025-04-19', '%Y-%m-%d')),
+                                          (6, 1, STR_TO_DATE('2023-06-11', '%Y-%m-%d'), STR_TO_DATE('2023-08-27', '%Y-%m-%d')),
+                                          (7, 2, STR_TO_DATE('2024-09-14', '%Y-%m-%d'), STR_TO_DATE('2024-12-01', '%Y-%m-%d')),
+                                          (8, 5, STR_TO_DATE('2025-02-08', '%Y-%m-%d'), STR_TO_DATE('2025-04-22', '%Y-%m-%d')),
+                                          (9, 4, STR_TO_DATE('2024-07-19', '%Y-%m-%d'), STR_TO_DATE('2024-10-04', '%Y-%m-%d')),
+                                          (10, 5, STR_TO_DATE('2024-11-02', '%Y-%m-%d'), STR_TO_DATE('2025-01-15', '%Y-%m-%d')),
+                                          (11, 1, STR_TO_DATE('2023-04-07', '%Y-%m-%d'), STR_TO_DATE('2023-06-30', '%Y-%m-%d')),
+                                          (12, 2, STR_TO_DATE('2024-10-05', '%Y-%m-%d'), STR_TO_DATE('2025-01-01', '%Y-%m-%d')),
+                                          (13, 1, STR_TO_DATE('2023-07-13', '%Y-%m-%d'), STR_TO_DATE('2023-10-08', '%Y-%m-%d')),
+                                          (14, 4, STR_TO_DATE('2024-03-21', '%Y-%m-%d'), STR_TO_DATE('2024-06-10', '%Y-%m-%d')),
+                                          (15, 5, STR_TO_DATE('2024-12-09', '%Y-%m-%d'), STR_TO_DATE('2025-02-28', '%Y-%m-%d')),
+                                          (16, 3, STR_TO_DATE('2024-02-12', '%Y-%m-%d'), STR_TO_DATE('2024-05-19', '%Y-%m-%d')),
+                                          (17, 3, STR_TO_DATE('2024-06-10', '%Y-%m-%d'), STR_TO_DATE('2024-09-01', '%Y-%m-%d')),
+                                          (18, 1, STR_TO_DATE('2024-08-15', '%Y-%m-%d'), STR_TO_DATE('2024-11-10', '%Y-%m-%d')),
+                                          (19, 5, STR_TO_DATE('2024-12-22', '%Y-%m-%d'), STR_TO_DATE('2025-03-30', '%Y-%m-%d')),
+                                          (20, 4, STR_TO_DATE('2025-01-14', '%Y-%m-%d'), STR_TO_DATE('2025-04-25', '%Y-%m-%d')),
+                                          (21, 2, STR_TO_DATE('2025-03-05', '%Y-%m-%d'), STR_TO_DATE('2025-06-20', '%Y-%m-%d')),
+                                          (22, 1, STR_TO_DATE('2024-09-01', '%Y-%m-%d'), STR_TO_DATE('2024-12-20', '%Y-%m-%d')),
+                                          (23, 4, STR_TO_DATE('2024-04-18', '%Y-%m-%d'), STR_TO_DATE('2024-07-10', '%Y-%m-%d')),
+                                          (24, 5, STR_TO_DATE('2024-05-25', '%Y-%m-%d'), STR_TO_DATE('2024-08-18', '%Y-%m-%d')),
+                                          (25, 3, STR_TO_DATE('2024-10-09', '%Y-%m-%d'), STR_TO_DATE('2025-01-31', '%Y-%m-%d')),
+                                          (26, 2, STR_TO_DATE('2025-02-20', '%Y-%m-%d'), STR_TO_DATE('2025-05-29', '%Y-%m-%d')),
+                                          (27, 1, STR_TO_DATE('2024-07-13', '%Y-%m-%d'), STR_TO_DATE('2024-10-25', '%Y-%m-%d')),
+                                          (28, 5, STR_TO_DATE('2025-04-02', '%Y-%m-%d'), STR_TO_DATE('2025-07-11', '%Y-%m-%d')),
+                                          (29, 4, STR_TO_DATE('2024-11-15', '%Y-%m-%d'), STR_TO_DATE('2025-02-14', '%Y-%m-%d'));                                     (30, 3, STR_TO_DATE('2024-06-21', '%Y-%m-%d'), STR_TO_DATE('2024-09-13', '%Y-%m-%d'));
+
+INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES
+                                                                (1),
+                                                                (2),
+                                                                (3),
+                                                                (4),
+                                                                (5),
+                                                                (6),
+                                                                (7),
+                                                                (8),
+                                                                (9),
+                                                                (10),
+                                                                (11),
+                                                                (12),
+                                                                (13),
+                                                                (14),
+                                                                (15),
+                                                                (16),
+                                                                (17),
+                                                                (18),
+                                                                (19),
+                                                                (20),
+                                                                (21),
+                                                                (22),
+                                                                (23),
+                                                                (24),
+                                                                (25),
+                                                                (26),
+                                                                (27),
+                                                                (28),
+                                                                (29);
+
+
+
+
+
+
+
 -- -------------------
 
 -- Mario FUNKCIJE I OSTALO --
 
--- ------------------- STATS -> Br.Procedura: 1, Br.Funkcija: 2, Br.Trigger: 2
+-- ------------------- MARIO STATS -> Br.Procedura: 1, Br.Funkcija: 2, Br.Trigger: 2, Br.Pogled: 4
 
 -- 1. Procedrua - azurira / mijenja cijenu usluge prema prosljeđenom ID-u
 
 
 DELIMITER //
-
 CREATE PROCEDURE PromjenaCijeneUsluge(IN ID INT, IN n_cijena FLOAT)
 BEGIN
     DECLARE c FLOAT;
@@ -121,7 +191,6 @@ SELECT * FROM usluge;
 -- 2. Funkcija vraca ukupan broji dana trajanja usluge nekog klijenta ( sa recenicom za bolje korisnicko iskustvo )
 
 DELIMITER //
-
 CREATE FUNCTION BrojDanaR(ID int) RETURNS VARCHAR(100)
     DETERMINISTIC
     BEGIN
@@ -143,7 +212,6 @@ SELECT * FROM usluge_klijenata;
 -- 3. Funkcija BrojDana samo vraca INT u svrhu njezine inkomporacije u druge dijelove projekta
 
 DELIMITER //
-
 CREATE FUNCTION BrojDana(ID int) RETURNS INT
     DETERMINISTIC
     BEGIN
@@ -171,7 +239,7 @@ BEGIN
 END //
 DELIMITER ;
 
-    -- Test Triggera
+    -- Test Triggera -- RADI ISKLJUCIVO PRIJE SVIH GORE INSERTOVA ZBOG OGRANICENJA!!!
 
     INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge) VALUES
     ( 4,1, STR_TO_DATE('2024-04-10', '%Y-%m-%d'), STR_TO_DATE('2024-01-15', '%Y-%m-%d')); -- Ne prolazi
@@ -205,17 +273,91 @@ DELIMITER ;
 
 -- Provjera triggera
 
-INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES(15);
+-- INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES(15);
+SELECT * FROM racuni_prema_klijentima;
+
+-- 6. Pogled koji radi privremenu tablicu sa svim korsinicima te prikazuje oni koji su "najvjerniji" korisnika, te one koji nisu -> Statistika korisnika
+
+CREATE VIEW StatistikaKorisnika AS
+SELECT
+    klijenti.id_klijent,
+    klijenti.ime,
+    klijenti.prezime,
+    usluge_klijenata.id_usluga_klijent,
+    usluge_klijenata.pocetak_usluge,
+    usluge_klijenata.kraj_usluge,
+    DATEDIFF(usluge_klijenata.kraj_usluge, usluge_klijenata.pocetak_usluge) AS broj_dana_koristenja,
+    CASE
+        WHEN DATEDIFF(usluge_klijenata.kraj_usluge, usluge_klijenata.pocetak_usluge) > 80 THEN 'Izuzetno vjeran korisnik'
+        WHEN DATEDIFF(usluge_klijenata.kraj_usluge, usluge_klijenata.pocetak_usluge) < 80 THEN 'Vjeran korisnik'
+        WHEN DATEDIFF(usluge_klijenata.kraj_usluge, usluge_klijenata.pocetak_usluge) < 30 THEN 'Obican korisnik'
+    END AS statistika_korisnika
+FROM
+    klijenti
+JOIN
+    usluge_klijenata ON klijenti.id_klijent = usluge_klijenata.id_klijent;
+
+
+-- Testiranje pogleda
+
+    SELECT * FROM StatistikaKorisnika;
+
+-- 7. Pogled koji vraca raspodjelu kategorija ( pogled StatistikaKorisnika ) prema razini preplate od korisnika
+DROP VIEW StatistikaUsluga;
+
+CREATE VIEW StatistikaUsluga AS
+SELECT
+    usluge.vrsta AS 'Vrsta usluge',
+    StatistikaKorisnika.statistika_korisnika,
+    COUNT(*) AS 'Broj korisnika'
+FROM
+    StatistikaKorisnika
+JOIN
+    usluge_klijenata ON StatistikaKorisnika.id_usluga_klijent = usluge_klijenata.id_usluga_klijent
+JOIN
+    usluge ON usluge_klijenata.id_usluga = usluge.id_usluga
+GROUP BY
+    usluge.vrsta, StatistikaKorisnika.statistika_korisnika;
+
+
+SELECT * FROM StatistikaUsluga ORDER BY 'Broj korisnika' DESC;
+
+-- 8. Pogled AktivniKlijenti uzima trenutni datum te izbacujue trenutno aktivne klijente ( datum koji je u trenutku kada osoba pokrece pogled )
+
+CREATE VIEW AktivniKlijenti AS
+SELECT
+    ime, prezime, klijenti.id_klijent,
+    usluge_klijenata.pocetak_usluge, usluge_klijenata.kraj_usluge, usluge_klijenata.id_usluga,
+    usluge.vrsta
+FROM klijenti
+JOIN usluge_klijenata ON klijenti.id_klijent=usluge_klijenata.id_klijent
+JOIN usluge ON usluge.id_usluga =usluge_klijenata.id_usluga
+WHERE pocetak_usluge<CURRENT_DATE AND kraj_usluge>CURRENT_DATE;
+
+SELECT * FROM AktivniKlijenti;
+
+-- 9. Pogled UkupniPrihodiUsluge prikazuje ukupni prihod prema svakoj kategoriji usluge
+DROP VIEW UkupniPrihodiUsluge;
+
+CREATE VIEW UkupniPrihodiUsluge AS
+SELECT
+    usluge.vrsta AS 'Usluga:',
+    SUM(racuni_prema_klijentima.ukupan_iznos) AS 'Ukupni prihod:'
+FROM
+    racuni_prema_klijentima
+JOIN
+    usluge_klijenata ON racuni_prema_klijentima.id_usluga_klijent = usluge_klijenata.id_usluga_klijent
+JOIN
+    usluge ON usluge_klijenata.id_usluga = usluge.id_usluga
+GROUP BY
+    usluge.vrsta;
+
+SELECT * FROM UkupniPrihodiUsluge;
+
 SELECT * FROM racuni_prema_klijentima;
 
 
-
-
-
-
-
 -- Mario KRAJ
-
 
 -- --- --- --- --- --- --- --- --- --- ---
 
@@ -336,7 +478,7 @@ select * from Incidenti;
 select * from Monitoring;
 -- Ronan END
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 -- Adis START
 
@@ -376,7 +518,7 @@ CREATE TABLE konfiguracija_uredjaja (
     FOREIGN KEY (hladenje) REFERENCES oprema(id),
     FOREIGN KEY (switch) REFERENCES oprema(id),
     FOREIGN KEY (router) REFERENCES oprema(id)
-); 
+);
 
 
 CREATE TABLE pracenje_statusa_posluzitelja (
