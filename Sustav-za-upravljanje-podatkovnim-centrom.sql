@@ -366,8 +366,8 @@ SELECT * FROM racuni_prema_klijentima;
 
 
 -- Kreiranje tablica
-CREATE TABLE Server (
-    id_server INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE Posluzitelj (
+    id_posluzitelj INT AUTO_INCREMENT PRIMARY KEY,
     id_konfiguracija INT NOT NULL,
     id_rack INT NOT NULL,
     id_smjestaj INT NOT NULL,
@@ -376,31 +376,31 @@ CREATE TABLE Server (
 
 CREATE TABLE Monitoring (
     id_monitoring INT AUTO_INCREMENT PRIMARY KEY,
-    id_server INT NOT NULL,
+    id_posluzitelj INT NOT NULL,
     vrsta VARCHAR(50) NOT NULL,
-    FOREIGN KEY (id_server) REFERENCES Server(id_server)
+    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
 CREATE TABLE Incidenti (
     id_incidenta INT AUTO_INCREMENT PRIMARY KEY,
     datum DATE NOT NULL,
     opis TEXT NOT NULL,
-    id_server INT NOT NULL,
+    id_posluzitelj INT NOT NULL,
     status VARCHAR(20) NOT NULL,
-    FOREIGN KEY (id_server) REFERENCES Server(id_server)
+    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
 CREATE TABLE Logovi (
     id_log INT AUTO_INCREMENT PRIMARY KEY,
-    id_server INT NOT NULL,
+    id_posluzitelj INT NOT NULL,
     akcija VARCHAR(100) NOT NULL,
     datum DATETIME NOT NULL,
     user VARCHAR(50) NOT NULL,
-    FOREIGN KEY (id_server) REFERENCES Server(id_server)
+    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
 -- Server
-INSERT INTO Server (id_konfiguracija, id_rack, id_smjestaj, kategorija) VALUES
+INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, kategorija) VALUES
 (101, 201, 301, 'Web poslužitelj'),
 (102, 202, 302, 'Baza podataka'),
 (103, 203, 303, 'Aplikacijski poslužitelj'),
@@ -418,7 +418,7 @@ INSERT INTO Server (id_konfiguracija, id_rack, id_smjestaj, kategorija) VALUES
 (115, 215, 315, 'Testni poslužitelj');
 
 -- Monitoring
-INSERT INTO Monitoring (id_server, vrsta) VALUES
+INSERT INTO Monitoring (id_posluzitelj, vrsta) VALUES
 (1, 'Praćenje performansi'),
 (2, 'Praćenje sigurnosti'),
 (3, 'Praćenje mreže'),
@@ -436,7 +436,7 @@ INSERT INTO Monitoring (id_server, vrsta) VALUES
 (15, 'Praćenje usluga');
 
 -- Incidenti
-INSERT INTO Incidenti (datum, opis, id_server, status) VALUES
+INSERT INTO Incidenti (datum, opis, id_posluzitelj, status) VALUES
 ('2025-01-01', 'Neočekivano ponovno pokretanje', 1, 'Riješen'),
 ('2025-01-02', 'Visoka upotreba memorije', 2, 'U tijeku'),
 ('2025-01-03', 'Problemi s mrežnom povezivošću', 3, 'Otvoreno'),
@@ -454,7 +454,7 @@ INSERT INTO Incidenti (datum, opis, id_server, status) VALUES
 ('2025-01-15', 'Backup nije uspješan', 15, 'U tijeku');
 
 -- Logovi
-INSERT INTO Logovi (id_server, akcija, datum, user) VALUES
+INSERT INTO Logovi (id_posluzitelj, akcija, datum, user) VALUES
 (1, 'Ponovno pokretanje poslužitelja', '2025-01-01 12:00:00', 'admin'),
 (2, 'Ažuriranje postavki vatrozida', '2025-01-02 15:30:00', 'network_admin'),
 (3, 'Implementacija nove verzije aplikacije', '2025-01-03 09:00:00', 'devops_team'),
@@ -473,7 +473,7 @@ INSERT INTO Logovi (id_server, akcija, datum, user) VALUES
 
 
 select * from Logovi;
-select * from Server;
+select * from Posluzitelj;
 select * from Incidenti;
 select * from Monitoring;
 -- Ronan END
@@ -523,13 +523,13 @@ CREATE TABLE konfiguracija_uredjaja (
 
 CREATE TABLE pracenje_statusa_servera (
 	id SERIAL PRIMARY KEY,
-    id_server INT NOT NULL,
+    id_posluzitelj INT NOT NULL,
     procesor_status VARCHAR(255) NOT NULL,
     ram_status VARCHAR(255) NOT NULL,
     ssd_status VARCHAR(255) NOT NULL,
     temperatura_status VARCHAR(255) NOT NULL,
     vrijeme_statusa TIMESTAMP NOT NULL,
-	FOREIGN KEY (id_server) REFERENCES Server(id_server)
+	FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
 
@@ -1200,7 +1200,7 @@ CREATE TABLE Odrzavanje (
     id_odrzavanja INT PRIMARY KEY,
     datum DATE NOT NULL,
     opis TEXT NOT NULL,
-    id_server INT NOT NULL,          
+   id_posluzitelj INT NOT NULL,          
     id_zaposlenik INT NOT NULL,
     CONSTRAINT fk_odrzavanje_zaposlenik 
         FOREIGN KEY (id_zaposlenik) 
@@ -1318,7 +1318,7 @@ VALUES
 (24, 'Damir',   'Hrgović',2, 'Inženjer sustava');
 
 
-INSERT INTO Odrzavanje (id_odrzavanja, datum, opis, id_server, id_zaposlenik)
+INSERT INTO Odrzavanje (id_odrzavanja, datum, opis, id_posluzitelj, id_zaposlenik)
 VALUES
 (16, '2025-01-17', 'Zamjena UPS baterija',                         5,  13),
 (17, '2025-01-18', 'Čišćenje prašine i ventilacije',               2,  14),
