@@ -993,8 +993,99 @@ DELIMITER //
 -- TRIGGER koji ce azurirati stanje na zalihama pojedine opreme u tablici oprema jednom kada se ona upotrijebi u konfiguracijskom setu
 
 DELIMITER //
+CREATE PROCEDURE p_azuriraj_zalihe(
+IN p_graficka_kartica BIGINT,
+IN p_procesor BIGINT,
+IN p_SSD BIGINT,
+IN p_ram BIGINT,
+IN dimenzije BIGINT,
+IN PDU BIGINT,
+IN patchpanel BIGINT,
+IN rack_rails BIGINT,
+IN UPS BIGINT,
+IN hladenje BIGINT,
+IN switch BIGINT,
+IN router BIGINT)
+BEGIN
+
+	IF p_graficka_kartica IS NOT NULL THEN
+		UPDATE oprema
+		SET stanje_na_zalihama = stanje_na_zalihama - 1
+		WHERE id = p_graficka_kartica;
+	END IF;
+
+	IF p_procesor IS NOT NULL THEN
+		UPDATE oprema
+		SET stanje_na_zalihama = stanje_na_zalihama - 1
+		WHERE id = p_procesor;
+	END IF;
+
+	IF p_SSD IS NOT NULL THEN
+		UPDATE oprema
+		SET stanje_na_zalihama = stanje_na_zalihama - 1
+		WHERE id = p_SSD;
+	END IF;
+
+	IF p_ram IS NOT NULL THEN
+		UPDATE oprema
+		SET stanje_na_zalihama = stanje_na_zalihama - 1
+		WHERE id = p_ram;
+	END IF;
+
+	IF p_dimenzije IS NOT NULL THEN
+		UPDATE oprema
+		SET stanje_na_zalihama = stanje_na_zalihama - 1
+		WHERE id = p_dimenzije;
+	END IF;
+
+	IF p_PDU IS NOT NULL THEN
+		UPDATE oprema
+		SET stanje_na_zalihama = stanje_na_zalihama - 1
+		WHERE id = p_PDU;
+	END IF;
+
+	IF p_patchpanel IS NOT NULL THEN
+		UPDATE oprema
+		SET stanje_na_zalihama = stanje_na_zalihama - 1
+		WHERE id = p_patchpanel;
+	END IF;
+
+	IF p_rack_rails IS NOT NULL THEN
+		UPDATE oprema
+		SET stanje_na_zalihama = stanje_na_zalihama - 1
+		WHERE id = p_rack_rails;
+	END IF;
+
+	IF p_UPS IS NOT NULL THEN
+		UPDATE oprema
+		SET stanje_na_zalihama = stanje_na_zalihama - 1
+		WHERE id = p_UPS;
+	END IF;
+
+	IF p_hladenje IS NOT NULL THEN
+		UPDATE oprema
+		SET stanje_na_zalihama = stanje_na_zalihama - 1
+		WHERE id = p_hladenje;
+	END IF;
+
+	IF p_switch IS NOT NULL THEN
+		UPDATE oprema
+		SET stanje_na_zalihama = stanje_na_zalihama - 1
+		WHERE id = p_switch;
+	END IF;
+
+	IF p_router IS NOT NULL THEN
+		UPDATE oprema
+		SET stanje_na_zalihama = stanje_na_zalihama - 1
+		WHERE id = p_router;
+	END IF;
+    
+END //
+DELIMITER ;
+
+DELIMITER //
 CREATE TRIGGER ai_konfiguracija_uredaja
-AFTER INSERT ON konfiguracija_uredaja
+AFTER INSERT ON konfiguracija_uredjaja
 FOR EACH ROW
 BEGIN
 
@@ -1011,9 +1102,21 @@ IF NEW.graficka_kartica IS NOT NULL OR
     NEW.switch IS NOT NULL OR
     NEW.router IS NOT NULL
     THEN
-		CALL -- proceduru(koja ponovno radi provjeru i umanjuje za - 1
-
-
+		CALL p_azuriraj_zalihe(
+			NEW.graficka_kartica,
+			NEW.procesor,
+			NEW.SSD,
+			NEW.ram,
+			NEW.dimenzije,
+			NEW.PDU,
+			NEW.patchpanel,
+			NEW.rack_rails,
+			NEW.UPS,
+			NEW.hladenje,
+			NEW.switch,
+			NEW.router
+		);
+	END IF;
 
 
 
@@ -1042,9 +1145,15 @@ IF NEW.graficka_kartica IS NOT NULL OR
 END //
 DELIMITER ;
 
+-- TEST(konfiguraciji set za server):
+SELECT * FROM oprema;
+INSERT INTO konfiguracija_uredjaja (graficka_kartica, procesor, SSD, ram, IP_adresa)
+VALUES
+(1, 26, 51, 76, '192.168.1.100');
 
 
-----------------------------------------------
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 -- Marko START 
 
