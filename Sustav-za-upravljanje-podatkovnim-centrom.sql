@@ -521,28 +521,29 @@ CREATE TABLE konfiguracija_uredjaja (
 );
 
 
-CREATE TABLE pracenje_statusa_posluzitelja (
+CREATE TABLE pracenje_statusa_servera (
 	id SERIAL PRIMARY KEY,
-    -- id_posluzitelj INT NOT NULL,
+    id_server INT NOT NULL,
     procesor_status VARCHAR(255) NOT NULL,
     ram_status VARCHAR(255) NOT NULL,
     ssd_status VARCHAR(255) NOT NULL,
     temperatura_status VARCHAR(255) NOT NULL,
-    vrijeme_statusa TIMESTAMP NOT NULL
-	-- FOREIGN KEY (id_posluzitelj) REFERENCES posluzitelj(id)
+    vrijeme_statusa TIMESTAMP NOT NULL,
+	FOREIGN KEY (id_server) REFERENCES Server(id_server)
 );
+
 
 CREATE TABLE pracenje_statusa_racka (
 	id SERIAL PRIMARY KEY,
-    -- id_rack INT NOT NULL,
+    id_rack INT NOT NULL,
     temperatura_status VARCHAR(255) NOT NULL,
     popunjenost_status VARCHAR(255) NOT NULL,
     pdu_status VARCHAR(255) NOT NULL,
     ups_status VARCHAR(255) NOT NULL,
     bandwith_status_switch VARCHAR(255) NOT NULL DEFAULT 'Standardni rack',
     interface_status_router VARCHAR(255) NOT NULL DEFAULT 'Standardni rack',
-	vrijeme_statusa TIMESTAMP NOT NULL
-    -- FOREIGN KEY (id_rack) REFERENCES rack(id)
+	vrijeme_statusa TIMESTAMP NOT NULL,
+    FOREIGN KEY (id_rack) REFERENCES Rack(id_rack)
 );
 
 
@@ -945,6 +946,104 @@ VALUES
 
 -- Adis END za sada :)
 
+-- Unjeti podatke za tablice pracenja, a potrosnja tablica ce se materijaliziranim pogledom puniti ONLINE ili OFFLINE nacin, na temelju statusa u tablicama pracenje
+
+SELECT * FROM oprema;
+
+-- TRIGGER koji kreiraju novu narudzbu za pojedinu opremu kada njezino stanje u zalihama bude <= 5;
+-- Temelji se na pozivu procedure koja izadje narudzbenicu;
+
+DELIMITER //
+CREATE PROCEDURE p_narudzbenica_oprema(IN p_id_oprema INTEGER, IN p_id_dobavljac INTEGER)
+BEGIN
+
+DECLARE p_oprema_kolicina INTEGER DEFAULT 10;
+DECLARE p_datum DATE;
+DECLARE p_opisna_poruka VARCHAR(255);
+SET p_datum = CURDATE();
+SET p_opisna_poruka = CONCAT("Kreiram narudzbenicu za opremu sa ID-em ", p_id_oprema, " kolicine ", p_oprema_kolicina);
+
+
+INSERT INTO narudzbe (id_dobavljac, datum, opis, id_oprema)
+VALUES(p_id_dobavljac, p_datum, p_opisna_poruka, p_id_dobavljac);
+
+
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER au_oprema
+AFTER UPDATE ON oprema
+FOR EACH ROW
+BEGIN
+
+IF NEW.stanje_na_zalihama <= 5 THEN
+	CALL p_narudzbenica_oprema(NEW.id, NEW.id_dobavljac);
+    SIGNAL SQLSTATE '01000'
+    SET MESSAGE_TEXT = CONCAT('Uspjesno kreirana nova narudzba za opremu sa ID-em ', NEW.id, ' zbog niskih zaliha');
+ELSEIF NEW.stanje_na_zalihama >= 5 THEN
+	SIGNAL SQLSTATE '01000'
+	SET MESSAGE_TEXT = 'Tablica oprema je uspjesno azurirana';    
+END IF;
+
+END ;
+DELIMITER //
+
+
+-- TRIGGER koji ce azurirati stanje na zalihama pojedine opreme u tablici oprema jednom kada se ona upotrijebi u konfiguracijskom setu
+
+DELIMITER //
+CREATE TRIGGER ai_konfiguracija_uredaja
+AFTER INSERT ON konfiguracija_uredaja
+FOR EACH ROW
+BEGIN
+
+IF NEW.graficka_kartica IS NOT NULL OR
+	NEW.procesor IS NOT NULL OR
+    NEW.SSD IS NOT NULL OR
+    NEW.ram IS NOT NULL OR
+    NEW.dimenzije IS NOT NULL OR
+    NEW.PDU IS NOT NULL OR
+    NEW.patchpanel IS NOT NULL OR
+    NEW.rack_rails IS NOT NULL OR
+    NEW.UPS IS NOT NULL OR
+    NEW.hladenje IS NOT NULL OR
+    NEW.switch IS NOT NULL OR
+    NEW.router IS NOT NULL
+    THEN
+		CALL -- proceduru(koja ponovno radi provjeru i umanjuje za - 1
+
+
+
+
+
+	/* zakomentirana ideja koja nece raditi, razlog u IN klauzuli moze biti NULL koji se ne ocekuje po pravilu zapravo (ici ponovno putem procedure koja se poziva 
+    ukoliko nesto nije NULL
+	UPDATE oprema
+    SET stanje_na_zalihama = stanje_na_zalihama - 1
+    WHERE id IN (
+    NEW.graficka_kartica,
+    NEW.procesor,
+    NEW.SSD,
+    NEW.ram,
+    NEW.dimenzije,
+    NEW.PDU,
+    NEW.patchpanel,
+    NEW.rack_rails,
+    NEW.UPS,
+    NEW.hladenje,
+    NEW.switch,
+    NEW.router
+    );
+    */
+    
+    
+
+END //
+DELIMITER ;
+
+
+
 ----------------------------------------------
 
 -- Marko START 
@@ -975,7 +1074,7 @@ CREATE TABLE Rack (
     id_rack INT PRIMARY KEY,
     id_konfiguracija INT,
     id_smjestaj INT NOT NULL,
-    kategorija ENUM('server_rack','patch_rack','drugo') NOT NULL,
+    kategorija ENUM('server_rack','mrezni_rack','drugo') NOT NULL,
     CONSTRAINT fk_rack_fizicki 
        FOREIGN KEY (id_smjestaj) REFERENCES Fizicki_smjestaj(id_smjestaj)
 );
@@ -999,6 +1098,8 @@ CREATE TABLE Odrzavanje (
         REFERENCES Zaposlenik(id_zaposlenik)
 
 );
+
+
 
 
 INSERT INTO Sigurnost_objekta 
@@ -1134,10 +1235,10 @@ SELECT * FROM Rack;
 SELECT * FROM Zaposlenik;
 SELECT * FROM Održavanje;
 
-------------
---UPITI
+-- -- -- -- -- --
+-- UPITI
 
---pregled svih rackova s detaljima o njihovoj lokaciji i sigurnosti
+-- pregled svih rackova s detaljima o njihovoj lokaciji i sigurnosti
 CREATE VIEW RackDetalji AS
 SELECT 
     r.id_rack,
@@ -1152,7 +1253,7 @@ JOIN Fizicki_smjestaj f ON r.id_smjestaj = f.id_smjestaj
 JOIN Sigurnost_objekta s ON f.id_sigurnost = s.id_sigurnost;
 
 
---dodavanje novog racka
+-- dodavanje novog racka
 DELIMITER //
 
 CREATE PROCEDURE DodajRack(
@@ -1167,7 +1268,7 @@ END //
 
 DELIMITER ;
 
---dobijanje ukupnog broja zaposlenika u određenom odjelu
+-- dobijanje ukupnog broja zaposlenika u određenom odjelu
 
 DELIMITER //
 
@@ -1184,6 +1285,4 @@ DELIMITER ;
 
 -- Marko KRAJ za sada 
 
------------------------------------------------------------
-
-	
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
