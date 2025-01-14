@@ -521,25 +521,27 @@ CREATE TABLE konfiguracija_uredjaja (
 );
 
 
-CREATE TABLE pracenje_statusa_servera (
+CREATE TABLE pracenje_statusa_posluzitelja (
 	id SERIAL PRIMARY KEY,
     id_posluzitelj INT NOT NULL,
-    procesor_status VARCHAR(255) NOT NULL,
-    ram_status VARCHAR(255) NOT NULL,
-    ssd_status VARCHAR(255) NOT NULL,
-    temperatura_status VARCHAR(255) NOT NULL,
+    procesor_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
+    ram_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
+    ssd_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
+    temperatura_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
     vrijeme_statusa TIMESTAMP NOT NULL,
 	FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
 
+
+
 CREATE TABLE pracenje_statusa_racka (
 	id SERIAL PRIMARY KEY,
     id_rack INT NOT NULL,
-    temperatura_status VARCHAR(255) NOT NULL,
-    popunjenost_status VARCHAR(255) NOT NULL,
-    pdu_status VARCHAR(255) NOT NULL,
-    ups_status VARCHAR(255) NOT NULL,
+    temperatura_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
+    popunjenost_status ENUM('Slobodno', 'Pun') NOT NULL,
+    pdu_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
+    ups_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
     bandwith_status_switch VARCHAR(255) NOT NULL DEFAULT 'Standardni rack',
     interface_status_router VARCHAR(255) NOT NULL DEFAULT 'Standardni rack',
 	vrijeme_statusa TIMESTAMP NOT NULL,
@@ -881,78 +883,79 @@ VALUES
 -- konfiguracija uredjaja
 
 -- serveri
-INSERT INTO konfiguracija_uredjaja (graficka_kartica, procesor, SSD, ram, IP_adresa, dimenzije, PDU, rack_rails, UPS, hladenje)
+INSERT INTO konfiguracija_uredjaja (graficka_kartica, procesor, SSD, ram, IP_adresa)
 VALUES
-(1, 26, 51, 76, '192.168.1.1', 201, 101, 126, 151, 176),
-(2, 27, 52, 77, '192.168.1.2', 202, 102, 127, 152, 177),
-(3, 28, 53, 78, '192.168.1.3', 203, 103, 128, 153, 178),
-(4, 29, 54, 79, '192.168.1.4', 204, 104, 129, 154, 179),
-(5, 30, 55, 80, '192.168.1.5', 205, 105, 130, 155, 180),
-(6, 31, 56, 81, '192.168.1.6', 206, 106, 131, 156, 181),
-(7, 32, 57, 82, '192.168.1.7', 207, 107, 132, 157, 182),
-(8, 33, 58, 83, '192.168.1.8', 208, 108, 133, 158, 183),
-(9, 34, 59, 84, '192.168.1.9', 209, 109, 134, 159, 184),
-(10, 35, 60, 85, '192.168.1.10', 210, 110, 135, 160, 185),
-(11, 36, 61, 86, '192.168.1.11', 211, 111, 136, 161, 186),
-(12, 37, 62, 87, '192.168.1.12', 212, 112, 137, 162, 187),
-(13, 38, 63, 88, '192.168.1.13', 213, 113, 138, 163, 188),
-(14, 39, 64, 89, '192.168.1.14', 214, 114, 139, 164, 189),
-(15, 40, 65, 90, '192.168.1.15', 215, 115, 140, 165, 190),
-(16, 41, 66, 91, '192.168.1.16', 216, 116, 141, 166, 191),
-(17, 42, 67, 92, '192.168.1.17', 217, 117, 142, 167, 192),
-(18, 43, 68, 93, '192.168.1.18', 218, 118, 143, 168, 193),
-(19, 44, 69, 94, '192.168.1.19', 219, 119, 144, 169, 194),
-(20, 45, 70, 95, '192.168.1.20', 220, 120, 145, 170, 195),
-(21, 46, 71, 96, '192.168.1.21', 221, 121, 146, 171, 196),
-(22, 47, 72, 97, '192.168.1.22', 222, 122, 147, 172, 197),
-(23, 48, 73, 98, '192.168.1.23', 223, 123, 148, 173, 198),
-(24, 49, 74, 99, '192.168.1.24', 224, 124, 149, 174, 199),
-(25, 50, 75, 100, '192.168.1.25', 225, 125, 150, 175, 200);
+(1, 26, 51, 76, '192.168.1.1'),
+(2, 27, 52, 77, '192.168.1.2'),
+(3, 28, 53, 78, '192.168.1.3'),
+(4, 29, 54, 79, '192.168.1.4'),
+(5, 30, 55, 80, '192.168.1.5'),
+(6, 31, 56, 81, '192.168.1.6'),
+(7, 32, 57, 82, '192.168.1.7'),
+(8, 33, 58, 83, '192.168.1.8'),
+(9, 34, 59, 84, '192.168.1.9'),
+(10, 35, 60, 85, '192.168.1.10'),
+(11, 36, 61, 86, '192.168.1.11'),
+(12, 37, 62, 87, '192.168.1.12'),
+(13, 38, 63, 88, '192.168.1.13'),
+(14, 39, 64, 89, '192.168.1.14'),
+(15, 40, 65, 90, '192.168.1.15'),
+(16, 41, 66, 91, '192.168.1.16'),
+(17, 42, 67, 92, '192.168.1.17'),
+(18, 43, 68, 93, '192.168.1.18'),
+(19, 44, 69, 94, '192.168.1.19'),
+(20, 45, 70, 95, '192.168.1.20'),
+(21, 46, 71, 96, '192.168.1.21'),
+(22, 47, 72, 97, '192.168.1.22'),
+(23, 48, 73, 98, '192.168.1.23'),
+(24, 49, 74, 99, '192.168.1.24'),
+(25, 50, 75, 100, '192.168.1.25');
 
 
 -- standardni rackovi
-INSERT INTO konfiguracija_uredjaja (dimenzije, PDU, patchpanel, rack_rails, UPS, hladenje)
+INSERT INTO konfiguracija_uredjaja (dimenzije, PDU, UPS, hladenje)
 VALUES
-(201, 101, 126, 151, 176, 201),
-(202, 102, 127, 152, 177, 202),
-(203, 103, 128, 153, 178, 203),
-(204, 104, 129, 154, 179, 204),
-(205, 105, 130, 155, 180, 205),
-(206, 106, 131, 156, 181, 206),
-(207, 107, 132, 157, 182, 207),
-(208, 108, 133, 158, 183, 208),
-(209, 109, 134, 159, 184, 209),
-(210, 110, 135, 160, 185, 210),
-(211, 111, 136, 161, 186, 211),
-(212, 112, 137, 162, 187, 212);
+(201, 101, 151, 176),
+(202, 102, 152, 177),
+(203, 103, 153, 178),
+(204, 104, 154, 179),
+(205, 105, 155, 180),
+(206, 106, 156, 181),
+(207, 107, 157, 182),
+(208, 108, 158, 183),
+(209, 109, 159, 184),
+(210, 110, 160, 185),
+(211, 111, 161, 186),
+(212, 112, 162, 187);
 
 
 -- mrezni rackovi
-INSERT INTO konfiguracija_uredjaja (dimenzije, PDU, patchpanel, rack_rails, UPS, hladenje, switch, router)
+INSERT INTO konfiguracija_uredjaja (dimenzije, patchpanel, switch, router)
 VALUES
-(213, 113, 138, 163, 188, 213, 226, 251),
-(214, 114, 139, 164, 189, 214, 227, 252),
-(215, 115, 140, 165, 190, 215, 228, 253),
-(216, 116, 141, 166, 191, 216, 229, 254),
-(217, 117, 142, 167, 192, 217, 230, 255),
-(218, 118, 143, 168, 193, 218, 231, 256),
-(219, 119, 144, 169, 194, 219, 232, 257),
-(220, 120, 145, 170, 195, 220, 233, 258),
-(221, 121, 146, 171, 196, 221, 234, 259),
-(222, 122, 147, 172, 197, 222, 235, 260),
-(223, 123, 148, 173, 198, 223, 236, 261),
-(224, 124, 149, 174, 199, 224, 237, 262),
-(225, 125, 150, 175, 200, 225, 238, 263);
+(213, 126, 226, 251),
+(214, 127, 227, 252),
+(215, 128, 228, 253),
+(216, 129, 229, 254),
+(217, 130, 230, 255),
+(218, 131, 231, 256),
+(219, 132, 232, 257),
+(220, 133, 233, 258),
+(221, 134, 234, 259),
+(222, 135, 235, 260),
+(223, 136, 236, 261),
+(224, 137, 237, 262),
+(225, 138, 238, 263);
 
 -- Adis END za sada :)
 
 -- Unjeti podatke za tablice pracenja, a potrosnja tablica ce se materijaliziranim pogledom puniti ONLINE ili OFFLINE nacin, na temelju statusa u tablicama pracenje
 
-SELECT * FROM oprema;
+
 
 -- TRIGGER koji kreiraju novu narudzbu za pojedinu opremu kada njezino stanje u zalihama bude <= 5;
 -- Temelji se na pozivu procedure koja izadje narudzbenicu;
 
+-- Ovo cu pokrenuti kada Mark napravi tablice koje ovise o ovoj proceduri i trigeru
 DELIMITER //
 CREATE PROCEDURE p_narudzbenica_oprema(IN p_id_oprema INTEGER, IN p_id_dobavljac INTEGER)
 BEGIN
@@ -998,14 +1001,14 @@ IN p_graficka_kartica BIGINT,
 IN p_procesor BIGINT,
 IN p_SSD BIGINT,
 IN p_ram BIGINT,
-IN dimenzije BIGINT,
-IN PDU BIGINT,
-IN patchpanel BIGINT,
-IN rack_rails BIGINT,
-IN UPS BIGINT,
-IN hladenje BIGINT,
-IN switch BIGINT,
-IN router BIGINT)
+IN p_dimenzije BIGINT,
+IN p_PDU BIGINT,
+IN p_patchpanel BIGINT,
+IN p_rack_rails BIGINT,
+IN p_UPS BIGINT,
+IN p_hladenje BIGINT,
+IN p_switch BIGINT,
+IN p_router BIGINT)
 BEGIN
 
 	IF p_graficka_kartica IS NOT NULL THEN
@@ -1118,30 +1121,6 @@ IF NEW.graficka_kartica IS NOT NULL OR
 		);
 	END IF;
 
-
-
-	/* zakomentirana ideja koja nece raditi, razlog u IN klauzuli moze biti NULL koji se ne ocekuje po pravilu zapravo (ici ponovno putem procedure koja se poziva 
-    ukoliko nesto nije NULL
-	UPDATE oprema
-    SET stanje_na_zalihama = stanje_na_zalihama - 1
-    WHERE id IN (
-    NEW.graficka_kartica,
-    NEW.procesor,
-    NEW.SSD,
-    NEW.ram,
-    NEW.dimenzije,
-    NEW.PDU,
-    NEW.patchpanel,
-    NEW.rack_rails,
-    NEW.UPS,
-    NEW.hladenje,
-    NEW.switch,
-    NEW.router
-    );
-    */
-    
-    
-
 END //
 DELIMITER ;
 
@@ -1151,6 +1130,405 @@ INSERT INTO konfiguracija_uredjaja (graficka_kartica, procesor, SSD, ram, IP_adr
 VALUES
 (1, 26, 51, 76, '192.168.1.100');
 
+-- TRIGGER koji ce ukoliko status nekog atributa bude pod visokim_opterecenjem ili kriticinim zamijeniti ga sa istim ili sljedecim tj. po performansama boljim.
+-- Scenarij: Visoko_opterecenje mijenja trenutnu komponentu sa istom ali novijom(smatramo da je problem npr sa driverima ili je nekakvo ostecenje)
+-- Kriticno mijenja ga sa sljedecim boljim znaci id + 1, iz razloga sto nema dovoljno resursa npr server za bazu
+
+
+-- Pored triggera biti ce potrebna i procedura, cak dvije koje ce posebno biti pozvane za visoko opterecenje posebno kritican status.
+
+DELIMITER //
+CREATE PROCEDURE p_zamijeni_posluzitelj_status_visoko_opterecenje(IN p_id_posluzitelj INTEGER, IN p_komponenta VARCHAR(255))
+BEGIN
+
+DECLARE konfiguracijski_set INTEGER;
+DECLARE id_zamijenjene_komponente INTEGER;
+
+SELECT id_konfiguracija INTO konfiguracijski_set
+FROM Posluzitelj
+WHERE id_posluzitelj = p_id_posluzitelj;
+
+-- Ovime sam dosao do konfiguracijskog seta o kojem se radi
+
+IF p_komponenta = 'Procesor' THEN
+	SELECT id INTO id_zamijenjene_komponente 
+    FROM oprema 
+    WHERE vrsta = 'Procesor' AND id = (
+		SELECT procesor FROM konfiguracija_uredjaja WHERE id = konfiguracijski_set
+    );
+    
+	UPDATE konfiguracija_uredjaja
+	SET procesor = id_zamijenjene_komponente
+	WHERE id = konfiguracijski_set;
+    
+    CALL p_azuriraj_zalihe(
+			NULL,
+			id_zamijenjene_komponente,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL
+		);
+END IF;
+
+IF p_komponenta = 'SSD' THEN
+	SELECT id INTO id_zamijenjene_komponente 
+    FROM oprema 
+    WHERE vrsta = 'SSD' AND id = (
+		SELECT SSD FROM konfiguracija_uredjaja WHERE id = konfiguracijski_set
+    );
+
+	UPDATE konfiguracija_uredjaja
+	SET SSD = id_zamijenjene_komponente
+	WHERE id = konfiguracijski_set;
+    
+    CALL p_azuriraj_zalihe(
+			NULL,
+			NULL,
+			id_zamijenjene_komponente,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL
+		);
+END IF;
+
+IF p_komponenta = 'RAM' THEN
+	SELECT id INTO id_zamijenjene_komponente
+    FROM oprema
+    WHERE vrsta = 'RAM' AND id = (
+		SELECT ram FROM konfiguracija_uredjaja WHERE id = konfiguracijski_set
+    );
+    
+	UPDATE konfiguracija_uredjaja
+	SET ram = id_zamijenjene_komponente
+	WHERE id = konfiguracijski_set;
+    
+    
+    CALL p_azuriraj_zalihe(
+			NULL,
+			NULL,
+			NULL,
+			id_zamijenjene_komponente,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL
+		);
+END IF;
+
+
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE p_zamijeni_posluzitelj_status_kritican(IN p_id_posluzitelj INTEGER, IN p_komponenta VARCHAR(255))
+BEGIN
+
+DECLARE konfiguracijski_set INTEGER;
+DECLARE id_zamijenjene_komponente INTEGER;
+
+SELECT id_konfiguracija INTO konfiguracijski_set
+FROM Posluzitelj
+WHERE id_posluzitelj = p_id_posluzitelj;
+
+-- Ovime sam dosao do konfiguracijskog seta o kojem se radi
+
+IF p_komponenta = 'Procesor' THEN
+	SELECT id + 1 INTO id_zamijenjene_komponente 
+    FROM oprema 
+    WHERE vrsta = 'Procesor' AND id = (
+		SELECT procesor FROM konfiguracija_uredjaja WHERE id = konfiguracijski_set
+    );
+    
+	UPDATE konfiguracija_uredjaja
+	SET procesor = id_zamijenjene_komponente
+	WHERE id = konfiguracijski_set;
+    
+    CALL p_azuriraj_zalihe(
+			NULL,
+			id_zamijenjene_komponente,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL
+		);
+END IF;
+
+IF p_komponenta = 'SSD' THEN
+	SELECT id + 1 INTO id_zamijenjene_komponente 
+    FROM oprema 
+    WHERE vrsta = 'SSD' AND id = (
+		SELECT SSD FROM konfiguracija_uredjaja WHERE id = konfiguracijski_set
+    );
+
+	UPDATE konfiguracija_uredjaja
+	SET SSD = id_zamijenjene_komponente
+	WHERE id = konfiguracijski_set;
+    
+    CALL p_azuriraj_zalihe(
+			NULL,
+			NULL,
+			id_zamijenjene_komponente,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL
+		);
+END IF;
+
+IF p_komponenta = 'RAM' THEN
+	SELECT id + 1 INTO id_zamijenjene_komponente
+    FROM oprema
+    WHERE vrsta = 'RAM' AND id = (
+		SELECT ram FROM konfiguracija_uredjaja WHERE id = konfiguracijski_set
+    );
+    
+	UPDATE konfiguracija_uredjaja
+	SET ram = id_zamijenjene_komponente
+	WHERE id = konfiguracijski_set;
+    
+    
+    CALL p_azuriraj_zalihe(
+			NULL,
+			NULL,
+			NULL,
+			id_zamijenjene_komponente,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL
+		);
+END IF;
+
+
+END //
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE TRIGGER ai_pracenje_statusa_posluzitelja
+AFTER INSERT ON pracenje_statusa_posluzitelja
+FOR EACH ROW
+BEGIN
+
+	IF NEW.procesor_status != "Normalan" THEN
+		IF NEW.procesor_status = "Visoko opterecenje" THEN
+			CALL p_zamijeni_posluzitelj_status_visoko_opterecenje(NEW.id_posluzitelj, 'Procesor');
+		ELSEIF NEW.procesor_status = "Kritican" THEN
+			CALL p_zamijeni_posluzitelj_status_kritican(NEW.id_posluzitelj, 'Procesor');
+		END IF;
+	END IF;
+    
+    IF NEW.ssd_status != "Normalan" THEN
+		IF NEW.ssd_status = "Visoko opterecenje" THEN
+			CALL p_zamijeni_posluzitelj_status_visoko_opterecenje(NEW.id_posluzitelj, 'SSD');
+		ELSEIF NEW.ssd_status = "Kritican" THEN
+			CALL p_zamijeni_posluzitelj_status_kritican(NEW.id_posluzitelj, 'SSD');
+		END IF;
+	END IF;
+    
+	IF NEW.ram_status != "Normalan" THEN
+		IF NEW.ram_status = "Visoko opterecenje" THEN
+			CALL p_zamijeni_posluzitelj_status_visoko_opterecenje(NEW.id_posluzitelj, 'RAM');
+		ELSEIF NEW.ram_status = "Kritican" THEN
+			CALL p_zamijeni_posluzitelj_status_kritican(NEW.id_posluzitelj, 'RAM');
+		END IF;
+	END IF;
+
+
+END //
+DELIMITER ;
+
+
+-- Pracenje statusa racka slican princip kao i za posluzitelja, samo se prate drugaciji atributi te uvjeti i pozivanje procedura
+
+DELIMITER //
+CREATE PROCEDURE p_zamijeni_rack_status_kritican(IN p_id_rack INTEGER, IN p_komponenta VARCHAR(255))
+BEGIN
+
+DECLARE konfiguracijski_set INTEGER;
+DECLARE id_zamijenjene_komponente INTEGER;
+
+SELECT id_konfiguracija INTO konfiguracijski_set
+FROM Rack 
+WHERE id_rack = p_id_rack;
+
+IF p_komponenta = 'Hlađenje' THEN
+SELECT id INTO id_zamijenjene_komponente
+FROM oprema
+WHERE vrsta = 'hladenje' AND specifikacije LIKE '%vodeno hlađenje%'
+ORDER BY RAND()
+LIMIT 1;
+
+
+UPDATE konfiguracija_uredjaja
+SET hladenje = id_zamijenjene_komponente
+WHERE id = konfiguracijski_set;
+CALL p_azuriraj_zalihe(
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			id_zamijenjene_komponente,
+			NULL,
+			NULL
+		);
+END IF;
+
+IF p_komponenta = "PDU" THEN
+SELECT id + 1 INTO id_zamijenjene_komponente 
+FROM oprema 
+WHERE vrsta = 'PDU' AND id = (
+	SELECT PDU FROM konfiguracija_uredjaja WHERE id = konfiguracijski_set
+);
+
+UPDATE konfiguracija_uredjaja
+SET PDU = id_zamijenjene_komponente
+WHERE id = konfiguracijski_set;
+CALL p_azuriraj_zalihe(
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			id_zamijenjene_komponente,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL
+		);
+END IF;
+        
+IF p_komponenta = "UPS" THEN
+SELECT id + 1 INTO id_zamijenjene_komponente
+FROM oprema 
+WHERE vrsta = 'UPS' AND id = (
+	SELECT UPS FROM konfiguracija_uredjaja WHERE id = konfiguracijski_set
+);
+
+UPDATE konfiguracija_uredjaja
+SET UPS = id_zamijenjene_komponente
+WHERE id = konfiguracijski_set;
+CALL p_azuriraj_zalihe(
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			id_zamijenjene_komponente,
+			NULL,
+			NULL,
+			NULL
+		);
+END IF;
+
+END //
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE TRIGGER ai_pracenje_statusa_racka
+AFTER INSERT ON pracenje_statusa_racka
+FOR EACH ROW
+BEGIN
+	-- ako je temperatura kriticna zamijenit cemo vodenim hladenjem
+	IF NEW.temperatura_status = "Kritican" THEN
+		CALL p_zamijeni_rack_status_kritican(NEW.id_rack, 'Hlađenje');
+	END IF;
+    
+    -- ako je PDU visok, tj u ovom slucaju kritican zamijeniti ga boljim zbog optimizacije(u realnom svijetu nije jedini preduslov kao rjesenje problema)
+    IF NEW.pdu_status = "Kritican" THEN
+		CALL p_zamijeni_rack_status_kritican(NEW.id_rack, 'PDU');
+	END IF;
+    
+	IF NEW.ups_status = "Kritican" THEN
+		CALL p_zamijeni_rack_status_kritican(NEW.id_rack, 'UPS');
+	END IF;
+	
+	
+
+	-- Ostaka ideja ako je nesto pod visokim opterecenjem neka ode u monitoring ja cu tu napraviti uvjet, a Ronan posto je njegova tablica neka napravi proceduru i ja cu je pozvati 
+
+END //
+DELIMITER ;
+
+
+-- TEST(jedan je gore za konfiguracijski set sve prolazi dobro)
+
+-- Sada za pracenje statusa posluzitelja, provjeriti stanja u tablici nakon rekorda:  -- Radi
+SELECT * FROM oprema;
+SELECT * FROM konfiguracija_uredjaja;
+ 
+INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, kategorija) VALUES
+(4, 1, 1, 'Web poslužitelj');
+
+SELECT *
+FROM Posluzitelj;
+
+INSERT INTO pracenje_statusa_posluzitelja (id_posluzitelj, procesor_status, ram_status, ssd_status, temperatura_status, vrijeme_statusa)
+VALUES (16, 'Kritican', 'Visoko opterecenje', 'Kritican', 'Normalan', NOW());
+
+-- Sada za pracenje statusa racka, provjeriti stanja u tablici nakon rekorda:  -- Radi
+SELECT * FROM oprema;
+SELECT * FROM konfiguracija_uredjaja;
+
+INSERT INTO Rack VALUES
+(103, 28, 1, 'server_rack');
+
+SELECT * FROM Rack;
+
+INSERT INTO pracenje_statusa_racka (id_rack, temperatura_status, popunjenost_status, pdu_status, ups_status, vrijeme_statusa)
+VALUES (103, 'Kritican', 'Slobodno', 'Kritican', 'Kritican', NOW());
+
+-- Jos imam plan dodati: Proceduru koja vraca uredjaj sa najvecim intenzitetmo(gleda se po stanjima ili po broju izmjena nad tim uredjajem)
+-- Kreirati materijalizirani pogled koji puni tablicu potrosnja smislenim obracunom na temelju statusa iz pracenja uredjaja, tj. odredenih atributa i njihovog statusa(rada)
+-- Na tu tablicu potrosnja napraviti proceduru koja vraca npr neki period(dan, mjesec) u kojem je ostvarena najveca potrosnja u kW.
+
+-- Onda bi moje stanje iznosilo: Procedure: 6-7, Triggeri: 5-6, Pogledi: 1 za sada taj materijalizirani, te mozda par slozenijih upita spremljenih u pogled za pojedinacni prikaz necega na frontendu
 
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -1187,6 +1565,8 @@ CREATE TABLE Rack (
     CONSTRAINT fk_rack_fizicki 
        FOREIGN KEY (id_smjestaj) REFERENCES Fizicki_smjestaj(id_smjestaj)
 );
+
+ALTER TABLE Rack MODIFY COLUMN kategorija ENUM('server_rack', 'mrezni_rack', 'drugo', 'patch_rack') NOT NULL;
 
 CREATE TABLE Zaposlenik (
     id_zaposlenik INT PRIMARY KEY,
