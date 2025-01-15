@@ -371,6 +371,7 @@ CREATE TABLE Posluzitelj (
     id_konfiguracija INT NOT NULL,
     id_rack INT NOT NULL,
     id_smjestaj INT NOT NULL,
+    naziv  VARCHAR(50) NOT NULL,
     kategorija VARCHAR(50) NOT NULL
 );
 
@@ -400,22 +401,37 @@ CREATE TABLE Logovi (
 );
 
 -- Server
-INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, kategorija) VALUES
-(101, 201, 301, 'Web poslužitelj'),
-(102, 202, 302, 'Baza podataka'),
-(103, 203, 303, 'Aplikacijski poslužitelj'),
-(104, 204, 304, 'Proxy poslužitelj'),
-(105, 205, 305, 'Backup poslužitelj'),
-(106, 206, 306, 'DNS poslužitelj'),
-(107, 207, 307, 'Mail poslužitelj'),
-(108, 208, 308, 'FTP poslužitelj'),
-(109, 209, 309, 'Virtualizacijski poslužitelj'),
-(110, 210, 310, 'Streaming poslužitelj'),
-(111, 211, 311, 'VoIP poslužitelj'),
-(112, 212, 312, 'IoT Gateway'),
-(113, 213, 313, 'Load Balancer'),
-(114, 214, 314, 'Cache poslužitelj'),
-(115, 215, 315, 'Testni poslužitelj');
+INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, naziv, kategorija) VALUES
+(101, 201, 301, 'Fujitsu', 'Web poslužitelj'),
+(102, 202, 302, 'Dell', 'Baza podataka'),
+(103, 203, 303, 'Lenovo', 'Aplikacijski poslužitelj'),
+(104, 204, 304, 'HP', 'Proxy poslužitelj'),
+(105, 205, 305, 'Fujitsu', 'Backup poslužitelj'),
+(106, 206, 306, 'Dell', 'DNS poslužitelj'),
+(107, 207, 307, 'Lenovo', 'Mail poslužitelj'),
+(108, 208, 308, 'HP', 'FTP poslužitelj'),
+(109, 209, 309, 'Fujitsu', 'Virtualizacijski poslužitelj'),
+(110, 210, 310, 'Dell', 'Streaming poslužitelj'),
+(111, 211, 311, 'Lenovo', 'VoIP poslužitelj'),
+(112, 212, 312, 'HP', 'IoT Gateway'),
+(113, 213, 313, 'Fujitsu', 'Load Balancer'),
+(114, 214, 314, 'Dell', 'Cache poslužitelj'),
+(115, 215, 315, 'Lenovo', 'Testni poslužitelj'),
+(116, 216, 316, 'HP', 'Analitički poslužitelj'),
+(117, 217, 317, 'Fujitsu', 'Web Proxy'),
+(118, 218, 318, 'Dell', 'Data Warehouse'),
+(119, 219, 319, 'Lenovo', 'CI/CD poslužitelj'),
+(120, 220, 320, 'HP', 'VPN poslužitelj'),
+(121, 221, 321, 'Fujitsu', 'Sigurnosni poslužitelj'),
+(122, 222, 322, 'Dell', 'CRM poslužitelj'),
+(123, 223, 323, 'Lenovo', 'ERP poslužitelj'),
+(124, 224, 324, 'HP', 'IoT Hub'),
+(125, 225, 325, 'Fujitsu', 'Firewall poslužitelj'),
+(126, 226, 326, 'Dell', 'Big Data poslužitelj'),
+(127, 227, 327, 'Lenovo', 'API Gateway'),
+(128, 228, 328, 'HP', 'Backup Gateway'),
+(129, 229, 329, 'Fujitsu', 'Monitoring poslužitelj'),
+(130, 230, 330, 'Dell', 'Distribucijski poslužitelj');
 
 -- Monitoring
 INSERT INTO Monitoring (id_posluzitelj, vrsta) VALUES
