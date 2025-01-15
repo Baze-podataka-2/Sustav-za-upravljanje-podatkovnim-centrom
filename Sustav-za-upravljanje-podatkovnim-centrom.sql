@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS datacentar;
 CREATE DATABASE datacentar;
 USE datacentar;
 
--- GENERAL STATS -> Br.Procedura: 10, Br.Funkcija: 2, Br.Trigger: 6, Br.Pogled: 6
+-- GENERAL STATS -> Br.Procedura: 11, Br.Funkcija: 2, Br.Trigger: 6, Br.Pogled: 6
 
 -- Mario
 
