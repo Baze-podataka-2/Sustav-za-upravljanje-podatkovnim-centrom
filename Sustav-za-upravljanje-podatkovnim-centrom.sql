@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS datacentar;
 CREATE DATABASE datacentar;
 USE datacentar;
 
--- GENERAL STATS -> Br.Procedura: 1, Br.Funkcija: 2, Br.Trigger: 2, Br.Pogled: 4
+-- GENERAL STATS -> Br.Procedura: 10, Br.Funkcija: 2, Br.Trigger: 6, Br.Pogled: 6
 
 -- Mario
 
@@ -1859,7 +1859,7 @@ LIMIT 1;
 
 -- STATUS: Ono sto sam mislio napraviti za svoj dio sam napravio, morati cu jos nesto testirati jednom kada ponovno insertam rekorde za sve tablice 
 -- Mozda u hodu ubacim jos neki cisti query ili view ako nam bude falilo toga za zahtjev projekta
--- Sadasnje stanje: JOB EVENTI: 1 TRIGGERI: 4 PROCEDURE: 9 Procedura Pogledi: 2 (od toga jedan materijaliziran), Cisit query 1
+-- Sadasnje stanje: JOB EVENTI: 1 TRIGGERI: 4 PROCEDURE: 9 Pogledi: 2 (od toga jedan materijaliziran), Cisit query 1
 -- Od toga Procedure i triggeri rade vecinu smislenog posla nad mojim tablicama
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -1867,7 +1867,7 @@ LIMIT 1;
 -- Marko START 
 
 CREATE TABLE Sigurnost_objekta (
-    id_sigurnost INT PRIMARY KEY,
+    id_sigurnost INT PRIMARY KEY AUTO_INCREMENT,
     sigurnosne_kamere INT NOT NULL,
     vrste_alarma VARCHAR(200),
     broj_zastitara INT,
@@ -1875,7 +1875,7 @@ CREATE TABLE Sigurnost_objekta (
 );
 
 CREATE TABLE Fizicki_smjestaj (
-    id_smjestaj INT PRIMARY KEY,
+    id_smjestaj INT PRIMARY KEY AUTO_INCREMENT,
     kontinent VARCHAR(50) NOT NULL,
     drzava VARCHAR(50) NOT NULL,
     regija VARCHAR(50),
@@ -1889,7 +1889,7 @@ CREATE TABLE Fizicki_smjestaj (
 );
 
 CREATE TABLE Rack (
-    id_rack INT PRIMARY KEY,
+    id_rack INT PRIMARY KEY AUTO_INCREMENT,
     id_konfiguracija INT,
     id_smjestaj INT NOT NULL,
     kategorija ENUM('server_rack','mrezni_rack','drugo') NOT NULL,
@@ -1900,7 +1900,7 @@ CREATE TABLE Rack (
 ALTER TABLE Rack MODIFY COLUMN kategorija ENUM('server_rack', 'mrezni_rack', 'drugo', 'patch_rack') NOT NULL;
 
 CREATE TABLE Zaposlenik (
-    id_zaposlenik INT PRIMARY KEY,
+    id_zaposlenik INT PRIMARY KEY AUTO_INCREMENT,
     ime VARCHAR(50) NOT NULL,
     prezime VARCHAR(50) NOT NULL,
     id_odjel INT,
@@ -1908,7 +1908,7 @@ CREATE TABLE Zaposlenik (
 );
 
 CREATE TABLE Odrzavanje (
-    id_odrzavanja INT PRIMARY KEY,
+    id_odrzavanja INT PRIMARY KEY AUTO_INCREMENT,
     datum DATE NOT NULL,
     opis TEXT NOT NULL,
    id_posluzitelj INT NOT NULL,          
