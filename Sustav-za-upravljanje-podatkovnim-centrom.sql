@@ -366,14 +366,18 @@ SELECT * FROM racuni_prema_klijentima;
 
 
 -- Kreiranje tablica
-CREATE TABLE Posluzitelj (
+ CREATE TABLE Posluzitelj (
     id_posluzitelj INT AUTO_INCREMENT PRIMARY KEY,
-    id_konfiguracija INT NOT NULL,
+    id_konfiguracija  INT NOT NULL,
     id_rack INT NOT NULL,
-    id_smjestaj INT NOT NULL,
+    id_smjestaj INT  NOT NULL,
     naziv  VARCHAR(50) NOT NULL,
-    kategorija VARCHAR(50) NOT NULL
+    kategorija VARCHAR(50) NOT NULL,
+	FOREIGN KEY (id_konfiguracija) REFERENCES konfiguracija_uredjaja(id),
+    FOREIGN KEY (id_rack) REFERENCES rack(id_rack),
+    FOREIGN KEY (id_smjestaj) REFERENCES Fizicki_smjestaj(id_smjestaj)
 );
+drop table posluzitelj;
 
 CREATE TABLE Monitoring (
     id_monitoring INT AUTO_INCREMENT PRIMARY KEY,
@@ -381,7 +385,7 @@ CREATE TABLE Monitoring (
     vrsta VARCHAR(50) NOT NULL,
     FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
-
+drop table monitoring;
 CREATE TABLE Incidenti (
     id_incidenta INT AUTO_INCREMENT PRIMARY KEY,
     datum DATE NOT NULL,
@@ -390,7 +394,8 @@ CREATE TABLE Incidenti (
     status VARCHAR(20) NOT NULL,
     FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
-
+drop table incidenti;
+drop table logovi;
 CREATE TABLE Logovi (
     id_log INT AUTO_INCREMENT PRIMARY KEY,
     id_posluzitelj INT NOT NULL,
@@ -402,36 +407,28 @@ CREATE TABLE Logovi (
 
 -- Server
 INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, naziv, kategorija) VALUES
-(101, 201, 301, 'Fujitsu', 'Web poslužitelj'),
-(102, 202, 302, 'Dell', 'Baza podataka'),
-(103, 203, 303, 'Lenovo', 'Aplikacijski poslužitelj'),
-(104, 204, 304, 'HP', 'Proxy poslužitelj'),
-(105, 205, 305, 'Fujitsu', 'Backup poslužitelj'),
-(106, 206, 306, 'Dell', 'DNS poslužitelj'),
-(107, 207, 307, 'Lenovo', 'Mail poslužitelj'),
-(108, 208, 308, 'HP', 'FTP poslužitelj'),
-(109, 209, 309, 'Fujitsu', 'Virtualizacijski poslužitelj'),
-(110, 210, 310, 'Dell', 'Streaming poslužitelj'),
-(111, 211, 311, 'Lenovo', 'VoIP poslužitelj'),
-(112, 212, 312, 'HP', 'IoT Gateway'),
-(113, 213, 313, 'Fujitsu', 'Load Balancer'),
-(114, 214, 314, 'Dell', 'Cache poslužitelj'),
-(115, 215, 315, 'Lenovo', 'Testni poslužitelj'),
-(116, 216, 316, 'HP', 'Analitički poslužitelj'),
-(117, 217, 317, 'Fujitsu', 'Web Proxy'),
-(118, 218, 318, 'Dell', 'Data Warehouse'),
-(119, 219, 319, 'Lenovo', 'CI/CD poslužitelj'),
-(120, 220, 320, 'HP', 'VPN poslužitelj'),
-(121, 221, 321, 'Fujitsu', 'Sigurnosni poslužitelj'),
-(122, 222, 322, 'Dell', 'CRM poslužitelj'),
-(123, 223, 323, 'Lenovo', 'ERP poslužitelj'),
-(124, 224, 324, 'HP', 'IoT Hub'),
-(125, 225, 325, 'Fujitsu', 'Firewall poslužitelj'),
-(126, 226, 326, 'Dell', 'Big Data poslužitelj'),
-(127, 227, 327, 'Lenovo', 'API Gateway'),
-(128, 228, 328, 'HP', 'Backup Gateway'),
-(129, 229, 329, 'Fujitsu', 'Monitoring poslužitelj'),
-(130, 230, 330, 'Dell', 'Distribucijski poslužitelj');
+(1, 1, 1, 'Fujitsu', 'Web poslužitelj'),
+(2, 2, 2, 'Dell', 'Baza podataka'),
+(3, 3, 3, 'Lenovo', 'Aplikacijski poslužitelj'),
+(4, 4, 4, 'HP', 'Proxy poslužitelj'),
+(5, 5, 5, 'Fujitsu', 'Backup poslužitelj'),
+(6, 6, 6, 'Dell', 'DNS poslužitelj'),
+(7, 7, 7, 'Lenovo', 'Mail poslužitelj'),
+(8, 8, 8, 'HP', 'FTP poslužitelj'),
+(9, 9, 9, 'Fujitsu', 'Virtualizacijski poslužitelj'),
+(10, 10, 10, 'Dell', 'Streaming poslužitelj'),
+(11, 11, 11, 'Lenovo', 'VoIP poslužitelj'),
+(12, 12, 12, 'HP', 'IoT Gateway'),
+(13, 13, 13, 'Fujitsu', 'Load Balancer'),
+(14, 14, 14, 'Dell', 'Cache poslužitelj'),
+(15, 15, 15, 'Lenovo', 'Testni poslužitelj'),
+(16, 16, 16, 'HP', 'Analitički poslužitelj'),
+(17, 17, 17, 'Fujitsu', 'Web Proxy'),
+(18, 18, 18, 'Dell', 'Data Warehouse'),
+(19, 19, 19, 'Lenovo', 'CI/CD poslužitelj'),
+(20, 20, 20, 'HP', 'VPN poslužitelj'),
+(21, 21, 21, 'Fujitsu', 'Sigurnosni poslužitelj'),
+(22, 22, 22, 'Dell', 'CRM poslužitelj');
 
 -- Monitoring
 INSERT INTO Monitoring (id_posluzitelj, vrsta) VALUES
@@ -508,7 +505,7 @@ CREATE TABLE oprema (
 );
 
 CREATE TABLE konfiguracija_uredjaja (
-	id SERIAL PRIMARY KEY,
+	id INT AUTO_INCREMENT PRIMARY KEY,
     graficka_kartica BIGINT UNSIGNED DEFAULT NULL, -- 'Rack ne sadrzi',
     procesor BIGINT UNSIGNED DEFAULT NULL, -- 'Rack ne sadrzi',
     SSD BIGINT UNSIGNED DEFAULT NULL, -- 'Rack ne sadrzi',
@@ -535,7 +532,8 @@ CREATE TABLE konfiguracija_uredjaja (
     FOREIGN KEY (switch) REFERENCES oprema(id),
     FOREIGN KEY (router) REFERENCES oprema(id)
 );
-
+drop table konfiguracija_uredjaja;
+select * from konfiguracija_uredjaja;
 
 CREATE TABLE pracenje_statusa_posluzitelja (
 	id SERIAL PRIMARY KEY,
@@ -1684,6 +1682,7 @@ VALUES
 (20, 210, 20, 'drugo'),
 (21, 211, 21, 'patch_rack'),
 (22, 212, 22, 'server_rack');
+
 
 
 INSERT INTO Zaposlenik (id_zaposlenik, ime, prezime, id_odjel, zanimanje)
