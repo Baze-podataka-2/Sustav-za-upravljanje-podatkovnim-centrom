@@ -547,8 +547,6 @@ CREATE TABLE pracenje_statusa_posluzitelja (
 );
 
 
-
-
 CREATE TABLE pracenje_statusa_racka (
 	id SERIAL PRIMARY KEY,
     id_rack INT NOT NULL,
@@ -567,8 +565,8 @@ CREATE TABLE potrosnja (
 	id SERIAL PRIMARY KEY,
     potrosnja_kw DECIMAL(10, 2) NOT NULL,
     datum DATE NOT NULL
-    -- napraviti kao materijalizirani pogled na kraju dana na temelju podataka iz pracenje_statusa_servera i pracenje_statusa_racka
 );
+
 
 -- PUNJENJE:
 
@@ -1538,12 +1536,188 @@ SELECT * FROM Rack;
 INSERT INTO pracenje_statusa_racka (id_rack, temperatura_status, popunjenost_status, pdu_status, ups_status, vrijeme_statusa)
 VALUES (103, 'Kritican', 'Slobodno', 'Kritican', 'Kritican', NOW());
 
--- Jos imam plan dodati: Proceduru koja vraca uredjaj sa najvecim intenzitetmo(gleda se po stanjima ili po broju izmjena nad tim uredjajem)
--- Kreirati materijalizirani pogled koji puni tablicu potrosnja smislenim obracunom na temelju statusa iz pracenja uredjaja, tj. odredenih atributa i njihovog statusa(rada)
--- Na tu tablicu potrosnja napraviti proceduru koja vraca npr neki period(dan, mjesec) u kojem je ostvarena najveca potrosnja u kW.
+-- Jos imam plan dodati: Proceduru koja vraca uredjaj sa najvecim intenzitetmo(gleda se po stanjima ili po broju izmjena nad tim uredjajem) -- nakon pauze
+-- Kreirati materijalizirani pogled koji puni tablicu potrosnja smislenim obracunom na temelju statusa iz pracenja uredjaja, tj. odredenih atributa i njihovog statusa(rada) danas gotovo
+-- Na tu tablicu potrosnja napraviti proceduru koja vraca npr neki period(dan, mjesec) u kojem je ostvarena najveca potrosnja u kW. -- nakon pauze, barem kao test dok nemamo dosta rekorda
 
 -- Onda bi moje stanje iznosilo: Procedure: 6-7, Triggeri: 5-6, Pogledi: 1 za sada taj materijalizirani, te mozda par slozenijih upita spremljenih u pogled za pojedinacni prikaz necega na frontendu
 
+
+-- Krecem sa materijaliziranim pogledom, za pocetak za svaki unos, potom kao offline/batch nacin tj neka izracuna za cijeli dan potrosnju i ugraditi cu job tj event za to postici
+
+DELIMITER //
+CREATE PROCEDURE p_generirana_potrosnja_posluzitelja (
+IN p_status_temperatura VARCHAR(255),
+    IN p_status_RAM VARCHAR(255),
+    IN p_status_SSD VARCHAR(255),
+	OUT ukupno INTEGER)
+BEGIN
+
+	DECLARE potrosnja_lokalno_w INTEGER DEFAULT 0;
+    SET potrosnja_lokalno_w = 200; -- bazni slucaj
+
+-- temperatura
+IF p_status_temperatura = "Normalan" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 50;
+ELSEIF p_status_temperatura = "Visoko opterecenje" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 150;
+ELSEIF p_status_temperatura = "Kritican" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 200;
+END IF;
+
+-- RAM
+IF p_status_RAM = "Normalan" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 50;
+ELSEIF p_status_RAM = "Visoko opterecenje" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 150;
+ELSEIF p_status_RAM = "Kritican" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 200;
+END IF;
+
+-- SSD
+IF p_status_SSD = "Normalan" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 50;
+ELSEIF p_status_SSD = "Visoko opterecenje" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 150;
+ELSEIF p_status_SSD = "Kritican" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 200;
+END IF;
+
+SET ukupno = potrosnja_lokalno_w;
+
+
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE p_generirana_potrosnja_racka (
+IN p_status_temperatura VARCHAR(255),
+    IN p_status_PDU VARCHAR(255),
+    IN p_status_UPS VARCHAR(255),
+	OUT ukupno INTEGER)
+BEGIN
+
+	DECLARE potrosnja_lokalno_w INTEGER DEFAULT 0;
+    SET potrosnja_lokalno_w = 200; -- bazni slucaj
+
+-- temperatura
+IF p_status_temperatura = "Normalan" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 50;
+ELSEIF p_status_temperatura = "Visoko opterecenje" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 150;
+ELSEIF p_status_temperatura = "Kritican" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 200;
+END IF;
+
+-- PDU
+IF p_status_PDU = "Normalan" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 50;
+ELSEIF p_status_PDU = "Visoko opterecenje" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 150;
+ELSEIF p_status_PDU = "Kritican" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 200;
+END IF;
+
+-- UPS
+IF p_status_UPS = "Normalan" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 50;
+ELSEIF p_status_UPS = "Visoko opterecenje" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 150;
+ELSEIF p_status_UPS = "Kritican" THEN
+	SET potrosnja_lokalno_w = potrosnja_lokalno_w + 200;
+END IF;
+
+SET ukupno = potrosnja_lokalno_w;
+
+
+
+END //
+DELIMITER ;
+
+-- Postigao sam racunanje potrosnje prilikom inserta u pracenje statusa, sada bi to trebalo zakurziti na kraj dana. Znaci jos jedna procedura koja to sve racuna te ima event job
+
+DELIMITER //
+CREATE PROCEDURE p_dnevna_potrosnja (p_datum DATE)
+BEGIN
+
+DECLARE ukupna_dnevna_potrosnja INTEGER DEFAULT 0;
+-- posluzitelj
+DECLARE p_status_temperatura_posluzitelj VARCHAR(255);
+DECLARE p_status_RAM VARCHAR(255);
+DECLARE p_status_SSD VARCHAR(255);
+-- rack
+DECLARE p_status_temperatura_rack VARCHAR(255);
+DECLARE p_status_PDU VARCHAR(255);
+DECLARE p_status_UPS VARCHAR(255);
+
+DECLARE fleg INTEGER DEFAULT 0;
+
+DECLARE moj_kursor_posluzitelj CURSOR FOR
+SELECT temperatura_status, ram_status, ssd_status
+FROM pracenje_statusa_posluzitelja
+WHERE DATE(vrijeme_statusa) = DATE(p_datum);
+
+
+DECLARE moj_kursor_rack CURSOR FOR
+SELECT temperatura_status, pdu_status, ups_status
+FROM pracenje_statusa_racka
+WHERE DATE(vrijeme_statusa) = DATE(p_datum);
+
+
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET fleg = 1;
+
+OPEN moj_kursor_posluzitelj;
+moja_petlja_posluzitelj:LOOP
+	
+    FETCH moj_kursor_posluzitelj INTO p_status_temperatura_posluzitelj, p_status_RAM, p_status_SSD;
+    
+    IF fleg = 1 THEN
+		LEAVE moja_petlja_posluzitelj;
+	END IF;
+    
+    
+    CALL p_generirana_potrosnja_posluzitelja(p_status_temperatura_posluzitelj, p_status_RAM, p_status_SSD, @ukupno);
+    SET ukupna_dnevna_potrosnja = ukupna_dnevna_potrosnja + @ukupno;
+END LOOP moja_petlja_posluzitelj;
+CLOSE moj_kursor_posluzitelj;
+
+SET fleg = 0;
+
+-- sada rackovi
+
+OPEN moj_kursor_rack;
+moja_petlja_rack:LOOP
+
+	FETCH moj_kursor_rack INTO p_status_temperatura_rack, p_status_PDU, p_status_UPS;
+    
+    IF fleg = 1 THEN
+		LEAVE moja_petlja_rack;
+	END IF;
+    
+    CALL p_generirana_potrosnja_racka(p_status_temperatura_rack, p_status_PDU, p_status_UPS, @ukupno);
+    SET ukupna_dnevna_potrosnja = ukupna_dnevna_potrosnja + @ukupno;
+END LOOP moja_petlja_rack;
+CLOSE moj_kursor_rack;
+
+    
+
+INSERT INTO potrosnja (potrosnja_kw, datum)
+VALUES (ukupna_dnevna_potrosnja / 1000, p_datum);
+END //
+DELIMITER ;
+
+-- radi na temelju podataka u tablicama pracenje sve je kriticno sto iznosi 800+800+800+800+800+800 tj 4800 kada to pretvorimo u kW 4800/1000 moramo dobiti 4.8 sto je tocno onom sto je u tablici potrosnja dobiveno sa 2 testna poziva procedure, sada cu je napraviti kao job tj. event za svaki dan
+CALL p_dnevna_potrosnja(CURDATE());
+
+CREATE EVENT job_obracun_dnevne_potrosnje
+ON SCHEDULE EVERY 1 DAY
+DO
+	CALL p_dnevna_potrosnja(CURDATE());
+	
+
+SELECT *
+FROM potrosnja;
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
