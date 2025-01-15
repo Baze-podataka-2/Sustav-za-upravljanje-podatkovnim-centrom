@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS datacentar;
 CREATE DATABASE datacentar;
 USE datacentar;
 
--- GENERAL STATS -> Br.Procedura: 1, Br.Funkcija: 2, Br.Trigger: 2, Br.Pogled: 4
+-- GENERAL STATS -> Br.Procedura: 11, Br.Funkcija: 2, Br.Trigger: 6, Br.Pogled: 6
 
 -- Mario
 
@@ -495,7 +495,7 @@ select * from Monitoring;
 
 -- Adis START
 
-CREATE TABLE oprema (
+CREATE TABLE oprema ( -- pojedinacni queryi npr u pogledima, u Topics na frontendu za ovu tablicu slozeniji quey u pogledu koji vraca najpopularniju opremu(ima najveci broj koristenja u konfiguracijskim setovima)
  id SERIAL PRIMARY KEY,
  vrsta VARCHAR(255) NOT NULL,
  specifikacije VARCHAR(255) NOT NULL,
@@ -529,7 +529,7 @@ CREATE TABLE konfiguracija_uredjaja (
 	FOREIGN KEY (rack_rails) REFERENCES oprema(id),
 	FOREIGN KEY (UPS) REFERENCES oprema(id),
     FOREIGN KEY (hladenje) REFERENCES oprema(id),
-    FOREIGN KEY (switch) REFERENCES oprema(id),
+    FOREIGN KEY (switch) REFERENCES oprema(id), 
     FOREIGN KEY (router) REFERENCES oprema(id)
 );
 drop table konfiguracija_uredjaja;
@@ -1536,12 +1536,11 @@ SELECT * FROM Rack;
 INSERT INTO pracenje_statusa_racka (id_rack, temperatura_status, popunjenost_status, pdu_status, ups_status, vrijeme_statusa)
 VALUES (103, 'Kritican', 'Slobodno', 'Kritican', 'Kritican', NOW());
 
--- Jos imam plan dodati: Proceduru koja vraca uredjaj sa najvecim intenzitetmo(gleda se po stanjima ili po broju izmjena nad tim uredjajem) -- nakon pauze
+-- Jos imam plan dodati: Proceduru koja vraca broj izmjena kod pojedinog uredjaj -- nakon pauze gotove
 -- Kreirati materijalizirani pogled koji puni tablicu potrosnja smislenim obracunom na temelju statusa iz pracenja uredjaja, tj. odredenih atributa i njihovog statusa(rada) danas gotovo
--- Na tu tablicu potrosnja napraviti proceduru koja vraca npr neki period(dan, mjesec) u kojem je ostvarena najveca potrosnja u kW. -- nakon pauze, barem kao test dok nemamo dosta rekorda
+-- Na tu tablicu potrosnja napraviti proceduru koja vraca npr neki period(dan, mjesec) u kojem je ostvarena najveca potrosnja u kW. -- nakon pauze, barem kao test dok nemamo dosta rekorda gotovo
 
 -- Onda bi moje stanje iznosilo: Procedure: 6-7, Triggeri: 5-6, Pogledi: 1 za sada taj materijalizirani, te mozda par slozenijih upita spremljenih u pogled za pojedinacni prikaz necega na frontendu
-
 
 -- Krecem sa materijaliziranim pogledom, za pocetak za svaki unos, potom kao offline/batch nacin tj neka izracuna za cijeli dan potrosnju i ugraditi cu job tj event za to postici
 
@@ -1719,12 +1718,154 @@ DO
 SELECT *
 FROM potrosnja;
 
+-- Procedura koja vraca broj izmjena kod pojedinog uredjaja pracenjem iz statusa uredjaja.
+
+DELIMITER //
+CREATE PROCEDURE p_broj_izmjena_na_uredjaju(IN p_vrsta_uredjaja VARCHAR(255), IN p_id_uredjaja INTEGER, OUT broj_izmjena INTEGER)
+BEGIN
+
+DECLARE brojac INTEGER DEFAULT 0;
+DECLARE fleg INTEGER DEFAULT 0;
+DECLARE p_procesor_status VARCHAR(255);
+DECLARE p_ram_status VARCHAR(255);
+DECLARE p_ssd_status VARCHAR(255);
+DECLARE p_temperatura_status VARCHAR(255);
+DECLARE p_PDU_status VARCHAR(255);
+DECLARE p_UPS_status VARCHAR(255);
+
+
+DECLARE moj_kursor_posluzitelj CURSOR FOR
+SELECT procesor_status, ram_status, ssd_status
+FROM pracenje_statusa_posluzitelja
+WHERE id_posluzitelj = p_id_uredjaja;
+
+
+DECLARE moj_kursor_rack CURSOR FOR
+SELECT temperatura_status, pdu_status, ups_status
+FROM pracenje_statusa_racka
+WHERE id_rack = p_id_uredjaja;
+
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET fleg = 1;
+
+IF p_vrsta_uredjaja = 'posluzitelj' THEN
+	OPEN moj_kursor_posluzitelj;
+	moja_petlja_posluzitelj:LOOP
+
+		FETCH moj_kursor_posluzitelj INTO p_procesor_status, p_ram_status, p_ssd_status;
+		
+		IF fleg = 1 THEN
+			LEAVE moja_petlja_posluzitelj;
+		END IF;
+		
+		IF p_procesor_status IN ('Visoko opterecenje', 'Kritican') THEN
+			SET brojac = brojac + 1;
+		END IF;
+		
+		 IF p_ram_status IN ('Visoko opterecenje', 'Kritican') THEN
+			SET brojac = brojac + 1;
+		END IF;
+		
+		IF p_ssd_status IN ('Visoko opterecenje', 'Kritican') THEN
+			SET brojac = brojac + 1;
+		END IF;
+		
+		END LOOP moja_petlja_posluzitelj;
+		CLOSE moj_kursor_posluzitelj;
+ELSEIF p_vrsta_uredjaja = 'rack' THEN
+	OPEN moj_kursor_rack;
+	moja_petlja_rack:LOOP
+
+		FETCH moj_kursor_rack INTO p_temperatura_status, p_pdu_status, p_ups_status;
+		
+		IF fleg = 1 THEN
+			LEAVE moja_petlja_rack;
+		END IF;
+		
+		IF p_temperatura_status = 'Kritican' THEN
+			SET brojac = brojac + 1;
+		END IF;
+		
+		 IF p_pdu_status = 'Kritican' THEN
+			SET brojac = brojac + 1;
+		END IF;
+		
+		IF p_ups_status = 'Kritican' THEN
+			SET brojac = brojac + 1;
+		END IF;
+		
+		END LOOP moja_petlja_rack;
+		CLOSE moj_kursor_rack;
+END IF;
+    
+    
+    SET broj_izmjena = brojac;
+END //
+DELIMITER ;
+
+
+CALL p_broj_izmjena_na_uredjaju('rack', 103, @izmjene);
+SELECT @izmjene FROM DUAL;
+
+-- Pogled koji vraca ukupnu potrosnju energije za mjesece u godini, moze raditi i za pojedinacni mjesec u godini(pogodno za pretrazivanje sa frontenda npr)
+
+CREATE VIEW ukupna_energetska_potrosnja_po_mjesecima AS
+SELECT 
+    MONTH(datum) AS mjesec,       
+    YEAR(datum) AS godina,        
+    SUM(potrosnja_kw) AS ukupna_potrosnja
+FROM potrosnja
+GROUP BY YEAR(datum), MONTH(datum)
+ORDER BY godina, mjesec; -- ostavljeno defaultno zbog ASC koji je pogodan za ovaj slucaj
+
+-- Pogled koji vraca najpopularniju opremu na temelju broja njezinog koristenja u konfiguracijama uredjaja
+/* jos testirati
+SELECT 
+    o.id AS oprema_id,
+    o.vrsta AS naziv_opreme,
+    COUNT(*) AS broj_koristenja
+FROM oprema o
+LEFT JOIN (
+    SELECT graficka_kartica AS oprema_id FROM konfiguracija_uredjaja WHERE graficka_kartica IS NOT NULL
+    UNION ALL
+    SELECT procesor FROM konfiguracija_uredjaja WHERE procesor IS NOT NULL
+    UNION ALL
+    SELECT SSD FROM konfiguracija_uredjaja WHERE SSD IS NOT NULL
+    UNION ALL
+    SELECT ram FROM konfiguracija_uredjaja WHERE ram IS NOT NULL
+    UNION ALL
+    SELECT dimenzije FROM konfiguracija_uredjaja WHERE dimenzije IS NOT NULL
+    UNION ALL
+    SELECT PDU FROM konfiguracija_uredjaja WHERE PDU IS NOT NULL
+    UNION ALL
+    SELECT patchpanel FROM konfiguracija_uredjaja WHERE patchpanel IS NOT NULL
+    UNION ALL
+    SELECT rack_rails FROM konfiguracija_uredjaja WHERE rack_rails IS NOT NULL
+    UNION ALL
+    SELECT UPS FROM konfiguracija_uredjaja WHERE UPS IS NOT NULL
+    UNION ALL
+    SELECT hladenje FROM konfiguracija_uredjaja WHERE hladenje IS NOT NULL
+    UNION ALL
+    SELECT switch FROM konfiguracija_uredjaja WHERE switch IS NOT NULL
+    UNION ALL
+    SELECT router FROM konfiguracija_uredjaja WHERE router IS NOT NULL
+) AS svi_uredjaji ON o.id = svi_uredjaji.oprema_id
+GROUP BY o.id, o.vrsta
+ORDER BY broj_koristenja DESC
+LIMIT 1;
+*/
+
+
+-- STATUS: Ono sto sam mislio napraviti za svoj dio sam napravio, morati cu jos nesto testirati jednom kada ponovno insertam rekorde za sve tablice 
+-- Mozda u hodu ubacim jos neki cisti query ili view ako nam bude falilo toga za zahtjev projekta
+-- Sadasnje stanje: JOB EVENTI: 1 TRIGGERI: 4 PROCEDURE: 9 Pogledi: 2 (od toga jedan materijaliziran), Cisit query 1
+-- Od toga Procedure i triggeri rade vecinu smislenog posla nad mojim tablicama
+
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 -- Marko START 
 
 CREATE TABLE Sigurnost_objekta (
-    id_sigurnost INT PRIMARY KEY,
+    id_sigurnost INT PRIMARY KEY AUTO_INCREMENT,
     sigurnosne_kamere INT NOT NULL,
     vrste_alarma VARCHAR(200),
     broj_zastitara INT,
@@ -1732,7 +1873,7 @@ CREATE TABLE Sigurnost_objekta (
 );
 
 CREATE TABLE Fizicki_smjestaj (
-    id_smjestaj INT PRIMARY KEY,
+    id_smjestaj INT PRIMARY KEY AUTO_INCREMENT,
     kontinent VARCHAR(50) NOT NULL,
     drzava VARCHAR(50) NOT NULL,
     regija VARCHAR(50),
@@ -1746,7 +1887,7 @@ CREATE TABLE Fizicki_smjestaj (
 );
 
 CREATE TABLE Rack (
-    id_rack INT PRIMARY KEY,
+    id_rack INT PRIMARY KEY AUTO_INCREMENT,
     id_konfiguracija INT,
     id_smjestaj INT NOT NULL,
     kategorija ENUM('server_rack','mrezni_rack','drugo') NOT NULL,
@@ -1757,7 +1898,7 @@ CREATE TABLE Rack (
 ALTER TABLE Rack MODIFY COLUMN kategorija ENUM('server_rack', 'mrezni_rack', 'drugo', 'patch_rack') NOT NULL;
 
 CREATE TABLE Zaposlenik (
-    id_zaposlenik INT PRIMARY KEY,
+    id_zaposlenik INT PRIMARY KEY AUTO_INCREMENT,
     ime VARCHAR(50) NOT NULL,
     prezime VARCHAR(50) NOT NULL,
     id_odjel INT,
@@ -1765,7 +1906,7 @@ CREATE TABLE Zaposlenik (
 );
 
 CREATE TABLE Odrzavanje (
-    id_odrzavanja INT PRIMARY KEY,
+    id_odrzavanja INT PRIMARY KEY AUTO_INCREMENT,
     datum DATE NOT NULL,
     opis TEXT NOT NULL,
    id_posluzitelj INT NOT NULL,          
