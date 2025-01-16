@@ -615,8 +615,9 @@ INSERT INTO Logovi (id_posluzitelj, akcija, datum, user) VALUES
 (15, 'Ponovno učitavanje usluge', '2025-01-15 17:20:00', 'service_admin');
 
 
-
--- Triger koji ce za svaki incident dodati log
+-- TRIGERI - Ronan
+-- ---------------------------------------------------------------------------------------------------
+-- 1. Triger koji ce za svaki incident dodati log
 -- ------------------
 DELIMITER //
 
@@ -637,9 +638,35 @@ DELIMITER ;
 INSERT INTO Incidenti (datum, opis, id_posluzitelj, status) 
 VALUES ('2024-02-18', 'Internal server error na web posluzitelju', 1, 'Otvoreno');
 
-select * from konfiguracija_uredjaja;
-select * from incidenti;
+-- 2. Triger koji ce se aktivirati ukoliko je opterecenje na serveru kriticno
+-- ----------------------------------------------------------------------
 
+DELIMITER //
+create trigger logAfterVisokoOpterecenje
+after insert on pracenje_statusa_posluzitelja 
+for each row
+begin
+   if new.procesor_status = 'Kritican' and new.ram_status = 'Kritican' and new.temperatura_status = 'Kritican' then
+    
+    INSERT INTO Logovi (id_posluzitelj, akcija, datum, user)
+    VALUES (NEW.id_posluzitelj, 
+            CONCAT('Upozorenje, server u kriticnom stanju'), 
+            NOW(), 
+            'Sustav'); 
+   end if;
+   end; 
+   // DELIMITER ;
+   
+   -- Testiranje trigera
+   INSERT INTO pracenje_statusa_posluzitelja (id_posluzitelj, procesor_status, ram_status, ssd_status, temperatura_status, vrijeme_statusa)
+	VALUES (1, 'Kritican', 'Kritican', 'Kritican', 'Kritican', NOW());
+    
+    select * from logovi;
+  
+-- ----------------------------------------------------------------------------------------------------------
+
+-- FUNKCIJE - Ronan
+-- ----------------------------------------------------------------------------------------------------------
 -- Funkcija koja broji aktivne incidente
 -- ------------------------------------
 DELIMITER //
@@ -660,7 +687,8 @@ end;
 -- Testiranje funkcije
 select BrojAktivnihIncidenata(1) as AktivniIncidenti;
 
-
+-- PROCEDURE - Ronan
+-- ----------------------------------------------------------------------------------------------------------
 -- Procedura koja mjenja status za sve incidente na nekom posluzitelju
 -- ------------------------------------------------------------------------
 DELIMITER //
@@ -680,8 +708,7 @@ DELIMITER ;
 call PromijeniStatus(1);
 select * from incidenti;
 -- Ronan END
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
+-- ----------------------------------------------------------------------------------------------------------
 
 
 -- Adis START
