@@ -2190,6 +2190,23 @@ END //
 
 DELIMITER ;
 
+--funkcionalnost
+
+DELIMITER $$
+
+CREATE PROCEDURE VratiZaposlenika()
+BEGIN
+    -- pronađi zaposlenika s najmanje zadataka i vrati ga(ime.prezime,id i broj zadataka)
+    SELECT z.id_zaposlenik, z.ime, z.prezime, COUNT(o.id_odrzavanja) AS broj_zadataka
+    FROM Zaposlenik z
+    LEFT JOIN Održavanje o ON z.id_zaposlenik = o.id_zaposlenik
+    GROUP BY z.id_zaposlenik, z.ime, z.prezime
+    ORDER BY broj_zadataka ASC
+    LIMIT 1;
+END$$
+
+DELIMITER ;
+
 -- Marko KRAJ za sada 
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
