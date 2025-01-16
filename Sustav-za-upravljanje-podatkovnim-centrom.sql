@@ -484,11 +484,73 @@ INSERT INTO Logovi (id_posluzitelj, akcija, datum, user) VALUES
 (15, 'Ponovno učitavanje usluge', '2025-01-15 17:20:00', 'service_admin');
 
 
-select * from Logovi;
-select * from Posluzitelj;
-select * from Incidenti;
-select * from Monitoring;
+
+-- Triger koji ce za svaki incident dodati log
+-- ------------------
+DELIMITER //
+
+CREATE TRIGGER logAfterIncident
+AFTER INSERT ON Incidenti
+FOR EACH ROW
+BEGIN
+    INSERT INTO Logovi (id_posluzitelj, akcija, datum, user)
+    VALUES (NEW.id_posluzitelj, 
+            CONCAT('Novi incident prijavljen: ', NEW.opis), 
+            NOW(), 
+            'Sustav'); 
+END;
+//
+DELIMITER ;
+
+-- Testiranje trigera
+INSERT INTO Incidenti (datum, opis, id_posluzitelj, status) 
+VALUES ('2024-02-18', 'Internal server error na web posluzitelju', 1, 'Otvoreno');
+
+select * from konfiguracija_uredjaja;
+select * from incidenti;
+
+-- Funkcija koja broji aktivne incidente
+-- ------------------------------------
+DELIMITER //
+create function brojAktivnihIncidenata (p_id_posluzitelj INT)
+returns int
+deterministic
+begin
+declare broj INT;
+  select COUNT(*) 
+    into broj
+    from Incidenti
+    where id_posluzitelj = p_id_posluzitelj AND status = 'Otvoreno';
+    
+    return broj;
+end;
+// DELIMITER ;
+
+-- Testiranje funkcije
+select BrojAktivnihIncidenata(1) as AktivniIncidenti;
+
+
+-- Procedura koja mjenja status za sve incidente na nekom posluzitelju
+-- ------------------------------------------------------------------------
+DELIMITER //
+
+create procedure PromijeniStatus(p_id_posluzitelj int)
+begin
+    declare p_novi_status varchar(20) default 'Zatvoreno';  
+    
+    update Incidenti
+	 set status = p_novi_status
+    where  id_posluzitelj = p_id_posluzitelj and status = 'Otvoreno';
+end;
+//
+DELIMITER ;
+
+-- Testiranje procedure
+call PromijeniStatus(1);
+select * from incidenti;
 -- Ronan END
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
