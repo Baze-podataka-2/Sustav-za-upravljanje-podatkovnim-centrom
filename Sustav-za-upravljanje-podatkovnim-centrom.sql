@@ -509,6 +509,27 @@ VALUES ('2024-02-18', 'Internal server error na web posluzitelju', 1, 'Otvoreno'
 select * from konfiguracija_uredjaja;
 select * from incidenti;
 
+-- Triger 2 - triger koji na kriticno opterecenje dodati log
+DELIMITER //
+
+create trigger logAfterVisokoOpterecenje
+after insert on pracenje_statusa_posluzitelja
+for each row
+begin
+  if new.procesor_status = 'Kritican' and new.ram_status = 'Kritican' and new.temperatura_status = 'Kritican' then
+    
+    INSERT INTO Logovi (id_posluzitelj, akcija, datum, user)
+    VALUES (NEW.id_posluzitelj, 'Upozorenje, server je u kriticon stanju', NOW(), 'Sustav');
+  END IF;
+END;
+// DELIMITER ;
+
+-- Testiranje triggera 2
+INSERT INTO pracenje_statusa_posluzitelja (id_posluzitelj, procesor_status, ram_status, ssd_status, temperatura_status, vrijeme_statusa)
+	VALUES (1, 'Kritican', 'Kritican', 'Kritican', 'Kritican', NOW());
+
+select * from logovi;
+
 -- Funkcija koja broji aktivne incidente
 -- ------------------------------------
 DELIMITER //
