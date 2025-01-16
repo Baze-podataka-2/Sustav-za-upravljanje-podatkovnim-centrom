@@ -601,16 +601,37 @@ BEGIN
             'Sustav'); 
 END;
 //
-
 DELIMITER ;
 
 -- Testiranje trigera
 INSERT INTO Incidenti (datum, opis, id_posluzitelj, status) 
 VALUES ('2024-02-18', 'Internal server error na web posluzitelju', 1, 'Otvoreno');
 
-SELECT * from logovi;
+
+select * from incidenti;
+
+-- Funkcija koja broji aktivne incidente
+-- ------------------------------------
+DELIMITER //
+create function brojAktivnihIncidenata (p_id_posluzitelj INT)
+returns int
+deterministic
+begin
+declare broj INT;
+  select COUNT(*) 
+    into broj
+    from Incidenti
+    where id_posluzitelj = p_id_posluzitelj AND status = 'Otvoreno';
+    
+    return broj;
+end;
+// DELIMITER ;
+
+-- Testiranje funkcije
+select BrojAktivnihIncidenata(1) as AktivniIncidenti;
 -- Ronan END
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 
 
 -- Adis START
