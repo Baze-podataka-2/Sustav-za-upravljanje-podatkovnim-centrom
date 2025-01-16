@@ -502,7 +502,9 @@ drop table Incidienti;
 drop table monitoring;
 drop table posluzitelj;
 
-select * from konfiguracija_uredjaja;
+ALTER TABLE Posluzitelj MODIFY COLUMN id_konfiguracija INT AUTO_INCREMENT;
+ALTER TABLE Posluzitelj MODIFY COLUMN id_rack INT AUTO_INCREMENT;
+ALTER TABLE Posluzitelj MODIFY COLUMN id_smjestaj INT AUTO_INCREMENT;
 -- Server
 INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, naziv, kategorija) VALUES
 (1, 1, 1, 'Fujitsu', 'Web poslužitelj'),
@@ -583,18 +585,33 @@ INSERT INTO Logovi (id_posluzitelj, akcija, datum, user) VALUES
 (15, 'Ponovno učitavanje usluge', '2025-01-15 17:20:00', 'service_admin');
 
 
-select * from Logovi;
-select * from Posluzitelj;
-select * from Incidenti;
-select * from Monitoring;
-select * from rack;
 
+-- Triger koji ce za svaki incident dodati log
+-- ------------------
+DELIMITER //
 
+CREATE TRIGGER logAfterIncident
+AFTER INSERT ON Incidenti
+FOR EACH ROW
+BEGIN
+    INSERT INTO Logovi (id_posluzitelj, akcija, datum, user)
+    VALUES (NEW.id_posluzitelj, 
+            CONCAT('Novi incident prijavljen: ', NEW.opis), 
+            NOW(), 
+            'Sustav'); 
+END;
+//
+
+DELIMITER ;
+
+-- Testiranje trigera
+INSERT INTO Incidenti (datum, opis, id_posluzitelj, status) 
+VALUES ('2024-02-18', 'Internal server error na web posluzitelju', 1, 'Otvoreno');
+
+SELECT * from logovi;
 -- Ronan END
-ALTER TABLE Posluzitelj MODIFY COLUMN id_konfiguracija INT AUTO_INCREMENT;
-ALTER TABLE Posluzitelj MODIFY COLUMN id_rack INT AUTO_INCREMENT;
-ALTER TABLE Posluzitelj MODIFY COLUMN id_smjestaj INT AUTO_INCREMENT;
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 
 -- Adis START
 
