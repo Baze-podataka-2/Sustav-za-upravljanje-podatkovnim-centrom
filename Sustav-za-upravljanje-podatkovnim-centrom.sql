@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS datacentar;
 CREATE DATABASE datacentar;
 USE datacentar;
 
--- GENERAL STATS -> Br.Procedura: 10, Br.Funkcija: 2, Br.Trigger: 6, Br.Pogled: 6
+-- GENERAL STATS -> Br.Procedura: 11, Br.Funkcija: 2, Br.Trigger: 6, Br.Pogled: 6
 
 -- Mario
 
@@ -39,29 +39,12 @@ CREATE TABLE racuni_prema_klijentima(
 );
 
 
-/*CREATE TABLE troskovi_datacentra (
-    id_troskovi_datacentra INT PRIMARY KEY ,
-    id_potrosnja SERIAL,
+CREATE TABLE troskovi_datacentra (
+    id_troskovi_datacentra INT PRIMARY KEY AUTO_INCREMENT ,
+    id_potrosnja INT,
     id_licenca VARCHAR(50),
     FOREIGN KEY (id_potrosnja) REFERENCES potrosnja(id)
-);*/
-
-CREATE TABLE credit(
-    id_credit INT AUTO_INCREMENT PRIMARY KEY,
-    iznos FLOAT NOT NULL,
-    id_klijent_credit INT,
-    FOREIGN KEY (id_klijent_credit) REFERENCES klijenti(id_klijent)
 );
-
-CREATE TABLE dugovanja(
-    id_dugovanje INT AUTO_INCREMENT PRIMARY KEY,
-    iznos_dugovanja FLOAT,
-    id_klijent_dugovanje INT,
-    status VARCHAR(100)
-);
-
-
-
 
 INSERT INTO usluge (vrsta, cijena) VALUES     ("FREE" ,0.0 ),
                                               ("START" ,4.99 ),
@@ -81,7 +64,6 @@ INSERT INTO klijenti (ime, prezime, oib) VALUES
                                                 ('Tina', 'Matić', 89012345678),
                                                 ('Dino', 'Grgić', 90123456789),
                                                 ('Sara', 'Kralj', 11234567890),
-            -- 10
                                                 ('Nina', 'Vuković', 22345678901),
                                                 ('Tomislav', 'Šarić', 33456789012),
                                                 ('Katarina', 'Zorić', 44567890123),
@@ -92,7 +74,6 @@ INSERT INTO klijenti (ime, prezime, oib) VALUES
                                                 ('Davor', 'Kovačević', 99012345678),
                                                 ('Ema', 'Blažević', 10123456789),
                                                 ('Roko', 'Milić', 11123456780),
-           -- 20
                                                 ('Lea', 'Vlahović', 12123456781),
                                                 ('Toni', 'Križan', 13123456782),
                                                 ('Marta', 'Soldo', 14123456783),
@@ -101,12 +82,8 @@ INSERT INTO klijenti (ime, prezime, oib) VALUES
                                                 ('Milan', 'Šeparović', 17123456786),
                                                 ('Klara', 'Banić', 18123456787),
                                                 ('Ruža', 'Kovačić', 19123456788),
-                                                ('Ingrid', 'Trava', 15123498326),
-                                                ('Marko', 'Šimunić', 12351237543),
-           -- 30
-                                                ('Ksenija', 'Benežić', 1816755985),
-                                                ('Ružaica', 'Kovač', 19123098788),
-                                                ('Ingrid', 'Tenezić', 12356512379);
+                                                ('Ingrid', 'Trava', 12356547889);
+
 
 
 INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge) VALUES
@@ -138,14 +115,7 @@ INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge
                                           (26, 2, STR_TO_DATE('2025-02-20', '%Y-%m-%d'), STR_TO_DATE('2025-05-29', '%Y-%m-%d')),
                                           (27, 1, STR_TO_DATE('2024-07-13', '%Y-%m-%d'), STR_TO_DATE('2024-10-25', '%Y-%m-%d')),
                                           (28, 5, STR_TO_DATE('2025-04-02', '%Y-%m-%d'), STR_TO_DATE('2025-07-11', '%Y-%m-%d')),
-                                          (29, 4, STR_TO_DATE('2024-11-15', '%Y-%m-%d'), STR_TO_DATE('2025-02-14', '%Y-%m-%d')),
-                                          (30, 3, STR_TO_DATE('2024-06-21', '%Y-%m-%d'), STR_TO_DATE('2024-09-13', '%Y-%m-%d')),
-                                          (31, 5, STR_TO_DATE('2025-08-02', '%Y-%m-%d'), STR_TO_DATE('2025-12-11', '%Y-%m-%d')),
-                                          (32, 4, STR_TO_DATE('2024-01-15', '%Y-%m-%d'), STR_TO_DATE('2025-03-11', '%Y-%m-%d')),
-                                          (33, 3, STR_TO_DATE('2024-06-01', '%Y-%m-%d'), STR_TO_DATE('2025-09-13', '%Y-%m-%d'));
-
-
-
+                                          (29, 4, STR_TO_DATE('2024-11-15', '%Y-%m-%d'), STR_TO_DATE('2025-02-14', '%Y-%m-%d'));                                     (30, 3, STR_TO_DATE('2024-06-21', '%Y-%m-%d'), STR_TO_DATE('2024-09-13', '%Y-%m-%d'));
 
 INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES
                                                                 (1),
@@ -176,47 +146,9 @@ INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES
                                                                 (26),
                                                                 (27),
                                                                 (28),
-                                                                (29),
-                                                                (30),
-                                                                (31),
-                                                                (32),
-                                                                (33);
+                                                                (29);
 
-INSERT INTO credit(iznos, id_klijent_credit) VALUES
-                                                        (1, 1),
-                                                        (100, 1),
-                                                        (12, 2),
-                                                        (1000.12, 3),
-                                                        (0, 4),
-                                                        (11.56, 5),
-                                                        (123, 6),
-                                                        (56, 7),
-                                                        (12, 8),
-                                                        (22, 9),
-                                                        (332, 10),
-                                                        (111, 11),
-                                                        (12, 12),
-                                                        (13, 13),
-                                                        (14, 14),
-                                                        (1400, 15),
-                                                        (16, 16),
-                                                        (12, 17),
-                                                        (18.43, 18),
-                                                        (642, 19),
-                                                        (20, 20),
-                                                        (21, 21),
-                                                        (22, 22),
-                                                        (23, 23),
-                                                        (275, 24),
-                                                        (25, 25),
-                                                        (26, 26),
-                                                        (27, 27),
-                                                        (28, 28),
-                                                        (29, 29),
-                                                        (600, 30),
-                                                        (550, 31),
-                                                        (510, 32),
-                                                        (520, 33);
+
 
 
 
@@ -226,7 +158,7 @@ INSERT INTO credit(iznos, id_klijent_credit) VALUES
 
 -- Mario FUNKCIJE I OSTALO --
 
--- ------------------- MARIO STATS -> Br.Procedura: 2, Br.Funkcija: 2, Br.Trigger: 4, Br.Pogled: 4
+-- ------------------- MARIO STATS -> Br.Procedura: 1, Br.Funkcija: 2, Br.Trigger: 2, Br.Pogled: 4
 
 -- 1. Procedrua - azurira / mijenja cijenu usluge prema prosljeđenom ID-u
 
@@ -425,62 +357,7 @@ SELECT * FROM UkupniPrihodiUsluge;
 SELECT * FROM racuni_prema_klijentima;
 
 
--- 10. Trigger automatski oduzima iznos racuna od credita koji klijent ima te ažurira iznos kredita.
-
-DELIMITER //
-CREATE TRIGGER CreditAzuriranje
-BEFORE INSERT ON credit
-FOR EACH ROW
-BEGIN
-
-    DECLARE ukupan_iznos_kraj FLOAT;
-    DECLARE iznosA FLOAT;
-
-    SELECT ukupan_iznos INTO ukupan_iznos_kraj
-    FROM racuni_prema_klijentima
-    WHERE id_usluga_klijent = NEW.id_klijent_credit;
-
-    SET iznosA = NEW.iznos - ukupan_iznos_kraj;
-
-    IF iznosA > 0 THEN
-        SET NEW.iznos = iznosA;
-    ELSE
-        INSERT INTO dugovanja (id_klijent_dugovanje, iznos_dugovanja, status)
-        VALUES (NEW.id_klijent_credit, iznosA, 'Duznik');
-
-    END IF;
-
-END //
-DELIMITER ;
-
--- 11. Procedura koja provjerava ako je neki klijent duznik
-DROP PROCEDURE ProvjeraDuznikaR;
-DELIMITER //
-CREATE PROCEDURE ProvjeraDuznikaR(in id INT,out rec VARCHAR(100))
-DETERMINISTIC
-BEGIN
-   DECLARE pid INT;
-   SET pid = 0;
-    SELECT id_klijent_dugovanje INTO pid
-    FROM dugovanja
-    WHERE id_klijent_dugovanje = id;
-   IF pid!=id THEN
-    SET rec = CONCAT('Klijent sa ID: ',id,' nema dugovanja');
-   ELSE
-    SET rec = CONCAT('Klijent sa ID: ',id,' ima dugovanja');
-   END IF;
-END //
-DELIMITER ;
-SELECT * FROM dugovanja;
-CALL ProvjeraDuznikaR(5,@temp);
-SELECT @temp;
-
-
-
-
-
 -- Mario KRAJ
-
 
 -- --- --- --- --- --- --- --- --- --- ---
 
@@ -527,14 +404,6 @@ CREATE TABLE Logovi (
     FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
-drop table logovi;
-drop table Incidienti;
-drop table monitoring;
-drop table posluzitelj;
-
-ALTER TABLE Posluzitelj MODIFY COLUMN id_konfiguracija INT AUTO_INCREMENT;
-ALTER TABLE Posluzitelj MODIFY COLUMN id_rack INT AUTO_INCREMENT;
-ALTER TABLE Posluzitelj MODIFY COLUMN id_smjestaj INT AUTO_INCREMENT;
 -- Server
 INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, naziv, kategorija) VALUES
 (1, 1, 1, 'Fujitsu', 'Web poslužitelj'),
@@ -615,107 +484,19 @@ INSERT INTO Logovi (id_posluzitelj, akcija, datum, user) VALUES
 (15, 'Ponovno učitavanje usluge', '2025-01-15 17:20:00', 'service_admin');
 
 
--- TRIGERI - Ronan
--- ---------------------------------------------------------------------------------------------------
--- 1. Triger koji ce za svaki incident dodati log
--- ------------------
-DELIMITER //
-
-CREATE TRIGGER logAfterIncident
-AFTER INSERT ON Incidenti
-FOR EACH ROW
-BEGIN
-    INSERT INTO Logovi (id_posluzitelj, akcija, datum, user)
-    VALUES (NEW.id_posluzitelj, 
-            CONCAT('Novi incident prijavljen: ', NEW.opis), 
-            NOW(), 
-            'Sustav'); 
-END;
-//
-DELIMITER ;
-
--- Testiranje trigera
-INSERT INTO Incidenti (datum, opis, id_posluzitelj, status) 
-VALUES ('2024-02-18', 'Internal server error na web posluzitelju', 1, 'Otvoreno');
-
--- 2. Triger koji ce se aktivirati ukoliko je opterecenje na serveru kriticno
--- ----------------------------------------------------------------------
-
-DELIMITER //
-create trigger logAfterVisokoOpterecenje
-after insert on pracenje_statusa_posluzitelja 
-for each row
-begin
-   if new.procesor_status = 'Kritican' and new.ram_status = 'Kritican' and new.temperatura_status = 'Kritican' then
-    
-    INSERT INTO Logovi (id_posluzitelj, akcija, datum, user)
-    VALUES (NEW.id_posluzitelj, 
-            CONCAT('Upozorenje, server u kriticnom stanju'), 
-            NOW(), 
-            'Sustav'); 
-   end if;
-   end; 
-   // DELIMITER ;
-   
-   -- Testiranje trigera
-   INSERT INTO pracenje_statusa_posluzitelja (id_posluzitelj, procesor_status, ram_status, ssd_status, temperatura_status, vrijeme_statusa)
-	VALUES (1, 'Kritican', 'Kritican', 'Kritican', 'Kritican', NOW());
-    
-    select * from logovi;
-  
--- ----------------------------------------------------------------------------------------------------------
-
--- FUNKCIJE - Ronan
--- ----------------------------------------------------------------------------------------------------------
--- Funkcija koja broji aktivne incidente
--- ------------------------------------
-DELIMITER //
-create function brojAktivnihIncidenata (p_id_posluzitelj INT)
-returns int
-deterministic
-begin
-declare broj INT;
-  select COUNT(*) 
-    into broj
-    from Incidenti
-    where id_posluzitelj = p_id_posluzitelj AND status = 'Otvoreno';
-    
-    return broj;
-end;
-// DELIMITER ;
-
--- Testiranje funkcije
-select BrojAktivnihIncidenata(1) as AktivniIncidenti;
-
--- PROCEDURE - Ronan
--- ----------------------------------------------------------------------------------------------------------
--- Procedura koja mjenja status za sve incidente na nekom posluzitelju
--- ------------------------------------------------------------------------
-DELIMITER //
-
-create procedure PromijeniStatus(p_id_posluzitelj int)
-begin
-    declare p_novi_status varchar(20) default 'Zatvoreno';  
-    
-    update Incidenti
-	 set status = p_novi_status
-    where  id_posluzitelj = p_id_posluzitelj and status = 'Otvoreno';
-end;
-//
-DELIMITER ;
-
--- Testiranje procedure
-call PromijeniStatus(1);
-select * from incidenti;
+select * from Logovi;
+select * from Posluzitelj;
+select * from Incidenti;
+select * from Monitoring;
 -- Ronan END
--- ----------------------------------------------------------------------------------------------------------
 
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 -- Adis START
 
 CREATE TABLE oprema ( -- pojedinacni queryi npr u pogledima, u Topics na frontendu za ovu tablicu slozeniji quey u pogledu koji vraca najpopularniju opremu(ima najveci broj koristenja u konfiguracijskim setovima)
- id SERIAL PRIMARY KEY,
- vrsta VARCHAR(255) NOT NULL,
+ id INT PRIMARY KEY AUTO_INCREMENT,
+ vrsta VARCHAR(255) NOT NULL, -- check in (vrste koje imamo)?
  specifikacije VARCHAR(255) NOT NULL,
  stanje_na_zalihama INTEGER NOT NULL
  -- id_dobavljac INTEGER,
@@ -723,20 +504,20 @@ CREATE TABLE oprema ( -- pojedinacni queryi npr u pogledima, u Topics na fronten
 );
 
 CREATE TABLE konfiguracija_uredjaja (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-    graficka_kartica BIGINT UNSIGNED DEFAULT NULL, -- 'Rack ne sadrzi',
-    procesor BIGINT UNSIGNED DEFAULT NULL, -- 'Rack ne sadrzi',
-    SSD BIGINT UNSIGNED DEFAULT NULL, -- 'Rack ne sadrzi',
-    ram BIGINT UNSIGNED DEFAULT NULL, -- 'Rack ne sadrzi',
+	id INT PRIMARY KEY AUTO_INCREMENT, -- prije je bio SERIAL vracam na INT sa autoincrementom kako bi se slagalo sa referencama
+    graficka_kartica INT DEFAULT NULL, -- 'Rack ne sadrzi',
+    procesor INT DEFAULT NULL, -- 'Rack ne sadrzi',
+    SSD INT DEFAULT NULL, -- 'Rack ne sadrzi',
+    ram INT DEFAULT NULL, -- 'Rack ne sadrzi',
     IP_adresa VARCHAR(45) DEFAULT NULL, --  'Standardni rack ne sadrzi',
-    dimenzije BIGINT UNSIGNED DEFAULT NULL, -- 'Posluzitelj ne sadrzi',
-    PDU BIGINT UNSIGNED DEFAULT NULL, -- 'Posluzitelj ne sadrzi',
-    patchpanel BIGINT UNSIGNED DEFAULT NULL, --  'Posluzitelj ne sadrzi',
-    rack_rails BIGINT UNSIGNED DEFAULT NULL, -- 'Posluzitelj ne sadrzi',
-    UPS BIGINT UNSIGNED DEFAULT NULL, -- 'Posluzitelj ne sadrzi',
-    hladenje BIGINT UNSIGNED DEFAULT NULL, -- 'Posluzitelj ne sadrzi',
-    switch BIGINT UNSIGNED DEFAULT NULL, -- 'Posluzitelj, standardni rack ne sadrze',
-    router BIGINT UNSIGNED DEFAULT NULL, -- 'Posluzitelj, standardni rack ne sadrze',
+    dimenzije INT DEFAULT NULL, -- 'Posluzitelj ne sadrzi',
+    PDU INT DEFAULT NULL, -- 'Posluzitelj ne sadrzi',
+    patchpanel INT DEFAULT NULL, --  'Posluzitelj ne sadrzi',
+    rack_rails INT DEFAULT NULL, -- 'Posluzitelj ne sadrzi',
+    UPS INT DEFAULT NULL, -- 'Posluzitelj ne sadrzi',
+    hladenje INT DEFAULT NULL, -- 'Posluzitelj ne sadrzi',
+    switch INT DEFAULT NULL, -- 'Posluzitelj, standardni rack ne sadrze',
+    router INT DEFAULT NULL, -- 'Posluzitelj, standardni rack ne sadrze',
     FOREIGN KEY (graficka_kartica) REFERENCES oprema(id),
     FOREIGN KEY (procesor) REFERENCES oprema(id),
     FOREIGN KEY (SSD) REFERENCES oprema(id),
@@ -750,11 +531,10 @@ CREATE TABLE konfiguracija_uredjaja (
     FOREIGN KEY (switch) REFERENCES oprema(id), 
     FOREIGN KEY (router) REFERENCES oprema(id)
 );
-drop table konfiguracija_uredjaja;
-select * from konfiguracija_uredjaja;
+
 
 CREATE TABLE pracenje_statusa_posluzitelja (
-	id SERIAL PRIMARY KEY,
+	id INT PRIMARY KEY AUTO_INCREMENT,
     id_posluzitelj INT NOT NULL,
     procesor_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
     ram_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
@@ -766,7 +546,7 @@ CREATE TABLE pracenje_statusa_posluzitelja (
 
 
 CREATE TABLE pracenje_statusa_racka (
-	id SERIAL PRIMARY KEY, 
+	id SERIAL PRIMARY KEY,
     id_rack INT NOT NULL,
     temperatura_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
     popunjenost_status ENUM('Slobodno', 'Pun') NOT NULL,
@@ -780,7 +560,7 @@ CREATE TABLE pracenje_statusa_racka (
 
 
 CREATE TABLE potrosnja (
-	id SERIAL PRIMARY KEY,
+	id INT PRIMARY KEY AUTO_INCREMENT,
     potrosnja_kw DECIMAL(10, 2) NOT NULL,
     datum DATE NOT NULL
 );
@@ -1136,8 +916,10 @@ VALUES
 (19, 44, 69, 94, '192.168.1.19'),
 (20, 45, 70, 95, '192.168.1.20'),
 (21, 46, 71, 96, '192.168.1.21'),
-(22, 47, 72, 97, '192.168.1.22');
-
+(22, 47, 72, 97, '192.168.1.22'),
+(23, 48, 73, 98, '192.168.1.23'),
+(24, 49, 74, 99, '192.168.1.24'),
+(25, 50, 75, 100, '192.168.1.25');
 
 
 -- standardni rackovi
@@ -1933,6 +1715,8 @@ DO
 
 SELECT *
 FROM potrosnja;
+SELECT *
+FROM pracenje_statusa_posluzitelja;
 
 -- Procedura koja vraca broj izmjena kod pojedinog uredjaja pracenjem iz statusa uredjaja.
 
@@ -2033,6 +1817,9 @@ FROM potrosnja
 GROUP BY YEAR(datum), MONTH(datum)
 ORDER BY godina, mjesec; -- ostavljeno defaultno zbog ASC koji je pogodan za ovaj slucaj
 
+SELECT * FROM ukupna_energetska_potrosnja_po_mjesecima;
+SELECT * FROM potrosnja;
+
 -- Pogled koji vraca najpopularniju opremu na temelju broja njezinog koristenja u konfiguracijama uredjaja
 /* jos testirati
 SELECT 
@@ -2075,6 +1862,7 @@ LIMIT 1;
 -- Mozda u hodu ubacim jos neki cisti query ili view ako nam bude falilo toga za zahtjev projekta
 -- Sadasnje stanje: JOB EVENTI: 1 TRIGGERI: 4 PROCEDURE: 9 Pogledi: 2 (od toga jedan materijaliziran), Cisit query 1
 -- Od toga Procedure i triggeri rade vecinu smislenog posla nad mojim tablicama
+-- Napravim index na tablici oprema
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
@@ -2111,7 +1899,7 @@ CREATE TABLE Rack (
        FOREIGN KEY (id_smjestaj) REFERENCES Fizicki_smjestaj(id_smjestaj)
 );
 
-ALTER TABLE Rack MODIFY COLUMN kategorija ENUM('server_rack', 'mrezni_rack', 'drugo', 'patch_rack') NOT NULL;
+
 
 CREATE TABLE Zaposlenik (
     id_zaposlenik INT PRIMARY KEY AUTO_INCREMENT,
@@ -2137,133 +1925,132 @@ CREATE TABLE Odrzavanje (
 
 
 INSERT INTO Sigurnost_objekta 
-    (sigurnosne_kamere, vrste_alarma, broj_zastitara, razina_sigurnosti)
+    (id_sigurnost, sigurnosne_kamere, vrste_alarma, broj_zastitara, razina_sigurnosti)
 VALUES 
-(20, 'Protuprovalni, Protupožarni', 5, 'Visoka'),
-( 15, 'Protuprovalni', 3, 'Srednja'),
-( 10, 'Protupožarni', 2, 'Niska'),
-( 30, 'Protuprovalni, Protupožarni, Detektori pokreta', 6, 'Visoka'),
-( 5,  'Protuprovalni', 1, 'Niska'),
-( 40, 'Detektori pokreta', 8, 'Visoka'),
-( 8,  'Protuprovalni', 2, 'Niska'),
-( 25, 'Protupožarni', 4, 'Srednja'),
-( 50, 'Protuprovalni, Detektori pokreta', 10, 'Visoka'),
-( 12, 'Protupožarni', 3, 'Niska'),
-( 18, 'Protuprovalni, Protupožarni', 3, 'Srednja'),
-( 60, 'Protuprovalni, Detektori pokreta', 12, 'Visoka'),
-( 2,  'Protupožarni', 1, 'Niska'),
-( 35, 'Detektori pokreta, Protupožarni', 7, 'Visoka'),
-( 45, 'Protuprovalni', 9, 'Visoka'),
-( 22, 'Protupožarni', 4, 'Srednja'),
-( 6,  'Protuprovalni', 2, 'Niska'),
-( 28, 'Protuprovalni, Detektori pokreta', 5, 'Srednja'),
-( 55, 'Protuprovalni, Protupožarni, Detektori pokreta', 11, 'Visoka'),
-( 10, 'Protupožarni', 2, 'Niska'),
-( 1,  'Protuprovalni', 1, 'Niska'),
-( 65, 'Protuprovalni, Protupožarni, Detektori pokreta', 12, 'Visoka');
+(1, 20, 'Protuprovalni, Protupožarni', 5, 'Visoka'),
+(2, 15, 'Protuprovalni', 3, 'Srednja'),
+(3, 10, 'Protupožarni', 2, 'Niska'),
+(4, 30, 'Protuprovalni, Protupožarni, Detektori pokreta', 6, 'Visoka'),
+(5, 5,  'Protuprovalni', 1, 'Niska'),
+(6, 40, 'Detektori pokreta', 8, 'Visoka'),
+(7, 8,  'Protuprovalni', 2, 'Niska'),
+(8, 25, 'Protupožarni', 4, 'Srednja'),
+(9, 50, 'Protuprovalni, Detektori pokreta', 10, 'Visoka'),
+(10, 12, 'Protupožarni', 3, 'Niska'),
+(11, 18, 'Protuprovalni, Protupožarni', 3, 'Srednja'),
+(12, 60, 'Protuprovalni, Detektori pokreta', 12, 'Visoka'),
+(13, 2,  'Protupožarni', 1, 'Niska'),
+(14, 35, 'Detektori pokreta, Protupožarni', 7, 'Visoka'),
+(15, 45, 'Protuprovalni', 9, 'Visoka'),
+(16, 22, 'Protupožarni', 4, 'Srednja'),
+(17, 6,  'Protuprovalni', 2, 'Niska'),
+(18, 28, 'Protuprovalni, Detektori pokreta', 5, 'Srednja'),
+(19, 55, 'Protuprovalni, Protupožarni, Detektori pokreta', 11, 'Visoka'),
+(20, 10, 'Protupožarni', 2, 'Niska'),
+(21, 1,  'Protuprovalni', 1, 'Niska'),
+(22, 65, 'Protuprovalni, Protupožarni, Detektori pokreta', 12, 'Visoka');
 
 INSERT INTO Fizicki_smjestaj 
-    ( kontinent, drzava, regija, grad, hala, prostor_kat, vremenska_zona, id_sigurnost)
+    (id_smjestaj, kontinent, drzava, regija, grad, hala, prostor_kat, vremenska_zona, id_sigurnost)
 VALUES 
-( 'Europa', 'Hrvatska', 'Dalmacija',   'Split',       'Hala 1',  '1. kat',     'CET', 1),
-( 'Europa', 'Hrvatska', 'Slavonija',   'Osijek',      'Hala 2',  'Prizemlje',  'CET', 2),
-( 'Europa', 'Hrvatska', 'Zagorje',     'Zabok',       'Hala 3',  '2. kat',     'CET', 3),
-( 'Europa', 'Njemačka', 'Bavarska',    'Minhen',      'Hala 4',  'Prizemlje',  'CET', 4),
-( 'Sjeverna Amerika', 'SAD', 'Kalifornija', 'Los Angeles','Hala 5','1. kat',  'PST', 5),
-( 'Azija', 'Japan', 'Kansai', 'Osaka', 'Hala 6','3. kat','JST', 6),
-( 'Europa', 'Italija', 'Toskana', 'Firenca', 'Hala 7','Prizemlje','CET', 7),
-( 'Australija','Australija','Novi Južni Wales','Sidnej','Hala 8','1. kat','AEST',8),
-( 'Južna Amerika','Brazil','Rio de Janeiro','Rio','Hala 9','Prizemlje','BRT',9),
-( 'Europa','Francuska','Ile-de-France','Pariz','Hala 10','2. kat','CET',10),
-( 'Europa','Hrvatska','Istra','Pula','Hala 11','Prizemlje','CET',11),
-( 'Azija','Kina','Guangdong','Guangzhou','Hala 12','1. kat','CST',12),
-( 'Europa','Španjolska','Katalonija','Barcelona','Hala 13','2. kat','CET',13),
-( 'Europa','Hrvatska','Zagreb','Zagreb','Hala 14','1. kat','CET',14),
-( 'Europa','Hrvatska','Slavonija','Vinkovci','Hala 15','Prizemlje','CET',15),
-( 'Azija','Indija','Maharashtra','Mumbai','Hala 16','3. kat','IST',16),
-('Afrika','Egipat','Kairo','Kairo','Hala 17','1. kat','EET',17),
-( 'Europa','Srbija','Vojvodina','Novi Sad','Hala 18','2. kat','CET',18),
-( 'Sjeverna Amerika','Kanada','Ontario','Toronto','Hala 19','Prizemlje','EST',19),
-( 'Europa','Grčka','Atika','Atena','Hala 20','2. kat','EET',20),
-( 'Europa','Hrvatska','Istra','Rovinj','Hala 21','Podrum','CET',21),
-( 'Europa','Hrvatska','Gorski Kotar','Delnice','Hala 22','1. kat','CET',22);
+(1, 'Europa', 'Hrvatska', 'Dalmacija',   'Split',       'Hala 1',  '1. kat',     'CET', 1),
+(2, 'Europa', 'Hrvatska', 'Slavonija',   'Osijek',      'Hala 2',  'Prizemlje',  'CET', 2),
+(3, 'Europa', 'Hrvatska', 'Zagorje',     'Zabok',       'Hala 3',  '2. kat',     'CET', 3),
+(4, 'Europa', 'Njemačka', 'Bavarska',    'Minhen',      'Hala 4',  'Prizemlje',  'CET', 4),
+(5, 'Sjeverna Amerika', 'SAD', 'Kalifornija', 'Los Angeles','Hala 5','1. kat',  'PST', 5),
+(6, 'Azija', 'Japan', 'Kansai', 'Osaka', 'Hala 6','3. kat','JST', 6),
+(7, 'Europa', 'Italija', 'Toskana', 'Firenca', 'Hala 7','Prizemlje','CET', 7),
+(8, 'Australija','Australija','Novi Južni Wales','Sidnej','Hala 8','1. kat','AEST',8),
+(9, 'Južna Amerika','Brazil','Rio de Janeiro','Rio','Hala 9','Prizemlje','BRT',9),
+(10, 'Europa','Francuska','Ile-de-France','Pariz','Hala 10','2. kat','CET',10),
+(11, 'Europa','Hrvatska','Istra','Pula','Hala 11','Prizemlje','CET',11),
+(12, 'Azija','Kina','Guangdong','Guangzhou','Hala 12','1. kat','CST',12),
+(13, 'Europa','Španjolska','Katalonija','Barcelona','Hala 13','2. kat','CET',13),
+(14, 'Europa','Hrvatska','Zagreb','Zagreb','Hala 14','1. kat','CET',14),
+(15, 'Europa','Hrvatska','Slavonija','Vinkovci','Hala 15','Prizemlje','CET',15),
+(16, 'Azija','Indija','Maharashtra','Mumbai','Hala 16','3. kat','IST',16),
+(17, 'Afrika','Egipat','Kairo','Kairo','Hala 17','1. kat','EET',17),
+(18, 'Europa','Srbija','Vojvodina','Novi Sad','Hala 18','2. kat','CET',18),
+(19, 'Sjeverna Amerika','Kanada','Ontario','Toronto','Hala 19','Prizemlje','EST',19),
+(20, 'Europa','Grčka','Atika','Atena','Hala 20','2. kat','EET',20),
+(21, 'Europa','Hrvatska','Istra','Rovinj','Hala 21','Podrum','CET',21),
+(22, 'Europa','Hrvatska','Gorski Kotar','Delnice','Hala 22','1. kat','CET',22);
 
 
-INSERT INTO Rack (id_konfiguracija, id_smjestaj, kategorija)
+INSERT INTO Rack (id_rack, id_konfiguracija, id_smjestaj, kategorija)
 VALUES
-( 101, 1,  'server_rack'),
-( 102, 2,  'server_rack'),
-(  103, 3,  'server_rack'),
-(  104, 4,  'server_rack'),
-(  105, 5,  'mrezni_rack'),
-(  106, 6,  'server_rack'),
-(  107, 7,  'drugo'),
-(  108, 8,  'server_rack'),
-(  109, 9,  'drugo'),
-( 110, 10, 'server_rack'),
-( 201, 11, 'server_rack'),
-( 202, 12, 'patch_rack'),
-( 203, 13, 'drugo'),
-( 204, 14, 'server_rack'),
-( 205, 15, 'patch_rack'),
-( 206, 16, 'server_rack'),
-( 207, 17, 'drugo'),
-( 208, 18, 'patch_rack'),
-( 209, 19, 'server_rack'),
-( 210, 20, 'drugo'),
-( 211, 21, 'patch_rack'),
-( 212, 22, 'server_rack');
-
-select * from rack;
+(1,  101, 1,  'server_rack'),
+(2,  102, 2,  'mrezni_rack'),
+(3,  103, 3,  'server_rack'),
+(4,  104, 4,  'server_rack'),
+(5,  105, 5,  'mrezni_rack'),
+(6,  106, 6,  'server_rack'),
+(7,  107, 7,  'mrezni_rack'),
+(8,  108, 8,  'server_rack'),
+(9,  109, 9,  'mrezni_rack'),
+(10, 110, 10, 'server_rack'),
+(11, 201, 11, 'server_rack'),
+(12, 202, 12, 'mrezni_rack'),
+(13, 203, 13, 'drugo'),
+(14, 204, 14, 'server_rack'),
+(15, 205, 15, 'mrezni_rack'),
+(16, 206, 16, 'server_rack'),
+(17, 207, 17, 'drugo'),
+(18, 208, 18, 'mrezni_rack'),
+(19, 209, 19, 'server_rack'),
+(20, 210, 20, 'drugo'),
+(21, 211, 21, 'mrezni_rack'),
+(22, 212, 22, 'server_rack');
 
 
 
-INSERT INTO Zaposlenik ( ime, prezime, id_odjel, zanimanje)
+INSERT INTO Zaposlenik (id_zaposlenik, ime, prezime, id_odjel, zanimanje)
 VALUES
-( 'Ivan',    'Horvat', 1, 'Tehničar'),
-(  'Ana',     'Kovač',  2, 'Inženjer'),
-(  'Petar',   'Perić',  1, 'Administrator'),
-(  'Marko',   'Jurić',  3, 'Sigurnosni stručnjak'),
-( 'Lana',    'Novak',  4, 'Mrežni inženjer'),
-( 'Tomislav','Barić',  1, 'Tehničar'),
-( 'Jelena',  'Milić',  5, 'Projektni menadžer'),
-( 'Karla',   'Ljubić', 2, 'Dizajner'),
-('Filip',   'Marić',  4, 'Razvojni inženjer'),
-('Sandra',  'Božić',  3, 'Menadžer sigurnosti'),
-( 'Luka',    'Vidović',1, 'Sistem administrator'),
-( 'Iva',     'Šarić',  5, 'Konzultant'),
-( 'Marina',  'Lozić',  1, 'Računalni tehničar'),
-('Josip',   'Babić',  2, 'Sistem inženjer'),
-( 'Robert',  'Crnić',  3, 'Specijalist za sigurnost'),
-( 'Mia',     'Sertić', 1, 'Tehničar'),
-( 'Dario',   'Šimić',  4, 'Projektni koordinator'),
-( 'Tihana',  'Vrban',  2, 'DevOps inženjer'),
-( 'Goran',   'Bubalo', 3, 'Voditelj tima'),
-( 'Anita',   'Kos',    2, 'QA inženjer'),
-( 'Helena',  'Zorić',  1, 'Administrator bazepodataka'),
-( 'Stjepan', 'Rajner', 5, 'Voditelj projekata'),
-( 'Nikolina','Bašić',  1, 'Specijalist za baze podataka'),
-('Damir',   'Hrgović',2, 'Inženjer sustava');
+(1,  'Ivan',    'Horvat', 1, 'Tehničar'),
+(2,  'Ana',     'Kovač',  2, 'Inženjer'),
+(3,  'Petar',   'Perić',  1, 'Administrator'),
+(4,  'Marko',   'Jurić',  3, 'Sigurnosni stručnjak'),
+(5,  'Lana',    'Novak',  4, 'Mrežni inženjer'),
+(6,  'Tomislav','Barić',  1, 'Tehničar'),
+(7,  'Jelena',  'Milić',  5, 'Projektni menadžer'),
+(8,  'Karla',   'Ljubić', 2, 'Dizajner'),
+(9,  'Filip',   'Marić',  4, 'Razvojni inženjer'),
+(10, 'Sandra',  'Božić',  3, 'Menadžer sigurnosti'),
+(11, 'Luka',    'Vidović',1, 'Sistem administrator'),
+(12, 'Iva',     'Šarić',  5, 'Konzultant'),
+(13, 'Marina',  'Lozić',  1, 'Računalni tehničar'),
+(14, 'Josip',   'Babić',  2, 'Sistem inženjer'),
+(15, 'Robert',  'Crnić',  3, 'Specijalist za sigurnost'),
+(16, 'Mia',     'Sertić', 1, 'Tehničar'),
+(17, 'Dario',   'Šimić',  4, 'Projektni koordinator'),
+(18, 'Tihana',  'Vrban',  2, 'DevOps inženjer'),
+(19, 'Goran',   'Bubalo', 3, 'Voditelj tima'),
+(20, 'Anita',   'Kos',    2, 'QA inženjer'),
+(21, 'Helena',  'Zorić',  1, 'Administrator bazepodataka'),
+(22, 'Stjepan', 'Rajner', 5, 'Voditelj projekata'),
+(23, 'Nikolina','Bašić',  1, 'Specijalist za baze podataka'),
+(24, 'Damir',   'Hrgović',2, 'Inženjer sustava');
 
 
-INSERT INTO Odrzavanje (datum, opis, id_posluzitelj, id_zaposlenik)
+INSERT INTO Odrzavanje (id_odrzavanja, datum, opis, id_posluzitelj, id_zaposlenik)
 VALUES
-('2025-01-17', 'Zamjena UPS baterija',                         5,  13),
-( '2025-01-18', 'Čišćenje prašine i ventilacije',               2,  14),
-( '2025-01-19', 'Optimizacija mrežnih postavki',                4,  15),
-( '2025-01-20', 'Ponovno pokretanje servisa nakon pada',        8,  16),
-('2025-01-21', 'Provjera backupa i test vraćanja',             1,  17),
-('2025-01-22', 'Instalacija antivirusa',                       10, 18),
-('2025-01-23', 'Provjera RAID polja',                          3,  19),
-( '2025-01-24', 'Ažuriranje operativnog sustava',               7,  20),
-( '2025-01-25', 'Zamjena patch kabela',                         2,  21),
-( '2025-01-26', 'Migracija virtualnih mašina',                  5,  22),
-( '2025-01-28', 'Nadogradnja BIOS-a',                           9,  14),
-( '2025-01-29', 'Praćenje performansi 24h test',                10, 15),
-( '2025-01-30', 'Zamjena mrežnog switcha',                      4,  16),
-( '2025-02-01', 'Testiranje redundancije napajanja',            1,  17),
-( '2025-02-02', 'Zamjena dotrajalih kabela unutar racka 21',    2,  23),
-( '2025-02-03', 'Nadogradnja sigurnosnih postavki OS-a',        5,  24);
+(16, '2025-01-17', 'Zamjena UPS baterija',                         5,  13),
+(17, '2025-01-18', 'Čišćenje prašine i ventilacije',               2,  14),
+(18, '2025-01-19', 'Optimizacija mrežnih postavki',                4,  15),
+(19, '2025-01-20', 'Ponovno pokretanje servisa nakon pada',        8,  16),
+(20, '2025-01-21', 'Provjera backupa i test vraćanja',             1,  17),
+(21, '2025-01-22', 'Instalacija antivirusa',                       10, 18),
+(22, '2025-01-23', 'Provjera RAID polja',                          3,  19),
+(23, '2025-01-24', 'Ažuriranje operativnog sustava',               7,  20),
+(24, '2025-01-25', 'Zamjena patch kabela',                         2,  21),
+(25, '2025-01-26', 'Migracija virtualnih mašina',                  5,  22),
+(26, '2025-01-27', 'Optimizacija hlađenja',                        6,  13),
+(27, '2025-01-28', 'Nadogradnja BIOS-a',                           9,  14),
+(28, '2025-01-29', 'Praćenje performansi 24h test',                10, 15),
+(29, '2025-01-30', 'Zamjena mrežnog switcha',                      4,  16),
+(30, '2025-02-01', 'Testiranje redundancije napajanja',            1,  17),
+(31, '2025-02-02', 'Zamjena dotrajalih kabela unutar racka 21',    2,  23),
+(32, '2025-02-03', 'Nadogradnja sigurnosnih postavki OS-a',        5,  24);
 
 SELECT * FROM Sigurnost_objekta;
 SELECT * FROM Fizicki_smjestaj;
@@ -2271,7 +2058,6 @@ SELECT * FROM Rack;
 SELECT * FROM Zaposlenik;
 SELECT * FROM Održavanje;
 
-drop table rack;
 -- -- -- -- -- --
 -- UPITI
 
