@@ -109,7 +109,6 @@ INSERT INTO klijenti (ime, prezime, oib) VALUES
                                                 ('Ingrid', 'Tenezić', 12356512379);
 
 
-
 INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge) VALUES
                                           (1, 1, STR_TO_DATE('2024-01-15', '%Y-%m-%d'), STR_TO_DATE('2024-04-10', '%Y-%m-%d')),
                                           (2, 3, STR_TO_DATE('2023-03-20', '%Y-%m-%d'), STR_TO_DATE('2023-06-12', '%Y-%m-%d')),
@@ -183,7 +182,6 @@ INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES
                                                                 (32),
                                                                 (33);
 
-
 INSERT INTO credit(iznos, id_klijent_credit) VALUES
                                                         (1, 1),
                                                         (100, 1),
@@ -223,11 +221,12 @@ INSERT INTO credit(iznos, id_klijent_credit) VALUES
 
 
 
+
 -- -------------------
 
 -- Mario FUNKCIJE I OSTALO --
 
--- ------------------- MARIO STATS -> Br.Procedura: 1, Br.Funkcija: 2, Br.Trigger: 3, Br.Pogled: 4
+-- ------------------- MARIO STATS -> Br.Procedura: 2, Br.Funkcija: 2, Br.Trigger: 4, Br.Pogled: 4
 
 -- 1. Procedrua - azurira / mijenja cijenu usluge prema prosljeđenom ID-u
 
@@ -429,22 +428,53 @@ SELECT * FROM racuni_prema_klijentima;
 -- 10. Trigger automatski oduzima iznos racuna od credita koji klijent ima te ažurira iznos kredita.
 
 DELIMITER //
-
 CREATE TRIGGER CreditAzuriranje
 BEFORE INSERT ON credit
 FOR EACH ROW
 BEGIN
 
     DECLARE ukupan_iznos_kraj FLOAT;
+    DECLARE iznosA FLOAT;
+
     SELECT ukupan_iznos INTO ukupan_iznos_kraj
     FROM racuni_prema_klijentima
     WHERE id_usluga_klijent = NEW.id_klijent_credit;
 
-    SET NEW.iznos = NEW.iznos - ukupan_iznos_kraj;
+    SET iznosA = NEW.iznos - ukupan_iznos_kraj;
 
+    IF iznosA > 0 THEN
+        SET NEW.iznos = iznosA;
+    ELSE
+        INSERT INTO dugovanja (id_klijent_dugovanje, iznos_dugovanja, status)
+        VALUES (NEW.id_klijent_credit, iznosA, 'Duznik');
+
+    END IF;
 
 END //
 DELIMITER ;
+
+-- 11. Procedura koja provjerava ako je neki klijent duznik
+DROP PROCEDURE ProvjeraDuznikaR;
+DELIMITER //
+CREATE PROCEDURE ProvjeraDuznikaR(in id INT,out rec VARCHAR(100))
+DETERMINISTIC
+BEGIN
+   DECLARE pid INT;
+   SET pid = 0;
+    SELECT id_klijent_dugovanje INTO pid
+    FROM dugovanja
+    WHERE id_klijent_dugovanje = id;
+   IF pid!=id THEN
+    SET rec = CONCAT('Klijent sa ID: ',id,' nema dugovanja');
+   ELSE
+    SET rec = CONCAT('Klijent sa ID: ',id,' ima dugovanja');
+   END IF;
+END //
+DELIMITER ;
+SELECT * FROM dugovanja;
+CALL ProvjeraDuznikaR(5,@temp);
+SELECT @temp;
+
 
 
 
