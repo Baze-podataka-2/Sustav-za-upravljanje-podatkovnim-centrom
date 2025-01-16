@@ -470,7 +470,7 @@ DELIMITER ;
     FOREIGN KEY (id_rack) REFERENCES rack(id_rack),
     FOREIGN KEY (id_smjestaj) REFERENCES Fizicki_smjestaj(id_smjestaj)
 );
-drop table posluzitelj;
+
 
 CREATE TABLE Monitoring (
     id_monitoring INT AUTO_INCREMENT PRIMARY KEY,
@@ -478,7 +478,7 @@ CREATE TABLE Monitoring (
     vrsta VARCHAR(50) NOT NULL,
     FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
-drop table monitoring;
+
 CREATE TABLE Incidenti (
     id_incidenta INT AUTO_INCREMENT PRIMARY KEY,
     datum DATE NOT NULL,
@@ -487,8 +487,7 @@ CREATE TABLE Incidenti (
     status VARCHAR(20) NOT NULL,
     FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
-drop table incidenti;
-drop table logovi;
+
 CREATE TABLE Logovi (
     id_log INT AUTO_INCREMENT PRIMARY KEY,
     id_posluzitelj INT NOT NULL,
@@ -498,6 +497,12 @@ CREATE TABLE Logovi (
     FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
+drop table logovi;
+drop table Incidienti;
+drop table monitoring;
+drop table posluzitelj;
+
+select * from konfiguracija_uredjaja;
 -- Server
 INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, naziv, kategorija) VALUES
 (1, 1, 1, 'Fujitsu', 'Web poslužitelj'),
@@ -582,8 +587,13 @@ select * from Logovi;
 select * from Posluzitelj;
 select * from Incidenti;
 select * from Monitoring;
--- Ronan END
+select * from rack;
 
+
+-- Ronan END
+ALTER TABLE Posluzitelj MODIFY COLUMN id_konfiguracija INT AUTO_INCREMENT;
+ALTER TABLE Posluzitelj MODIFY COLUMN id_rack INT AUTO_INCREMENT;
+ALTER TABLE Posluzitelj MODIFY COLUMN id_smjestaj INT AUTO_INCREMENT;
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 -- Adis START
@@ -641,7 +651,7 @@ CREATE TABLE pracenje_statusa_posluzitelja (
 
 
 CREATE TABLE pracenje_statusa_racka (
-	id SERIAL PRIMARY KEY,
+	id SERIAL PRIMARY KEY, 
     id_rack INT NOT NULL,
     temperatura_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
     popunjenost_status ENUM('Slobodno', 'Pun') NOT NULL,
@@ -1011,10 +1021,8 @@ VALUES
 (19, 44, 69, 94, '192.168.1.19'),
 (20, 45, 70, 95, '192.168.1.20'),
 (21, 46, 71, 96, '192.168.1.21'),
-(22, 47, 72, 97, '192.168.1.22'),
-(23, 48, 73, 98, '192.168.1.23'),
-(24, 49, 74, 99, '192.168.1.24'),
-(25, 50, 75, 100, '192.168.1.25');
+(22, 47, 72, 97, '192.168.1.22');
+
 
 
 -- standardni rackovi
@@ -2014,132 +2022,133 @@ CREATE TABLE Odrzavanje (
 
 
 INSERT INTO Sigurnost_objekta 
-    (id_sigurnost, sigurnosne_kamere, vrste_alarma, broj_zastitara, razina_sigurnosti)
+    (sigurnosne_kamere, vrste_alarma, broj_zastitara, razina_sigurnosti)
 VALUES 
-(1, 20, 'Protuprovalni, Protupožarni', 5, 'Visoka'),
-(2, 15, 'Protuprovalni', 3, 'Srednja'),
-(3, 10, 'Protupožarni', 2, 'Niska'),
-(4, 30, 'Protuprovalni, Protupožarni, Detektori pokreta', 6, 'Visoka'),
-(5, 5,  'Protuprovalni', 1, 'Niska'),
-(6, 40, 'Detektori pokreta', 8, 'Visoka'),
-(7, 8,  'Protuprovalni', 2, 'Niska'),
-(8, 25, 'Protupožarni', 4, 'Srednja'),
-(9, 50, 'Protuprovalni, Detektori pokreta', 10, 'Visoka'),
-(10, 12, 'Protupožarni', 3, 'Niska'),
-(11, 18, 'Protuprovalni, Protupožarni', 3, 'Srednja'),
-(12, 60, 'Protuprovalni, Detektori pokreta', 12, 'Visoka'),
-(13, 2,  'Protupožarni', 1, 'Niska'),
-(14, 35, 'Detektori pokreta, Protupožarni', 7, 'Visoka'),
-(15, 45, 'Protuprovalni', 9, 'Visoka'),
-(16, 22, 'Protupožarni', 4, 'Srednja'),
-(17, 6,  'Protuprovalni', 2, 'Niska'),
-(18, 28, 'Protuprovalni, Detektori pokreta', 5, 'Srednja'),
-(19, 55, 'Protuprovalni, Protupožarni, Detektori pokreta', 11, 'Visoka'),
-(20, 10, 'Protupožarni', 2, 'Niska'),
-(21, 1,  'Protuprovalni', 1, 'Niska'),
-(22, 65, 'Protuprovalni, Protupožarni, Detektori pokreta', 12, 'Visoka');
+(20, 'Protuprovalni, Protupožarni', 5, 'Visoka'),
+( 15, 'Protuprovalni', 3, 'Srednja'),
+( 10, 'Protupožarni', 2, 'Niska'),
+( 30, 'Protuprovalni, Protupožarni, Detektori pokreta', 6, 'Visoka'),
+( 5,  'Protuprovalni', 1, 'Niska'),
+( 40, 'Detektori pokreta', 8, 'Visoka'),
+( 8,  'Protuprovalni', 2, 'Niska'),
+( 25, 'Protupožarni', 4, 'Srednja'),
+( 50, 'Protuprovalni, Detektori pokreta', 10, 'Visoka'),
+( 12, 'Protupožarni', 3, 'Niska'),
+( 18, 'Protuprovalni, Protupožarni', 3, 'Srednja'),
+( 60, 'Protuprovalni, Detektori pokreta', 12, 'Visoka'),
+( 2,  'Protupožarni', 1, 'Niska'),
+( 35, 'Detektori pokreta, Protupožarni', 7, 'Visoka'),
+( 45, 'Protuprovalni', 9, 'Visoka'),
+( 22, 'Protupožarni', 4, 'Srednja'),
+( 6,  'Protuprovalni', 2, 'Niska'),
+( 28, 'Protuprovalni, Detektori pokreta', 5, 'Srednja'),
+( 55, 'Protuprovalni, Protupožarni, Detektori pokreta', 11, 'Visoka'),
+( 10, 'Protupožarni', 2, 'Niska'),
+( 1,  'Protuprovalni', 1, 'Niska'),
+( 65, 'Protuprovalni, Protupožarni, Detektori pokreta', 12, 'Visoka');
 
 INSERT INTO Fizicki_smjestaj 
-    (id_smjestaj, kontinent, drzava, regija, grad, hala, prostor_kat, vremenska_zona, id_sigurnost)
+    ( kontinent, drzava, regija, grad, hala, prostor_kat, vremenska_zona, id_sigurnost)
 VALUES 
-(1, 'Europa', 'Hrvatska', 'Dalmacija',   'Split',       'Hala 1',  '1. kat',     'CET', 1),
-(2, 'Europa', 'Hrvatska', 'Slavonija',   'Osijek',      'Hala 2',  'Prizemlje',  'CET', 2),
-(3, 'Europa', 'Hrvatska', 'Zagorje',     'Zabok',       'Hala 3',  '2. kat',     'CET', 3),
-(4, 'Europa', 'Njemačka', 'Bavarska',    'Minhen',      'Hala 4',  'Prizemlje',  'CET', 4),
-(5, 'Sjeverna Amerika', 'SAD', 'Kalifornija', 'Los Angeles','Hala 5','1. kat',  'PST', 5),
-(6, 'Azija', 'Japan', 'Kansai', 'Osaka', 'Hala 6','3. kat','JST', 6),
-(7, 'Europa', 'Italija', 'Toskana', 'Firenca', 'Hala 7','Prizemlje','CET', 7),
-(8, 'Australija','Australija','Novi Južni Wales','Sidnej','Hala 8','1. kat','AEST',8),
-(9, 'Južna Amerika','Brazil','Rio de Janeiro','Rio','Hala 9','Prizemlje','BRT',9),
-(10, 'Europa','Francuska','Ile-de-France','Pariz','Hala 10','2. kat','CET',10),
-(11, 'Europa','Hrvatska','Istra','Pula','Hala 11','Prizemlje','CET',11),
-(12, 'Azija','Kina','Guangdong','Guangzhou','Hala 12','1. kat','CST',12),
-(13, 'Europa','Španjolska','Katalonija','Barcelona','Hala 13','2. kat','CET',13),
-(14, 'Europa','Hrvatska','Zagreb','Zagreb','Hala 14','1. kat','CET',14),
-(15, 'Europa','Hrvatska','Slavonija','Vinkovci','Hala 15','Prizemlje','CET',15),
-(16, 'Azija','Indija','Maharashtra','Mumbai','Hala 16','3. kat','IST',16),
-(17, 'Afrika','Egipat','Kairo','Kairo','Hala 17','1. kat','EET',17),
-(18, 'Europa','Srbija','Vojvodina','Novi Sad','Hala 18','2. kat','CET',18),
-(19, 'Sjeverna Amerika','Kanada','Ontario','Toronto','Hala 19','Prizemlje','EST',19),
-(20, 'Europa','Grčka','Atika','Atena','Hala 20','2. kat','EET',20),
-(21, 'Europa','Hrvatska','Istra','Rovinj','Hala 21','Podrum','CET',21),
-(22, 'Europa','Hrvatska','Gorski Kotar','Delnice','Hala 22','1. kat','CET',22);
+( 'Europa', 'Hrvatska', 'Dalmacija',   'Split',       'Hala 1',  '1. kat',     'CET', 1),
+( 'Europa', 'Hrvatska', 'Slavonija',   'Osijek',      'Hala 2',  'Prizemlje',  'CET', 2),
+( 'Europa', 'Hrvatska', 'Zagorje',     'Zabok',       'Hala 3',  '2. kat',     'CET', 3),
+( 'Europa', 'Njemačka', 'Bavarska',    'Minhen',      'Hala 4',  'Prizemlje',  'CET', 4),
+( 'Sjeverna Amerika', 'SAD', 'Kalifornija', 'Los Angeles','Hala 5','1. kat',  'PST', 5),
+( 'Azija', 'Japan', 'Kansai', 'Osaka', 'Hala 6','3. kat','JST', 6),
+( 'Europa', 'Italija', 'Toskana', 'Firenca', 'Hala 7','Prizemlje','CET', 7),
+( 'Australija','Australija','Novi Južni Wales','Sidnej','Hala 8','1. kat','AEST',8),
+( 'Južna Amerika','Brazil','Rio de Janeiro','Rio','Hala 9','Prizemlje','BRT',9),
+( 'Europa','Francuska','Ile-de-France','Pariz','Hala 10','2. kat','CET',10),
+( 'Europa','Hrvatska','Istra','Pula','Hala 11','Prizemlje','CET',11),
+( 'Azija','Kina','Guangdong','Guangzhou','Hala 12','1. kat','CST',12),
+( 'Europa','Španjolska','Katalonija','Barcelona','Hala 13','2. kat','CET',13),
+( 'Europa','Hrvatska','Zagreb','Zagreb','Hala 14','1. kat','CET',14),
+( 'Europa','Hrvatska','Slavonija','Vinkovci','Hala 15','Prizemlje','CET',15),
+( 'Azija','Indija','Maharashtra','Mumbai','Hala 16','3. kat','IST',16),
+('Afrika','Egipat','Kairo','Kairo','Hala 17','1. kat','EET',17),
+( 'Europa','Srbija','Vojvodina','Novi Sad','Hala 18','2. kat','CET',18),
+( 'Sjeverna Amerika','Kanada','Ontario','Toronto','Hala 19','Prizemlje','EST',19),
+( 'Europa','Grčka','Atika','Atena','Hala 20','2. kat','EET',20),
+( 'Europa','Hrvatska','Istra','Rovinj','Hala 21','Podrum','CET',21),
+( 'Europa','Hrvatska','Gorski Kotar','Delnice','Hala 22','1. kat','CET',22);
 
 
-INSERT INTO Rack (id_rack, id_konfiguracija, id_smjestaj, kategorija)
+INSERT INTO Rack (id_konfiguracija, id_smjestaj, kategorija)
 VALUES
-(1,  101, 1,  'server_rack'),
-(2,  102, 2,  'patch_rack'),
-(3,  103, 3,  'server_rack'),
-(4,  104, 4,  'server_rack'),
-(5,  105, 5,  'patch_rack'),
-(6,  106, 6,  'server_rack'),
-(7,  107, 7,  'patch_rack'),
-(8,  108, 8,  'server_rack'),
-(9,  109, 9,  'patch_rack'),
-(10, 110, 10, 'server_rack'),
-(11, 201, 11, 'server_rack'),
-(12, 202, 12, 'patch_rack'),
-(13, 203, 13, 'drugo'),
-(14, 204, 14, 'server_rack'),
-(15, 205, 15, 'patch_rack'),
-(16, 206, 16, 'server_rack'),
-(17, 207, 17, 'drugo'),
-(18, 208, 18, 'patch_rack'),
-(19, 209, 19, 'server_rack'),
-(20, 210, 20, 'drugo'),
-(21, 211, 21, 'patch_rack'),
-(22, 212, 22, 'server_rack');
+( 101, 1,  'server_rack'),
+( 102, 2,  'server_rack'),
+(  103, 3,  'server_rack'),
+(  104, 4,  'server_rack'),
+(  105, 5,  'mrezni_rack'),
+(  106, 6,  'server_rack'),
+(  107, 7,  'drugo'),
+(  108, 8,  'server_rack'),
+(  109, 9,  'drugo'),
+( 110, 10, 'server_rack'),
+( 201, 11, 'server_rack'),
+( 202, 12, 'patch_rack'),
+( 203, 13, 'drugo'),
+( 204, 14, 'server_rack'),
+( 205, 15, 'patch_rack'),
+( 206, 16, 'server_rack'),
+( 207, 17, 'drugo'),
+( 208, 18, 'patch_rack'),
+( 209, 19, 'server_rack'),
+( 210, 20, 'drugo'),
+( 211, 21, 'patch_rack'),
+( 212, 22, 'server_rack');
+
+select * from rack;
 
 
 
-INSERT INTO Zaposlenik (id_zaposlenik, ime, prezime, id_odjel, zanimanje)
+INSERT INTO Zaposlenik ( ime, prezime, id_odjel, zanimanje)
 VALUES
-(1,  'Ivan',    'Horvat', 1, 'Tehničar'),
-(2,  'Ana',     'Kovač',  2, 'Inženjer'),
-(3,  'Petar',   'Perić',  1, 'Administrator'),
-(4,  'Marko',   'Jurić',  3, 'Sigurnosni stručnjak'),
-(5,  'Lana',    'Novak',  4, 'Mrežni inženjer'),
-(6,  'Tomislav','Barić',  1, 'Tehničar'),
-(7,  'Jelena',  'Milić',  5, 'Projektni menadžer'),
-(8,  'Karla',   'Ljubić', 2, 'Dizajner'),
-(9,  'Filip',   'Marić',  4, 'Razvojni inženjer'),
-(10, 'Sandra',  'Božić',  3, 'Menadžer sigurnosti'),
-(11, 'Luka',    'Vidović',1, 'Sistem administrator'),
-(12, 'Iva',     'Šarić',  5, 'Konzultant'),
-(13, 'Marina',  'Lozić',  1, 'Računalni tehničar'),
-(14, 'Josip',   'Babić',  2, 'Sistem inženjer'),
-(15, 'Robert',  'Crnić',  3, 'Specijalist za sigurnost'),
-(16, 'Mia',     'Sertić', 1, 'Tehničar'),
-(17, 'Dario',   'Šimić',  4, 'Projektni koordinator'),
-(18, 'Tihana',  'Vrban',  2, 'DevOps inženjer'),
-(19, 'Goran',   'Bubalo', 3, 'Voditelj tima'),
-(20, 'Anita',   'Kos',    2, 'QA inženjer'),
-(21, 'Helena',  'Zorić',  1, 'Administrator bazepodataka'),
-(22, 'Stjepan', 'Rajner', 5, 'Voditelj projekata'),
-(23, 'Nikolina','Bašić',  1, 'Specijalist za baze podataka'),
-(24, 'Damir',   'Hrgović',2, 'Inženjer sustava');
+( 'Ivan',    'Horvat', 1, 'Tehničar'),
+(  'Ana',     'Kovač',  2, 'Inženjer'),
+(  'Petar',   'Perić',  1, 'Administrator'),
+(  'Marko',   'Jurić',  3, 'Sigurnosni stručnjak'),
+( 'Lana',    'Novak',  4, 'Mrežni inženjer'),
+( 'Tomislav','Barić',  1, 'Tehničar'),
+( 'Jelena',  'Milić',  5, 'Projektni menadžer'),
+( 'Karla',   'Ljubić', 2, 'Dizajner'),
+('Filip',   'Marić',  4, 'Razvojni inženjer'),
+('Sandra',  'Božić',  3, 'Menadžer sigurnosti'),
+( 'Luka',    'Vidović',1, 'Sistem administrator'),
+( 'Iva',     'Šarić',  5, 'Konzultant'),
+( 'Marina',  'Lozić',  1, 'Računalni tehničar'),
+('Josip',   'Babić',  2, 'Sistem inženjer'),
+( 'Robert',  'Crnić',  3, 'Specijalist za sigurnost'),
+( 'Mia',     'Sertić', 1, 'Tehničar'),
+( 'Dario',   'Šimić',  4, 'Projektni koordinator'),
+( 'Tihana',  'Vrban',  2, 'DevOps inženjer'),
+( 'Goran',   'Bubalo', 3, 'Voditelj tima'),
+( 'Anita',   'Kos',    2, 'QA inženjer'),
+( 'Helena',  'Zorić',  1, 'Administrator bazepodataka'),
+( 'Stjepan', 'Rajner', 5, 'Voditelj projekata'),
+( 'Nikolina','Bašić',  1, 'Specijalist za baze podataka'),
+('Damir',   'Hrgović',2, 'Inženjer sustava');
 
 
-INSERT INTO Odrzavanje (id_odrzavanja, datum, opis, id_posluzitelj, id_zaposlenik)
+INSERT INTO Odrzavanje (datum, opis, id_posluzitelj, id_zaposlenik)
 VALUES
-(16, '2025-01-17', 'Zamjena UPS baterija',                         5,  13),
-(17, '2025-01-18', 'Čišćenje prašine i ventilacije',               2,  14),
-(18, '2025-01-19', 'Optimizacija mrežnih postavki',                4,  15),
-(19, '2025-01-20', 'Ponovno pokretanje servisa nakon pada',        8,  16),
-(20, '2025-01-21', 'Provjera backupa i test vraćanja',             1,  17),
-(21, '2025-01-22', 'Instalacija antivirusa',                       10, 18),
-(22, '2025-01-23', 'Provjera RAID polja',                          3,  19),
-(23, '2025-01-24', 'Ažuriranje operativnog sustava',               7,  20),
-(24, '2025-01-25', 'Zamjena patch kabela',                         2,  21),
-(25, '2025-01-26', 'Migracija virtualnih mašina',                  5,  22),
-(26, '2025-01-27', 'Optimizacija hlađenja',                        6,  13),
-(27, '2025-01-28', 'Nadogradnja BIOS-a',                           9,  14),
-(28, '2025-01-29', 'Praćenje performansi 24h test',                10, 15),
-(29, '2025-01-30', 'Zamjena mrežnog switcha',                      4,  16),
-(30, '2025-02-01', 'Testiranje redundancije napajanja',            1,  17),
-(31, '2025-02-02', 'Zamjena dotrajalih kabela unutar racka 21',    2,  23),
-(32, '2025-02-03', 'Nadogradnja sigurnosnih postavki OS-a',        5,  24);
+('2025-01-17', 'Zamjena UPS baterija',                         5,  13),
+( '2025-01-18', 'Čišćenje prašine i ventilacije',               2,  14),
+( '2025-01-19', 'Optimizacija mrežnih postavki',                4,  15),
+( '2025-01-20', 'Ponovno pokretanje servisa nakon pada',        8,  16),
+('2025-01-21', 'Provjera backupa i test vraćanja',             1,  17),
+('2025-01-22', 'Instalacija antivirusa',                       10, 18),
+('2025-01-23', 'Provjera RAID polja',                          3,  19),
+( '2025-01-24', 'Ažuriranje operativnog sustava',               7,  20),
+( '2025-01-25', 'Zamjena patch kabela',                         2,  21),
+( '2025-01-26', 'Migracija virtualnih mašina',                  5,  22),
+( '2025-01-28', 'Nadogradnja BIOS-a',                           9,  14),
+( '2025-01-29', 'Praćenje performansi 24h test',                10, 15),
+( '2025-01-30', 'Zamjena mrežnog switcha',                      4,  16),
+( '2025-02-01', 'Testiranje redundancije napajanja',            1,  17),
+( '2025-02-02', 'Zamjena dotrajalih kabela unutar racka 21',    2,  23),
+( '2025-02-03', 'Nadogradnja sigurnosnih postavki OS-a',        5,  24);
 
 SELECT * FROM Sigurnost_objekta;
 SELECT * FROM Fizicki_smjestaj;
@@ -2147,6 +2156,7 @@ SELECT * FROM Rack;
 SELECT * FROM Zaposlenik;
 SELECT * FROM Održavanje;
 
+drop table rack;
 -- -- -- -- -- --
 -- UPITI
 
