@@ -607,7 +607,7 @@ DELIMITER ;
 INSERT INTO Incidenti (datum, opis, id_posluzitelj, status) 
 VALUES ('2024-02-18', 'Internal server error na web posluzitelju', 1, 'Otvoreno');
 
-
+select * from konfiguracija_uredjaja;
 select * from incidenti;
 
 -- Funkcija koja broji aktivne incidente
@@ -629,6 +629,26 @@ end;
 
 -- Testiranje funkcije
 select BrojAktivnihIncidenata(1) as AktivniIncidenti;
+
+
+-- Procedura koja mjenja status za sve incidente na nekom posluzitelju
+-- ------------------------------------------------------------------------
+DELIMITER //
+
+create procedure PromijeniStatus(p_id_posluzitelj int)
+begin
+    declare p_novi_status varchar(20) default 'Zatvoreno';  
+    
+    update Incidenti
+	 set status = p_novi_status
+    where  id_posluzitelj = p_id_posluzitelj and status = 'Otvoreno';
+end;
+//
+DELIMITER ;
+
+-- Testiranje procedure
+call PromijeniStatus(1);
+select * from incidenti;
 -- Ronan END
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
