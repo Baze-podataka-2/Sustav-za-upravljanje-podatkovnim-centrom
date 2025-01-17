@@ -1062,7 +1062,7 @@ SET p_opisna_poruka = CONCAT("Kreiram narudzbenicu za opremu sa ID-em ", p_id_op
 
 
 INSERT INTO narudzbe (id_dobavljac, datum, opis, id_oprema)
-VALUES(p_id_dobavljac, p_datum, p_opisna_poruka, p_id_dobavljac);
+VALUES(p_id_dobavljac, p_datum, p_opisna_poruka, p_id_oprema);
 
 
 END //
@@ -1904,13 +1904,12 @@ ORDER BY godina, mjesec; -- ostavljeno defaultno zbog ASC koji je pogodan za ova
 SELECT * FROM ukupna_energetska_potrosnja_po_mjesecima;
 SELECT * FROM potrosnja;
 
--- Pogled koji vraca najpopularniju opremu na temelju broja njezinog koristenja u konfiguracijama uredjaja
-/* jos testirati
+CREATE VIEW najpopularnija_oprema AS
 SELECT 
-    o.id AS oprema_id,
-    o.vrsta AS naziv_opreme,
+    id,
+    vrsta AS naziv_opreme,
     COUNT(*) AS broj_koristenja
-FROM oprema o
+FROM oprema 
 LEFT JOIN (
     SELECT graficka_kartica AS oprema_id FROM konfiguracija_uredjaja WHERE graficka_kartica IS NOT NULL
     UNION ALL
@@ -1935,11 +1934,14 @@ LEFT JOIN (
     SELECT switch FROM konfiguracija_uredjaja WHERE switch IS NOT NULL
     UNION ALL
     SELECT router FROM konfiguracija_uredjaja WHERE router IS NOT NULL
-) AS svi_uredjaji ON o.id = svi_uredjaji.oprema_id
-GROUP BY o.id, o.vrsta
+) AS svi_uredjaji ON oprema.id = svi_uredjaji.oprema_id
+GROUP BY oprema.id, oprema.vrsta
 ORDER BY broj_koristenja DESC
 LIMIT 1;
-*/
+
+SELECT *
+FROM najpopularnija_oprema;
+DROP VIEW najpopularnija_oprema;
 
 
 -- STATUS: Ono sto sam mislio napraviti za svoj dio sam napravio, morati cu jos nesto testirati jednom kada ponovno insertam rekorde za sve tablice 
@@ -2190,22 +2192,48 @@ END //
 
 DELIMITER ;
 
---funkcionalnost
+-- funkcionalnost
+-- pronađi zaposlenika s najmanje zadataka i vrati ga(ime.prezime,id i broj zadataka)
+DELIMITER //
 
-DELIMITER $$
-
-CREATE PROCEDURE VratiZaposlenika()
+CREATE PROCEDURE VratiZaposlenika(
+    OUT p_zaposlenik_id INTEGER, 
+    OUT p_zaposlenik_ime VARCHAR(255), 
+    OUT p_zaposlenik_prezime VARCHAR(255), 
+    OUT p_broj_zadataka INTEGER
+)
 BEGIN
-    -- pronađi zaposlenika s najmanje zadataka i vrati ga(ime.prezime,id i broj zadataka)
-    SELECT z.id_zaposlenik, z.ime, z.prezime, COUNT(o.id_odrzavanja) AS broj_zadataka
-    FROM Zaposlenik z
-    LEFT JOIN Održavanje o ON z.id_zaposlenik = o.id_zaposlenik
-    GROUP BY z.id_zaposlenik, z.ime, z.prezime
-    ORDER BY broj_zadataka ASC
+    SELECT 
+        z.id_zaposlenik, 
+        z.ime, 
+        z.prezime, 
+        COUNT(o.id_odrzavanja) AS broj_zadataka
+    INTO 
+        p_zaposlenik_id, 
+        p_zaposlenik_ime, 
+        p_zaposlenik_prezime, 
+        p_broj_zadataka
+    FROM 
+        Zaposlenik z
+    LEFT JOIN 
+        Odrzavanje o ON z.id_zaposlenik = o.id_zaposlenik
+    GROUP BY 
+        z.id_zaposlenik, z.ime, z.prezime
+    ORDER BY 
+        broj_zadataka ASC
     LIMIT 1;
-END$$
+END //
 
-DELIMITER ;
+DELIMITER ;
+
+	CALL VratiZaposlenika(@id, @ime, @prezime, @broj);
+    SELECT @id, @ime, @prezime, @broj FROM DUAL;
+	
+    
+    CREATE VIEW broj_zadataka_po_zaposleniku AS
+    SELECT zaposlenik.*, COUNT(odrzavanje.id_zaposlenik) AS broj_zadataka
+    FROM zaposlenik LEFT JOIN odrzavanje ON zaposlenik.id_zaposlenik = odrzavanje.id_zaposlenik
+    GROUP BY id_zaposlenik;
 
 -- Marko KRAJ za sada 
 
