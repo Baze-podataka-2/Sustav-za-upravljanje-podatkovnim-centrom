@@ -368,9 +368,9 @@ SELECT * FROM racuni_prema_klijentima;
 -- Kreiranje tablica
  CREATE TABLE Posluzitelj (
     id_posluzitelj INT AUTO_INCREMENT PRIMARY KEY,
-    id_konfiguracija  INT NOT NULL,
-    id_rack INT NOT NULL,
-    id_smjestaj INT  NOT NULL,
+    id_konfiguracija  INT DEFAULT NULL,
+    id_rack INT DEFAULT NULL,
+    id_smjestaj INT DEFAULT NULL,
     naziv  VARCHAR(50) NOT NULL,
     kategorija VARCHAR(50) NOT NULL,
 	FOREIGN KEY (id_konfiguracija) REFERENCES konfiguracija_uredjaja(id),
@@ -381,7 +381,7 @@ SELECT * FROM racuni_prema_klijentima;
 
 CREATE TABLE Monitoring (
     id_monitoring INT AUTO_INCREMENT PRIMARY KEY,
-    id_posluzitelj INT NOT NULL,
+    id_posluzitelj INT DEFAULT NULL,
     vrsta VARCHAR(50) NOT NULL,
     FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
@@ -390,14 +390,14 @@ CREATE TABLE Incidenti (
     id_incidenta INT AUTO_INCREMENT PRIMARY KEY,
     datum DATE NOT NULL,
     opis TEXT NOT NULL,
-    id_posluzitelj INT NOT NULL,
+    id_posluzitelj INT DEFAULT NULL,
     status VARCHAR(20) NOT NULL,
     FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
 CREATE TABLE Logovi (
     id_log INT AUTO_INCREMENT PRIMARY KEY,
-    id_posluzitelj INT NOT NULL,
+    id_posluzitelj INT DEFAULT NULL,
     akcija VARCHAR(100) NOT NULL,
     datum DATETIME NOT NULL,
     user VARCHAR(50) NOT NULL,
