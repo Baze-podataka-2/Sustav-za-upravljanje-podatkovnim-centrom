@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS datacentar;
 CREATE DATABASE datacentar;
 USE datacentar;
 
--- GENERAL STATS -> Br.Procedura: 11, Br.Funkcija: 2, Br.Trigger: 6, Br.Pogled: 6
+-- GENERAL STATS -> Br.Procedura: 10, Br.Funkcija: 2, Br.Trigger: 6, Br.Pogled: 6
 
 -- Mario
 
@@ -39,12 +39,23 @@ CREATE TABLE racuni_prema_klijentima(
 );
 
 
-CREATE TABLE troskovi_datacentra (
-    id_troskovi_datacentra INT PRIMARY KEY AUTO_INCREMENT ,
-    id_potrosnja INT,
-    id_licenca VARCHAR(50),
-    FOREIGN KEY (id_potrosnja) REFERENCES potrosnja(id)
+
+CREATE TABLE credit(
+    id_credit INT AUTO_INCREMENT PRIMARY KEY,
+    iznos FLOAT NOT NULL,
+    id_klijent_credit INT,
+    FOREIGN KEY (id_klijent_credit) REFERENCES klijenti(id_klijent)
 );
+
+CREATE TABLE dugovanja(
+    id_dugovanje INT AUTO_INCREMENT PRIMARY KEY,
+    iznos_dugovanja FLOAT,
+    id_klijent_dugovanje INT,
+    status VARCHAR(100)
+);
+
+
+
 
 INSERT INTO usluge (vrsta, cijena) VALUES     ("FREE" ,0.0 ),
                                               ("START" ,4.99 ),
@@ -64,6 +75,7 @@ INSERT INTO klijenti (ime, prezime, oib) VALUES
                                                 ('Tina', 'Matić', 89012345678),
                                                 ('Dino', 'Grgić', 90123456789),
                                                 ('Sara', 'Kralj', 11234567890),
+            -- 10
                                                 ('Nina', 'Vuković', 22345678901),
                                                 ('Tomislav', 'Šarić', 33456789012),
                                                 ('Katarina', 'Zorić', 44567890123),
@@ -74,6 +86,7 @@ INSERT INTO klijenti (ime, prezime, oib) VALUES
                                                 ('Davor', 'Kovačević', 99012345678),
                                                 ('Ema', 'Blažević', 10123456789),
                                                 ('Roko', 'Milić', 11123456780),
+           -- 20
                                                 ('Lea', 'Vlahović', 12123456781),
                                                 ('Toni', 'Križan', 13123456782),
                                                 ('Marta', 'Soldo', 14123456783),
@@ -82,10 +95,14 @@ INSERT INTO klijenti (ime, prezime, oib) VALUES
                                                 ('Milan', 'Šeparović', 17123456786),
                                                 ('Klara', 'Banić', 18123456787),
                                                 ('Ruža', 'Kovačić', 19123456788),
-                                                ('Ingrid', 'Trava', 12356547889);
+                                                ('Ingrid', 'Trava', 15123498326),
+                                                ('Marko', 'Šimunić', 12351237543),
+           -- 30
+                                                ('Ksenija', 'Benežić', 1816755985),
+                                                ('Ružaica', 'Kovač', 19123098788),
+                                                ('Ingrid', 'Tenezić', 12356512379);
 
-
-
+-- PRVO NAPRAVITI TRIGGER KontrolaDatuma kako bi se sprijecli upisi neispravnih datuma!
 INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge) VALUES
                                           (1, 1, STR_TO_DATE('2024-01-15', '%Y-%m-%d'), STR_TO_DATE('2024-04-10', '%Y-%m-%d')),
                                           (2, 3, STR_TO_DATE('2023-03-20', '%Y-%m-%d'), STR_TO_DATE('2023-06-12', '%Y-%m-%d')),
@@ -115,8 +132,15 @@ INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge
                                           (26, 2, STR_TO_DATE('2025-02-20', '%Y-%m-%d'), STR_TO_DATE('2025-05-29', '%Y-%m-%d')),
                                           (27, 1, STR_TO_DATE('2024-07-13', '%Y-%m-%d'), STR_TO_DATE('2024-10-25', '%Y-%m-%d')),
                                           (28, 5, STR_TO_DATE('2025-04-02', '%Y-%m-%d'), STR_TO_DATE('2025-07-11', '%Y-%m-%d')),
-                                          (29, 4, STR_TO_DATE('2024-11-15', '%Y-%m-%d'), STR_TO_DATE('2025-02-14', '%Y-%m-%d'));                                     (30, 3, STR_TO_DATE('2024-06-21', '%Y-%m-%d'), STR_TO_DATE('2024-09-13', '%Y-%m-%d'));
+                                          (29, 4, STR_TO_DATE('2024-11-15', '%Y-%m-%d'), STR_TO_DATE('2025-02-14', '%Y-%m-%d')),
+                                          (30, 3, STR_TO_DATE('2024-06-21', '%Y-%m-%d'), STR_TO_DATE('2024-09-13', '%Y-%m-%d')),
+                                          (31, 5, STR_TO_DATE('2025-08-02', '%Y-%m-%d'), STR_TO_DATE('2025-12-11', '%Y-%m-%d')),
+                                          (32, 4, STR_TO_DATE('2024-01-15', '%Y-%m-%d'), STR_TO_DATE('2025-03-11', '%Y-%m-%d')),
+                                          (33, 3, STR_TO_DATE('2024-06-01', '%Y-%m-%d'), STR_TO_DATE('2025-09-13', '%Y-%m-%d'));
 
+
+
+-- PRVO NAPRAVITI TIRGGER IznosRacuna i IznosRacunaUpdate!!!
 INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES
                                                                 (1),
                                                                 (2),
@@ -146,9 +170,50 @@ INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES
                                                                 (26),
                                                                 (27),
                                                                 (28),
-                                                                (29);
+                                                                (29),
+                                                                (30),
+                                                                (31),
+                                                                (32),
+                                                                (33);
 
 
+
+-- PRVO NAPRAVITI TRIGGER CreditAzuriranje!!!
+INSERT INTO credit(iznos, id_klijent_credit) VALUES
+                                                        (1, 1),
+                                                        (100, 1),
+                                                        (12, 2),
+                                                        (1000.12, 3),
+                                                        (0, 4),
+                                                        (11.56, 5),
+                                                        (123, 6),
+                                                        (56, 7),
+                                                        (12, 8),
+                                                        (22, 9),
+                                                        (332, 10),
+                                                        (111, 11),
+                                                        (12, 12),
+                                                        (13, 13),
+                                                        (14, 14),
+                                                        (1400, 15),
+                                                        (16, 16),
+                                                        (12, 17),
+                                                        (18.43, 18),
+                                                        (642, 19),
+                                                        (20, 20),
+                                                        (21, 21),
+                                                        (22, 22),
+                                                        (23, 23),
+                                                        (275, 24),
+                                                        (25, 25),
+                                                        (26, 26),
+                                                        (27, 27),
+                                                        (28, 28),
+                                                        (29, 29),
+                                                        (600, 30),
+                                                        (550, 31),
+                                                        (510, 32),
+                                                        (520, 33);
 
 
 
@@ -158,7 +223,7 @@ INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES
 
 -- Mario FUNKCIJE I OSTALO --
 
--- ------------------- MARIO STATS -> Br.Procedura: 1, Br.Funkcija: 2, Br.Trigger: 2, Br.Pogled: 4
+-- ------------------- MARIO STATS -> Br.Procedura: 3, Br.Funkcija: 2, Br.Trigger: 5, Br.Pogled: 3
 
 -- 1. Procedrua - azurira / mijenja cijenu usluge prema prosljeđenom ID-u
 
@@ -355,6 +420,166 @@ GROUP BY
 SELECT * FROM UkupniPrihodiUsluge;
 
 SELECT * FROM racuni_prema_klijentima;
+
+
+-- 10. Trigger automatski oduzima iznos racuna od credita koji klijent ima te ažurira iznos kredita.
+
+DELIMITER //
+CREATE TRIGGER CreditAzuriranje
+BEFORE INSERT ON credit
+FOR EACH ROW
+BEGIN
+
+    DECLARE ukupan_iznos_kraj FLOAT;
+    DECLARE iznosA FLOAT;
+
+    SELECT ukupan_iznos INTO ukupan_iznos_kraj
+    FROM racuni_prema_klijentima
+    WHERE id_usluga_klijent = NEW.id_klijent_credit;
+
+    SET iznosA = NEW.iznos - ukupan_iznos_kraj;
+
+    IF iznosA > 0 THEN
+        SET NEW.iznos = iznosA;
+    ELSE
+        INSERT INTO dugovanja (id_klijent_dugovanje, iznos_dugovanja, status)
+        VALUES (NEW.id_klijent_credit, iznosA, 'Duznik');
+
+    END IF;
+
+END //
+DELIMITER ;
+
+-- 11. Procedura koja provjerava ako je neki klijent duznik
+DROP PROCEDURE ProvjeraDuznikaR;
+
+DELIMITER //
+CREATE PROCEDURE ProvjeraDuznikaR(in id INT,out rec VARCHAR(100))
+DETERMINISTIC
+BEGIN
+   DECLARE pid INT;
+   SET pid = 0;
+    SELECT id_klijent_dugovanje INTO pid
+    FROM dugovanja
+    WHERE id_klijent_dugovanje = id;
+   IF pid!=id THEN
+    SET rec = CONCAT('Klijent sa ID: ',id,' nema dugovanja');
+   ELSE
+    SET rec = CONCAT('Klijent sa ID: ',id,' ima dugovanja');
+   END IF;
+END //
+DELIMITER ;
+
+SELECT * FROM dugovanja;
+CALL ProvjeraDuznikaR(8,@temp);
+SELECT @temp;
+
+-- 12. Procedura mijenja paket usluge korisnika ukoliko isti ima dovoljno credit na računu za novu uslugu
+
+DELIMITER //
+CREATE PROCEDURE PromjenaUslugeKlijenta(in id INT,in id_u INT,out recenica VARCHAR(150))
+NOT DETERMINISTIC
+BEGIN
+   DECLARE pid INT;
+   DECLARE cijena_u,saldo_k FLOAT;
+   SET cijena_u =0, saldo_k =0;
+   SET pid = 0;
+    SELECT id_klijent_dugovanje INTO pid
+                                        FROM dugovanja
+                                        WHERE id_klijent_dugovanje = id;
+    SELECT cijena INTO cijena_u
+                                FROM usluge
+                                WHERE id_u=id_usluga;
+    SELECT  iznos INTO saldo_k
+                              FROM credit
+                              WHERE id=id_klijent_credit;
+    IF pid!=id AND cijena_u<saldo_k THEN
+        UPDATE usluge_klijenata SET id_usluga = id_u WHERE id_klijent=id;
+        SET recenica = CONCAT('Usluga je uspjesno promijnenjena za klijenta sa ID: ', id);
+    ELSE
+        SET recenica = CONCAT('Usluga za klijenta sa ID ',id,' nije promijenjena zbog dugovanja ili iznosa credita na racunu!');
+    END IF;
+
+END //
+DELIMITER ;
+
+CALL PromjenaUslugeKlijenta(15,5,@rec);
+SELECT @rec;
+
+SELECT * FROM credit;
+SELECT * FROM dugovanja;
+SELECT * FROM usluge_klijenata; -- id_usluga_klijent i id_klijent SU ISTI jer ide auttoincrement INT ( za oboje ) te imamo isti broj recorda !
+SELECT * FROM racuni_prema_klijentima;
+-- 13 .Trigger IznosRacuna ne radi na UPDATE -> Iznos racuna se nebi promjenio nakon procedure PromjenaUslugeKlijenta, Trigger IznosRacunaUpdate racuna iznos
+
+DELIMITER //
+CREATE TRIGGER IznosRacunaUpdate
+AFTER UPDATE ON usluge_klijenata
+FOR EACH ROW
+BEGIN
+    DECLARE broj_dana INT;
+    DECLARE cijena_usluge FLOAT;
+
+    SELECT DATEDIFF(NEW.kraj_usluge, NEW.pocetak_usluge), usluge.cijena
+                INTO broj_dana, cijena_usluge
+    FROM usluge
+                WHERE usluge.id_usluga = NEW.id_usluga;
+
+    UPDATE racuni_prema_klijentima
+    SET ukupan_iznos = (broj_dana / 30) * cijena_usluge, -- dogovoreno kao 1mj = 30 dana
+        datum_izdavanja = CURDATE()
+    WHERE id_usluga_klijent = NEW.id_usluga_klijent;
+
+    END //
+DELIMITER ;
+
+-- 14. Trigger AzuriranjeCreditaKONZISTENTNOST azurira ili umece u tablice credit / dugovanje nakon što se izvrši UPDATE ( procedura PromjenaUslugeKlijenta )
+
+DELIMITER //
+CREATE TRIGGER AzuriranjeCreditaKONZISTENTNOST
+AFTER UPDATE ON usluge_klijenata
+FOR EACH ROW
+BEGIN
+    DECLARE ukupan_iznos_kraj FLOAT;
+    DECLARE trenutni_iznos FLOAT;
+    DECLARE klijent_dug INT;
+
+    -- IZRAČUNAJ UKUPAN IZNOS USLUGE ZA KLIJENTA
+    SELECT DATEDIFF(NEW.kraj_usluge, NEW.pocetak_usluge) * (cijena / 30) INTO ukupan_iznos_kraj
+            FROM usluge
+            WHERE id_usluga = NEW.id_usluga;
+
+    -- DOHVATI TRENUTNI KREDIT KLIJENTA
+    SELECT iznos INTO trenutni_iznos
+            FROM credit
+            WHERE id_klijent_credit = NEW.id_klijent;
+
+    -- PROVJERA DUGOVANJA
+    SELECT id_dugovanje INTO klijent_dug
+            FROM dugovanja
+            WHERE id_klijent_dugovanje = NEW.id_klijent;
+
+    IF trenutni_iznos >= ukupan_iznos_kraj THEN
+        UPDATE credit
+        SET iznos = trenutni_iznos - ukupan_iznos_kraj
+        WHERE id_klijent_credit = NEW.id_klijent;
+    ELSE
+        IF klijent_dug IS NOT NULL THEN -- PROVJERA DUGOVANJA 2
+            -- KLIJENT IMA DUGOVANJE -> AZURIRAJ IZNOS
+            UPDATE dugovanja
+            SET iznos_dugovanja = iznos_dugovanja + (ukupan_iznos_kraj - trenutni_iznos),
+                status = 'Duznik'
+            WHERE id_klijent_dugovanje = NEW.id_klijent;
+        ELSE
+            -- KLIJENT NEMA DUGOVANJE -> STAVI NOVO DUGOVANJE
+            INSERT INTO dugovanja (id_klijent_dugovanje, iznos_dugovanja, status)
+            VALUES (NEW.id_klijent, ukupan_iznos_kraj - trenutni_iznos, 'Duznik');
+        END IF;
+    END IF;
+END //
+DELIMITER ;
+
+
 
 
 -- Mario KRAJ
