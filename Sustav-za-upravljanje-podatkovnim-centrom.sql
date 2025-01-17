@@ -2479,3 +2479,136 @@ DELIMITER ;
 -- Marko KRAJ za sada 
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+
+
+-- Mark start
+
+CREATE TABLE Dobavljaci (
+    id_dobavljac INT PRIMARY KEY AUTO_INCREMENT,
+    ime VARCHAR(100) NOT NULL,
+    oib VARCHAR(11) NOT NULL UNIQUE,
+    opis TEXT
+);
+
+CREATE TABLE Narudzbe (
+    id_narudzbe INT PRIMARY KEY AUTO_INCREMENT,
+    id_dobavljac INT NOT NULL,
+    datum DATE NOT NULL,
+    opis TEXT,
+    id_oprema INT NOT NULL,
+    FOREIGN KEY (id_dobavljac) REFERENCES Dobavljaci(id_dobavljac) ON DELETE CASCADE,
+    FOREIGN KEY (id_oprema) REFERENCES Oprema(id_oprema) ON DELETE CASCADE
+);
+
+
+CREATE TABLE Licence (
+    id_licenca INT PRIMARY KEY AUTO_INCREMENT,
+    datum_pocetak DATE NOT NULL,
+    datum_istek DATE NOT NULL,
+    vrsta ENUM('mrežni', 'mailovi', 'mreža', 'ssl') NOT NULL
+);
+
+
+CREATE TABLE Odjel (
+    id_odjel INT PRIMARY KEY AUTO_INCREMENT,
+    naziv VARCHAR(100) NOT NULL,
+    id_smjestaj INT NOT NULL,
+    FOREIGN KEY (id_smjestaj) REFERENCES FizickiSmjestaj(id_smjestaj) ON DELETE CASCADE
+);
+
+
+
+INSERT INTO Dobavljaci (id_dobavljac, ime, oib, opis)
+VALUES
+(1, 'IT Solutions', '12345678901', 'Dobavljač IT opreme i softvera.'),
+(2, 'Tech Supply', '98765432109', 'Specijalizirani za mrežnu opremu.'),
+(3, 'Hardware Hub', '56473829101', 'Dobavljač hardverskih komponenti.'),
+(4, 'Network Builders', '45612378902', 'Dobavljač mrežne infrastrukture.'),
+(5, 'Cloud Providers', '78945612303', 'Specijalizirani za cloud tehnologije.'),
+(6, 'Secure Systems', '32165498706', 'Dobavljač sigurnosnih sustava.'),
+(7, 'Data Dynamics', '74185296307', 'Dobavljač podatkovnih rješenja.'),
+(8, 'Alpha Tech', '85274196308', 'Opća IT oprema i softver.'),
+(9, 'Beta Supplies', '96385274109', 'Nabava kablova i konektora.'),
+(10, 'Gamma Solutions', '14725836910', 'Specijalizirani za UPS sustave.'),
+(11, 'Delta Networks', '25836914711', 'Mrežne infrastrukture i servisi.'),
+(12, 'Zeta Systems', '36914725812', 'Backup i recovery rješenja.'),
+(13, 'Theta Supplies', '45678912313', 'Oprema za ventilaciju i hlađenje.'),
+(14, 'Omicron Hardware', '12378945614', 'Hardware specijalizacije.'),
+(15, 'Lambda Tech', '78912345615', 'Nabava server rack opreme.'),
+(16, 'Sigma Power', '45612378916', 'Napajanje i distribucija energije.'),
+(17, 'Omega Support', '32198765417', 'IT konzultacije i podrška.'),
+(18, 'Epsilon Hardware', '65432198718', 'Komponente za IT sustave.'),
+(19, 'Iota Systems', '98765412319', 'Infrastruktura i tehnologije.'),
+(20, 'Kappa Networks', '15975348620', 'Napredni mrežni sustavi.');
+
+INSERT INTO Narudzbe (id_narudzbe, id_dobavljac, datum, opis, id_oprema)
+VALUES
+(1, 1, '2025-01-15', 'Nabava novih servera za podatkovni centar.', 10),
+(2, 2, '2025-01-18', 'Nabava mrežnih switch uređaja.', 12),
+(3, 3, '2025-01-20', 'Nabava rezervnih hard diskova.', 15),
+(4, 4, '2025-01-22', 'Instalacija i konfiguracija mrežne opreme.', NULL),
+(5, 5, '2025-01-25', 'Nabava softvera za virtualizaciju.', NULL),
+(6, 6, '2025-01-27', 'Nabava sigurnosnih kamera.', 18),
+(7, 7, '2025-01-29', 'Proširenje sustava za backup.', 20),
+(8, 8, '2025-01-30', 'Kupnja novih procesora za servere.', 25),
+(9, 9, '2025-02-02', 'Nabava ventilacijskih modula.', 28),
+(10, 10, '2025-02-05', 'Instalacija UPS napajanja.', NULL),
+(11, 11, '2025-02-08', 'Dodavanje novih mrežnih adaptera.', 33),
+(12, 12, '2025-02-10', 'Proširenje kapaciteta za backup.', 35),
+(13, 13, '2025-02-12', 'Zamjena rashladnih sustava.', 38),
+(14, 14, '2025-02-14', 'Ažuriranje hardverskih komponenti.', 40),
+(15, 15, '2025-02-16', 'Instalacija dodatnih rack-ova.', NULL),
+(16, 16, '2025-02-18', 'Kupnja PDU jedinica.', 45),
+(17, 17, '2025-02-20', 'Nabava konzola za upravljanje.', 48),
+(18, 18, '2025-02-22', 'Testiranje novih naponskih modula.', 50),
+(19, 19, '2025-02-24', 'Zamjena mrežnih preklopnika.', 52),
+(20, 20, '2025-02-26', 'Dodavanje novih sigurnosnih uređaja.', NULL);
+
+INSERT INTO Licence (id_licenca, datum_pocetak, datum_istek, vrsta)
+VALUES
+(1, '2025-01-01', '2026-01-01', 'mrežni'),
+(2, '2025-02-01', '2026-02-01', 'mailovi'),
+(3, '2025-03-01', '2026-03-01', 'SSL'),
+(4, '2025-04-01', '2026-04-01', 'antivirusni'),
+(5, '2025-05-01', '2026-05-01', 'virtualizacijski'),
+(6, '2025-06-01', '2026-06-01', 'backup sustavi'),
+(7, '2025-07-01', '2026-07-01', 'mrežna sigurnost'),
+(8, '2025-08-01', '2026-08-01', 'VPN'),
+(9, '2025-09-01', '2026-09-01', 'firewall'),
+(10, '2025-10-01', '2026-10-01', 'load balancing'),
+(11, '2025-11-01', '2026-11-01', 'monitoring'),
+(12, '2025-12-01', '2026-12-01', 'sustavi hlađenja'),
+(13, '2026-01-01', '2027-01-01', 'komunikacijski sustavi'),
+(14, '2026-02-01', '2027-02-01', 'upravljanje energijom'),
+(15, '2026-03-01', '2027-03-01', 'hardverska kompatibilnost'),
+(16, '2026-04-01', '2027-04-01', 'server administracija'),
+(17, '2026-05-01', '2027-05-01', 'softverska rješenja'),
+(18, '2026-06-01', '2027-06-01', 'zaštita podataka'),
+(19, '2026-07-01', '2027-07-01', 'umjetna inteligencija'),
+(20, '2026-08-01', '2027-08-01', 'sigurnosne kopije');
+
+INSERT INTO Odjel (id_odjel, naziv, id_smjestaj)
+VALUES
+(1, 'IT podrška', 1),
+(2, 'Mrežna administracija', 2),
+(3, 'Razvoj softvera', 3),
+(4, 'Sigurnosni tim', 4),
+(5, 'Operativno održavanje', 5),
+(6, 'Analiza podataka', 6),
+(7, 'R&D odjel', 7),
+(8, 'Upravljanje energijom', 8),
+(9, 'Planiranje i logistika', 9),
+(10, 'Projektni menadžment', 10),
+(11, 'Korisnička podrška', 11),
+(12, 'Testiranje sustava', 12),
+(13, 'Marketing', 13),
+(14, 'Prodaja', 14),
+(15, 'Financije', 15),
+(16, 'Održavanje infrastrukture', 16),
+(17, 'Interna revizija', 17),
+(18, 'Upravljanje rizikom', 18),
+(19, 'Sustavi kvalitete', 19),
+(20, 'Kontrola pristupa', 20);
+
+
+-- Mark kraj
