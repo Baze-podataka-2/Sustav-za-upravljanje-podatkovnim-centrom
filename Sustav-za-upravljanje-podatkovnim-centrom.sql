@@ -794,6 +794,25 @@ DELIMITER ;
 -- Testiranje procedure
 call PromijeniStatus(1);
 select * from incidenti;
+
+
+
+-- Ostaka ideja ako je nesto pod visokim opterecenjem neka ode u monitoring ja cu tu napraviti uvjet, a Ronan posto je njegova tablica neka napravi proceduru i ja cu je pozvati 
+-- Procedura koja ce dodati novi posluzitelj u monitoring. Funkciju ce pozvati Adis ukoliko je status kritican 
+DELIMITER //
+
+create procedure DodajUMonitoring(p_id_posluzitelj int)
+begin
+     INSERT INTO Monitoring (id_posluzitelj, vrsta)
+    VALUES (p_id_posluzitelj, "Pracenje rada posluzitelja");
+end;
+//
+DELIMITER ;
+
+-- Testiranje procedure
+call DodajUMonitoring(22);
+select * from monitoring;
+
 -- Ronan END
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
