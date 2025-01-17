@@ -2205,7 +2205,7 @@ CREATE TABLE Rack (
     id_rack INT PRIMARY KEY AUTO_INCREMENT,
     id_konfiguracija INT,
     id_smjestaj INT NOT NULL,
-    kategorija ENUM('server_rack','mrezni_rack','drugo') NOT NULL,
+    kategorija ENUM('server_rack','mrezni_rack') NOT NULL,
     CONSTRAINT fk_rack_fizicki 
        FOREIGN KEY (id_smjestaj) REFERENCES Fizicki_smjestaj(id_smjestaj)
 );
@@ -2302,14 +2302,11 @@ VALUES
 (10, 110, 10, 'server_rack'),
 (11, 201, 11, 'server_rack'),
 (12, 202, 12, 'mrezni_rack'),
-(13, 203, 13, 'drugo'),
 (14, 204, 14, 'server_rack'),
 (15, 205, 15, 'mrezni_rack'),
 (16, 206, 16, 'server_rack'),
-(17, 207, 17, 'drugo'),
 (18, 208, 18, 'mrezni_rack'),
 (19, 209, 19, 'server_rack'),
-(20, 210, 20, 'drugo'),
 (21, 211, 21, 'mrezni_rack'),
 (22, 212, 22, 'server_rack');
 
@@ -2393,7 +2390,7 @@ DELIMITER //
 CREATE PROCEDURE DodajRack(
     IN p_id_konfiguracija INT,
     IN p_id_smjestaj INT,
-    IN p_kategorija ENUM('server_rack', 'patch_rack', 'drugo')
+    IN p_kategorija ENUM('server_rack', 'mrezni_rack')
 )
 BEGIN
     INSERT INTO Rack (id_konfiguracija, id_smjestaj, kategorija)
