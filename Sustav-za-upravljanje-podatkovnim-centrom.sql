@@ -2298,7 +2298,17 @@ VALUES
 (19, 55, 'Protuprovalni, Protupožarni, Detektori pokreta', 11, 'Visoka'),
 (20, 10, 'Protupožarni', 2, 'Niska'),
 (21, 1,  'Protuprovalni', 1, 'Niska'),
-(22, 65, 'Protuprovalni, Protupožarni, Detektori pokreta', 12, 'Visoka');
+(22, 65, 'Protuprovalni, Protupožarni, Detektori pokreta', 12, 'Visoka')
+(23, 5,  'Protuprovalni, Detektori pokreta', 2, 'Niska'),
+(24, 70, 'Protupožarni, Protuprovalni', 14, 'Visoka'),
+(25, 25, 'Detektori pokreta', 4, 'Srednja'),
+(26, 15, 'Protuprovalni', 3, 'Niska'),
+(27, 45, 'Protuprovalni, Protupožarni, Detektori pokreta', 9, 'Visoka'),
+(28, 10, 'Protuprovalni', 2, 'Niska'),
+(29, 50, 'Protupožarni, Detektori pokreta', 8, 'Visoka'),
+(30, 20, 'Protuprovalni, Protupožarni', 5, 'Srednja'),
+(31, 12, 'Protuprovalni', 3, 'Niska'),
+(32, 80, 'Protuprovalni, Detektori pokreta', 15, 'Visoka');
 
 INSERT INTO Fizicki_smjestaj 
     (id_smjestaj, kontinent, drzava, regija, grad, hala, prostor_kat, vremenska_zona, id_sigurnost)
@@ -2459,7 +2469,7 @@ SELECT * FROM Sigurnost_objekta;
 SELECT * FROM Fizicki_smjestaj;
 SELECT * FROM Rack;
 SELECT * FROM Zaposlenik;
-SELECT * FROM Održavanje;
+SELECT * FROM Odrzavanje;
 
 -- -- -- -- -- --
 -- UPITI
