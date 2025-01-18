@@ -2397,7 +2397,21 @@ VALUES
 (29, '2025-01-30', 'Zamjena mrežnog switcha',                      4,  16),
 (30, '2025-02-01', 'Testiranje redundancije napajanja',            1,  17),
 (31, '2025-02-02', 'Zamjena dotrajalih kabela unutar racka 21',    2,  23),
-(32, '2025-02-03', 'Nadogradnja sigurnosnih postavki OS-a',        5,  24);
+(32, '2025-02-03', 'Nadogradnja sigurnosnih postavki OS-a',        5,  24),
+(33, '2025-02-04', 'Instalacija novih diskova za pohranu',         3,  11),
+(34, '2025-02-05', 'Ažuriranje firmvera na mrežnim uređajima',     2,  14),
+(35, '2025-02-06', 'Zamjena oštećenih mrežnih kabela',             6,  15),
+(36, '2025-02-07', 'Izrada novih sigurnosnih pravila vatrozida',   4,  16),
+(37, '2025-02-08', 'Provjera redundancije napajanja sustava',      7,  17),
+(38, '2025-02-09', 'Provjera i zamjena ventilatora u rackovima',   5,  18),
+(39, '2025-02-10', 'Optimizacija SQL baze podataka',               8,  19),
+(40, '2025-02-11', 'Kalibracija temperaturnih senzora',            9,  20),
+(41, '2025-02-12', 'Migracija virtualnih poslužitelja na novi host',10, 21),
+(42, '2025-02-13', 'Resetiranje sustava za praćenje mreže',        1,  22),
+(43, '2025-02-14', 'Provjera i ažuriranje certifikata SSL',        2,  23),
+(44, '2025-02-15', 'Implementacija novog sustava za backup',       3,  24),
+(45, '2025-02-16', 'Zamjena baterija u UPS sustavu',               4,  25),
+(46, '2025-02-17', 'Testiranje redundancije mrežnih čvorova',      5,  26);
 
 SELECT * FROM Sigurnost_objekta;
 SELECT * FROM Fizicki_smjestaj;
