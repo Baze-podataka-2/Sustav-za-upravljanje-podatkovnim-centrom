@@ -1983,7 +1983,7 @@ DELIMITER ;
 -- Postigao sam racunanje potrosnje prilikom inserta u pracenje statusa, sada bi to trebalo zakurziti na kraj dana. Znaci jos jedna procedura koja to sve racuna te ima event job
 
 DELIMITER //
-CREATE PROCEDURE p_dnevna_potrosnja (p_datum DATE)
+CREATE PROCEDURE p_dnevna_potrosnja (INOUT p_datum DATE, OUT p_ukupno_kw DECIMAL(10,2))
 BEGIN
 
 DECLARE ukupna_dnevna_potrosnja INTEGER DEFAULT 0;
@@ -2045,7 +2045,7 @@ moja_petlja_rack:LOOP
 END LOOP moja_petlja_rack;
 CLOSE moj_kursor_rack;
 
-    
+ SET p_ukupno_kw = ukupna_dnevna_potrosnja;
 
 INSERT INTO potrosnja (potrosnja_kw, datum)
 VALUES (ukupna_dnevna_potrosnja / 1000, p_datum);
@@ -2053,12 +2053,22 @@ END //
 DELIMITER ;
 
 -- radi na temelju podataka u tablicama pracenje sve je kriticno sto iznosi 800+800+800+800+800+800 tj 4800 kada to pretvorimo u kW 4800/1000 moramo dobiti 4.8 sto je tocno onom sto je u tablici potrosnja dobiveno sa 2 testna poziva procedure, sada cu je napraviti kao job tj. event za svaki dan
-CALL p_dnevna_potrosnja(CURDATE());
 
+
+CALL p_dnevna_potrosnja(@datum := CURDATE(), @rezultat);
+SELECT @datum, @rezultat FROM DUAL;
+
+SELECT *
+FROM potrosnja;
+
+
+
+SELECT *
+FROM potrosnja;
 CREATE EVENT job_obracun_dnevne_potrosnje
 ON SCHEDULE EVERY 1 DAY
 DO
-	CALL p_dnevna_potrosnja(CURDATE());
+	CALL p_dnevna_potrosnja(CURDATE(), @rezultat);
 	
 
 SELECT *
