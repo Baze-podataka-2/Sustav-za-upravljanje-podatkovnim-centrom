@@ -813,6 +813,26 @@ DELIMITER ;
 call DodajUMonitoring(22);
 select * from monitoring;
 
+
+
+-- View koji vraca ukupan broji logova i incidenata za svaki poslužitelj
+
+create view ukupanBrojLiI as 
+select p.id_posluzitelj, p.naziv, p.kategorija,
+COUNT(DISTINCT i.id_incidenta) AS BrojIncidenata,
+COUNT(DISTINCT l.id_log) AS BrojLogZapisa
+
+from posluzitelj p
+
+left join incidenti i  on i.id_posluzitelj = p.id_posluzitelj
+left join logovi l on l.id_posluzitelj = p.id_posluzitelj
+
+group by p.id_posluzitelj, p.naziv, p.kategorija;
+
+
+select * from ukupanBrojLiI;
+
+
 -- Ronan END
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
