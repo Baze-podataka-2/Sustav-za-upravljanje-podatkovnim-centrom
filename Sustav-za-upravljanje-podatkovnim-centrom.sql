@@ -757,15 +757,17 @@ create trigger logAfterVisokoOpterecenjeRacka
 after insert on pracenje_statusa_racka
 for each row
 begin
-  if new.teperatura_status = 'Kritican' and new.pdu_status = 'Kritican' and new.ups_status = 'Kritican' then
+  if new.temperatura_status = 'Kritican' and new.pdu_status = 'Kritican' and new.ups_status = 'Kritican' then
     
-    INSERT INTO Incidenti (akcija, datum, user)
-    VALUES (CONCAT('Kriticno stanje racka ', NEW.id_rack), 
-            NOW(), 
-            'Sustav'); 
+    INSERT INTO Incidenti (datum, opis, status)
+    VALUES (NOW(), CONCAT('Kriticno stanje racka ', NEW.id_rack), 'otvoreno');
+		 
+        
   END IF;
 END;
 // DELIMITER ;
+
+
 
 -- Testiranje triggera 2
 INSERT INTO pracenje_statusa_posluzitelja (id_posluzitelj, procesor_status, ram_status, ssd_status, temperatura_status, vrijeme_statusa)
