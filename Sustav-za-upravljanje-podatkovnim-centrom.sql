@@ -2495,6 +2495,280 @@ DELIMITER ;
     SELECT zaposlenik.*, COUNT(odrzavanje.id_zaposlenik) AS broj_zadataka
     FROM zaposlenik LEFT JOIN odrzavanje ON zaposlenik.id_zaposlenik = odrzavanje.id_zaposlenik
     GROUP BY id_zaposlenik;
+--------------------------------
+-- vratit će true ako smiještaj ima rackove inače će vratiti false 
+
+DELIMITER $$
+
+CREATE FUNCTION ImaRack(smjestajID INT) 
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    DECLARE ima_rack BOOLEAN;
+
+    SELECT COUNT(*)
+    INTO ima_rack
+    FROM Rack
+    WHERE id_smjestaj = smjestajID;
+
+    RETURN ima_rack > 0;
+END$$
+
+DELIMITER ;
+
+-- test  
+SELECT ImaRack(1) AS rezultat;
+--------
+
+-- vraća id-ove zadnje održavanih rackova
+DELIMITER $$
+
+CREATE FUNCTION ZadnjeOdrzavaniRack() 
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE z_rack INT;
+
+    SELECT id_posluzitelj
+    INTO z_rack
+    FROM Odrzavanje
+    ORDER BY datum DESC
+    LIMIT 1;
+
+    RETURN z_rack;
+END$$
+
+DELIMITER ;
+
+-- test za ZadnjeOdrzavaniRack
+SELECT ZadnjeOdrzavaniRack() AS z_rack;
+-----
+
+-- prikazuje sve rackove koji se nalaze u smještajima s niskom mjerom sigurnosti
+CREATE VIEW RackNiskaSigurnost AS
+SELECT 
+    r.id_rack, r.kategorija, fs.grad, fs.hala, so.razina_sigurnosti
+FROM Rack r
+JOIN Fizicki_smjestaj fs ON r.id_smjestaj = fs.id_smjestaj
+JOIN Sigurnost_objekta so ON fs.id_sigurnost = so.id_sigurnost
+WHERE so.razina_sigurnosti = 'Niska';
+
+-- test pogleda 
+SELECT * FROM RackNiskaSigurnost;
+
+-- ako želimo jos filtrirati prema nekim našim specifičnim kriterijima
+
+SELECT * 
+FROM RackNiskaSigurnost
+WHERE grad = 'Zabok';
+-------------------------
+
+-- testni podaci 
+
+INSERT INTO Sigurnost_objekta (id_sigurnost, sigurnosne_kamere, vrste_alarma, broj_zastitara, razina_sigurnosti)
+VALUES (3, 15, 'Protuprovalni', 4, 'Niska');
+
+INSERT INTO Fizicki_smjestaj (id_smjestaj, kontinent, drzava, grad, hala, prostor_kat, vremenska_zona, id_sigurnost)
+VALUES (100, 'Europa', 'Hrvatska', 'Zagreb', 'Hala A', 'Prizemlje', 'CET', 3);
+
+INSERT INTO Rack (id_rack, id_konfiguracija, id_smjestaj, kategorija)
+VALUES (500, 101, 100, 'server_rack');
+
+SELECT * FROM Sigurnost_objekta;
+SELECT * FROM Fizicki_smjestaj;
+SELECT * FROM Rack;
+
+START TRANSACTION;
+
+DELETE FROM Rack
+WHERE id_smjestaj IN (
+    SELECT id_smjestaj 
+    FROM Fizicki_smjestaj 
+    WHERE id_sigurnost = 3
+);
+
+SELECT * FROM Rack WHERE id_smjestaj = 100;
+
+DELETE FROM Fizicki_smjestaj
+WHERE id_sigurnost = 3;
+
+SELECT * FROM Fizicki_smjestaj WHERE id_sigurnost = 3;
+
+DELETE FROM Sigurnost_objekta
+WHERE id_sigurnost = 3;
+
+SELECT * FROM Sigurnost_objekta WHERE id_sigurnost = 3;
+
+COMMIT;
+
+SELECT * FROM Rack;
+SELECT * FROM Fizicki_smjestaj;
+SELECT * FROM Sigurnost_objekta;
+
+-------------------------------------------
+
+-- povećava broj sigurnosnih kamera za sve lokacije s niskom sigurnosti
+DELIMITER $$
+
+CREATE PROCEDURE PovecajSigurnosneKamere()
+BEGIN
+    UPDATE Sigurnost_objekta
+    SET sigurnosne_kamere = sigurnosne_kamere + 10
+    WHERE razina_sigurnosti = 'Niska' AND id_sigurnost IS NOT NULL;
+END$$
+
+DELIMITER ;
+
+SELECT * FROM Sigurnost_objekta WHERE razina_sigurnosti = 'Niska';
+
+SET SQL_SAFE_UPDATES = 0;
+CALL PovecajSigurnosneKamere();
+SET SQL_SAFE_UPDATES = 1;
+----------------------------------
+-- procedura koja dodaje zadatak održavanja za svaki rack u određenom smještaju
+DELIMITER $$
+
+CREATE PROCEDURE DodajOdrzavanjeRacka(IN p_id_smjestaj INT)
+BEGIN
+    INSERT INTO Odrzavanje (datum, opis, id_posluzitelj, id_zaposlenik)
+    SELECT CURDATE(), 'Redovno održavanje racka', id_rack, 1
+    FROM Rack
+    WHERE id_smjestaj = p_id_smjestaj;
+END$$
+
+DELIMITER ;
+CALL DodajOdrzavanjeRacka(5);
+
+SELECT * FROM Rack WHERE id_smjestaj = 5;
+SELECT * FROM Odrzavanje WHERE id_posluzitelj IN (SELECT id_rack FROM Rack WHERE id_smjestaj = 5);
+------------
+
+-- prikazuje sve poslužitelje s brojem rackova koje održavaju.
+CREATE VIEW PosluziteljiIRackovi AS
+SELECT 
+    p.id_posluzitelj,
+    p.naziv AS naziv_posluzitelja,
+    COUNT(r.id_rack) AS broj_povezanih_rackova
+FROM Posluzitelj p
+LEFT JOIN Odrzavanje o ON p.id_posluzitelj = o.id_posluzitelj
+LEFT JOIN Rack r ON o.id_posluzitelj = r.id_rack
+GROUP BY p.id_posluzitelj;
+
+SELECT * FROM PosluziteljiIRackovi;
+
+--------------
+
+
+-- nakon dodavanja ili brisanja racka, automatski se ažurira broj rackova u tablici fizicki_smjestaj.
+
+DELIMITER $$
+
+CREATE TRIGGER AzurirajBrojRackova
+AFTER INSERT ON Rack
+FOR EACH ROW
+BEGIN
+    UPDATE Smjestaj
+    SET broj_rackova = (SELECT COUNT(*) FROM Rack WHERE id_smjestaj = NEW.id_smjestaj)
+    WHERE id_smjestaj = NEW.id_smjestaj;
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER AzurirajBrojRackovaBrisanje
+AFTER DELETE ON Rack
+FOR EACH ROW
+BEGIN
+    UPDATE Smjestaj
+    SET broj_rackova = (SELECT COUNT(*) FROM Rack WHERE id_smjestaj = OLD.id_smjestaj)
+    WHERE id_smjestaj = OLD.id_smjestaj;
+END$$
+
+DELIMITER ;
+
+SELECT * FROM Fizicki_smjestaj;
+SELECT * FROM Rack;
+
+----------------
+
+-- automatsko ažuriranje razine sigurnosti na 'Visoka' ako broj zaštitara premaši 10
+
+DELIMITER $$
+
+CREATE TRIGGER UpdateRazinaSigurnosti
+BEFORE UPDATE ON Sigurnost_objekta
+FOR EACH ROW
+BEGIN
+    IF NEW.broj_zastitara > 10 THEN
+        SET NEW.razina_sigurnosti = 'Visoka';
+    END IF;
+END$$
+
+DELIMITER ;
+-- test 
+UPDATE Sigurnost_objekta
+SET broj_zastitara = 12
+WHERE id_sigurnost = 1;
+
+SELECT * FROM Sigurnost_objekta WHERE id_sigurnost = 1;
+
+------------------------
+-- automatski unos datuma održavanja/ automatski se postavlja trenutni datum
+DELIMITER $$
+
+CREATE TRIGGER DatumOdrzavanja
+BEFORE INSERT ON Odrzavanje
+FOR EACH ROW
+BEGIN
+    IF NEW.datum IS NULL THEN
+        SET NEW.datum = CURDATE();
+    END IF;
+END$$
+
+DELIMITER ;
+-- test 
+INSERT INTO Odrzavanje (opis, id_posluzitelj, id_zaposlenik)
+VALUES ('Testiranje unosa bez datuma', 1, 1);
+
+SELECT * FROM Odrzavanje
+WHERE opis = 'Testiranje unosa bez datuma';
+-------------
+-- izvješće o održavanjima za određeni smještaj s brojem održavanja i zadnjim datumom održavanja 
+DELIMITER $$
+
+CREATE PROCEDURE IzvjesceOdrzavanja(IN p_id_smjestaj INT)
+BEGIN
+    SELECT 
+        f.grad,
+        COUNT(o.id_odrzavanja) AS broj_odrzavanja,
+        MAX(o.datum) AS zadnje_odrzavanje
+    FROM Fizicki_smjestaj f
+    JOIN Rack r ON f.id_smjestaj = r.id_smjestaj
+    JOIN Odrzavanje o ON r.id_rack = o.id_posluzitelj
+    WHERE f.id_smjestaj = p_id_smjestaj
+    GROUP BY f.grad;
+END$$
+
+DELIMITER ;
+
+CALL IzvjesceOdrzavanja(1);
+
+------
+
+-- prikazuje broj objekata i ukupnu sigurnost po regijama.
+CREATE VIEW SigurnostRegije AS
+SELECT
+    regija,
+    COUNT(f.id_smjestaj) AS broj_objekata,
+    SUM(s.broj_zastitara) AS ukupno_zastitara,
+    AVG(s.sigurnosne_kamere) AS prosjecne_kamere
+FROM Fizicki_smjestaj f
+JOIN Sigurnost_objekta s ON f.id_sigurnost = s.id_sigurnost
+GROUP BY regija;
+
+SELECT * FROM SigurnostRegije;
+
 
 -- Marko KRAJ za sada 
 
