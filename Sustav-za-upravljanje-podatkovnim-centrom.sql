@@ -2324,7 +2324,27 @@ VALUES
 (19, 'Sjeverna Amerika','Kanada','Ontario','Toronto','Hala 19','Prizemlje','EST',19),
 (20, 'Europa','Grčka','Atika','Atena','Hala 20','2. kat','EET',20),
 (21, 'Europa','Hrvatska','Istra','Rovinj','Hala 21','Podrum','CET',21),
-(22, 'Europa','Hrvatska','Gorski Kotar','Delnice','Hala 22','1. kat','CET',22);
+(22, 'Europa','Hrvatska','Gorski Kotar','Delnice','Hala 22','1. kat','CET',22)
+(23, 'Europa', 'Hrvatska', 'Zagreb',      'Velika Gorica', 'Hala 23', 'Prizemlje', 'CET', 1),
+(24, 'Azija',  'Kina',     'Sichuan',     'Chengdu',       'Hala 24', '2. kat',    'CST', 2),
+(25, 'Europa', 'Italija',  'Veneto',      'Venecija',      'Hala 25', '1. kat',    'CET', 3),
+(26, 'Južna Amerika', 'Argentina', 'Buenos Aires', 'Buenos Aires', 'Hala 26', 'Prizemlje', 'ART', 4),
+(27, 'Europa', 'Njemačka', 'Sjeverna Rajna-Vestfalija', 'Düsseldorf', 'Hala 27', '3. kat', 'CET', 5),
+(28, 'Sjeverna Amerika', 'Meksiko', 'Jukatan',      'Cancún',        'Hala 28', '1. kat',  'CST', 6),
+(29, 'Afrika', 'Južnoafrička Republika', 'Gauteng', 'Johannesburg',  'Hala 29', 'Prizemlje','SAST',7),
+(30, 'Europa', 'Hrvatska', 'Dalmacija',  'Dubrovnik',    'Hala 30',   '2. kat',  'CET', 8),
+(31, 'Australija','Australija','Queensland','Brisbane',   'Hala 31',   '1. kat',  'AEST', 9),
+(32, 'Europa', 'Francuska', 'Provence',  'Marseille',    'Hala 32',   '3. kat',  'CET', 10),
+(33, 'Europa', 'Hrvatska', 'Gorski Kotar','Rijeka',      'Hala 33',   'Prizemlje','CET', 11),
+(34, 'Azija',  'Indonezija','Java',      'Jakarta',      'Hala 34',   '2. kat',  'WIB', 12),
+(35, 'Sjeverna Amerika','SAD','New York','New York City','Hala 35','Prizemlje','EST',13),
+(36, 'Europa', 'Španjolska', 'Madrid',   'Madrid',       'Hala 36',   '1. kat',  'CET', 14),
+(37, 'Europa', 'Hrvatska', 'Zagreb',     'Velika Gorica','Hala 37',   '2. kat',  'CET', 15),
+(38, 'Afrika', 'Egipat', 'Aleksandrija', 'Aleksandrija', 'Hala 38',   'Prizemlje','EET', 16),
+(39, 'Azija', 'Japan', 'Tokyo', 'Tokyo', 'Hala 39', '3. kat', 'JST', 17),
+(40, 'Sjeverna Amerika', 'Kanada', 'Alberta', 'Calgary', 'Hala 40', '1. kat', 'MST', 18),
+(41, 'Europa', 'Švicarska', 'Zurich', 'Zurich', 'Hala 41', '1. kat', 'CET', 19),
+(42, 'Europa', 'Srbija', 'Beograd', 'Beograd', 'Hala 42', '3. kat', 'CET', 20);
 
 
 INSERT INTO Rack (id_rack, id_konfiguracija, id_smjestaj, kategorija)
