@@ -55,6 +55,20 @@ CREATE TABLE dugovanja(
 );
 
 
+SELECT 
+    k.id_klijent AS id_klijent,
+    k.ime AS ime_klijenta,
+    k.prezime AS prezime_klijenta,
+    u.vrsta AS usluga,
+    c.iznos AS stanje_kredita
+FROM 
+    klijenti k
+LEFT JOIN 
+    usluge_klijenata uk ON k.id_klijent = uk.id_klijent
+LEFT JOIN 
+    usluge u ON uk.id_usluga = u.id_usluga
+LEFT JOIN 
+    credit c ON k.id_klijent = c.id_klijent_credit;
 
 
 INSERT INTO usluge (vrsta, cijena) VALUES     ("FREE" ,0.0 ),
@@ -62,7 +76,8 @@ INSERT INTO usluge (vrsta, cijena) VALUES     ("FREE" ,0.0 ),
                                               ("PRO" ,9.99 ),
                                               ("PRO+" ,39.99 ),
                                               ("ENTERPRISE", 99.99);
-
+SELECT *
+FROM klijenti;
 
 INSERT INTO klijenti (ime, prezime, oib) VALUES
                                                 ('Ivan', 'Horvat', 12345678901),
@@ -101,7 +116,9 @@ INSERT INTO klijenti (ime, prezime, oib) VALUES
                                                 ('Ksenija', 'Benežić', 1816755985),
                                                 ('Ružaica', 'Kovač', 19123098788),
                                                 ('Ingrid', 'Tenezić', 12356512379);
-
+                                                
+                                                
+SELECT * FROM klijenti;
 -- PRVO NAPRAVITI TRIGGER KontrolaDatuma kako bi se sprijecli upisi neispravnih datuma!
 INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge) VALUES
                                           (1, 1, STR_TO_DATE('2024-01-15', '%Y-%m-%d'), STR_TO_DATE('2024-04-10', '%Y-%m-%d')),
@@ -140,6 +157,7 @@ INSERT INTO usluge_klijenata (id_klijent, id_usluga, pocetak_usluge, kraj_usluge
 
 
 
+
 -- PRVO NAPRAVITI TIRGGER IznosRacuna i IznosRacunaUpdate!!!
 INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES
                                                                 (1),
@@ -171,7 +189,7 @@ INSERT INTO racuni_prema_klijentima (id_usluga_klijent) VALUES
                                                                 (27),
                                                                 (28),
                                                                 (29),
-                                                                (30),
+																(30),
                                                                 (31),
                                                                 (32),
                                                                 (33);
@@ -217,6 +235,7 @@ INSERT INTO credit(iznos, id_klijent_credit) VALUES
 
 
 
+-- Error Code: 1452. Cannot add or update a child row: a foreign key constraint fails (`datacentar`.`credit`, CONSTRAINT `credit_ibfk_1` FOREIGN KEY (`id_klijent_credit`) REFERENCES `klijenti` (`id_klijent`))
 
 
 -- -------------------
@@ -275,7 +294,7 @@ SELECT * FROM usluge_klijenata;
     SELECT BrojDanaR(1);
 
 -- 3. Funkcija BrojDana samo vraca INT u svrhu njezine inkomporacije u druge dijelove projekta
-
+DROP FUNCTION BrojDana;
 DELIMITER //
 CREATE FUNCTION BrojDana(ID int) RETURNS INT
     DETERMINISTIC
@@ -620,6 +639,9 @@ CREATE TABLE Incidenti (
     FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
+ALTER TABLE Incidenti
+MODIFY id_posluzitelj INT DEFAULT NULL;
+
 CREATE TABLE Logovi (
     id_log INT AUTO_INCREMENT PRIMARY KEY,
     id_posluzitelj INT DEFAULT NULL,
@@ -767,7 +789,7 @@ begin
 END;
 // DELIMITER ;
 
-
+DROP TRIGGER logAfterVisokoOpterecenjeRacka;
 
 -- Testiranje triggera 2
 INSERT INTO pracenje_statusa_posluzitelja (id_posluzitelj, procesor_status, ram_status, ssd_status, temperatura_status, vrijeme_statusa)
