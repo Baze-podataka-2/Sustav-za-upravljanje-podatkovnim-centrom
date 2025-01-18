@@ -2376,7 +2376,29 @@ VALUES
 (21, 'Helena',  'Zorić',  1, 'Administrator bazepodataka'),
 (22, 'Stjepan', 'Rajner', 5, 'Voditelj projekata'),
 (23, 'Nikolina','Bašić',  1, 'Specijalist za baze podataka'),
-(24, 'Damir',   'Hrgović',2, 'Inženjer sustava');
+(24, 'Damir',   'Hrgović',2, 'Inženjer sustava')
+(25, 'Vanja',   'Radman',    3, 'Sigurnosni analitičar'),
+(26, 'Ivana',   'Lovrić',    4, 'Tehnički projektant'),
+(27, 'Krešimir','Šimić',     5, 'Voditelj tima'),
+(28, 'Dunja',   'Pavlović',  2, 'Mrežni arhitekt'),
+(29, 'Marijan', 'Kovačević', 1, 'Računalni tehničar'),
+(30, 'Lucija',  'Perić',     4, 'Specijalist za IT infrastrukturu'),
+(31, 'Toni',    'Vuković',   1, 'Sistem tehničar'),
+(32, 'Andrea',  'Kralj',     2, 'Inženjer za pohranu podataka'),
+(33, 'Hrvoje',  'Grgić',     3, 'Sigurnosni koordinator'),
+(34, 'Sara',    'Đurić',     5, 'Projektni asistent'),
+(35, 'Igor',    'Barišić',   4, 'Specijalist za virtualizaciju'),
+(36, 'Ema',     'Petrović',  2, 'Razvojni inženjer softvera'),
+(37, 'Luka',    'Matijević', 1, 'Tehnički specijalist'),
+(38, 'Martina', 'Jakovljević',3, 'Specijalist za mrežnu sigurnost'),
+(39, 'Ivan',    'Marić',     5, 'Tehnički voditelj projekta'),
+(40, 'Karla',   'Grabar',    2, 'QA analitičar'),
+(41, 'Davor',   'Prpić',     4, 'Projektni menadžer'),
+(42, 'Lana',    'Erceg',     3, 'Analitičar sigurnosnih rizika'),
+(43, 'Stipe',   'Raić',      1, 'Administrator sustava'),
+(44, 'Tina',    'Pavić',     5, 'IT konzultant'),
+(45, 'Mario',   'Radić',     2, 'Sistem inženjer'),
+(46, 'Zrinka',  'Ivanković', 4, 'Inženjer za cloud infrastrukturu');
 
 
 INSERT INTO Odrzavanje (id_odrzavanja, datum, opis, id_posluzitelj, id_zaposlenik)
