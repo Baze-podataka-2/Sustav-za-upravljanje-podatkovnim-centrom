@@ -849,7 +849,7 @@ CREATE TABLE pracenje_statusa_posluzitelja (
     ram_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
     ssd_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
     temperatura_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
-    vrijeme_statusa TIMESTAMP NOT NULL,
+    vrijeme_statusa TIMESTAMP DEFAULT NOW() NOT NULL,
 	FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
@@ -863,7 +863,7 @@ CREATE TABLE pracenje_statusa_racka (
     ups_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
     bandwith_status_switch VARCHAR(255) NOT NULL DEFAULT 'Standardni rack',
     interface_status_router VARCHAR(255) NOT NULL DEFAULT 'Standardni rack',
-	vrijeme_statusa TIMESTAMP NOT NULL,
+	vrijeme_statusa TIMESTAMP DEFAULT NOW() NOT NULL,
     FOREIGN KEY (id_rack) REFERENCES Rack(id_rack)
 );
 
@@ -2112,7 +2112,7 @@ END //
 DELIMITER ;
 
 
-CALL p_broj_izmjena_na_uredjaju('rack', 103, @izmjene);
+CALL p_broj_izmjena_na_uredjaju('posluzitelj', 22, @izmjene);
 SELECT @izmjene FROM DUAL;
 
 -- Pogled koji vraca ukupnu potrosnju energije za mjesece u godini, moze raditi i za pojedinacni mjesec u godini(pogodno za pretrazivanje sa frontenda npr)
