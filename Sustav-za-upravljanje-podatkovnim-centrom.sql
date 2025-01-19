@@ -2936,7 +2936,7 @@ CREATE TABLE Odjel (
     id_odjel INT PRIMARY KEY AUTO_INCREMENT,
     naziv VARCHAR(100) NOT NULL,
     id_smjestaj INT NOT NULL,
-    FOREIGN KEY (id_smjestaj) REFERENCES FizickiSmjestaj(id_smjestaj) ON DELETE CASCADE
+    FOREIGN KEY (id_smjestaj) REFERENCES Fizicki_smjestaj(id_smjestaj) ON DELETE CASCADE
 );
 
 
