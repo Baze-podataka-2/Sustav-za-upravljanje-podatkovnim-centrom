@@ -2431,16 +2431,16 @@ VALUES
 (110, 10, 'server_rack'),
 (201, 11, 'server_rack'),
 (202, 12, 'mrezni_rack'),
-(204, 14, 'server_rack'),
-(205, 15, 'mrezni_rack'),
-(206, 16, 'server_rack'),
-(208, 18, 'mrezni_rack'),
-(209, 19, 'server_rack'),
-(211, 21, 'mrezni_rack'),
-(212, 22, 'server_rack'),
-(213, 23, 'server_rack'),
-(214, 24, 'mrezni_rack'),
-(215, 25, 'server_rack');
+(204, 13, 'server_rack'),
+(205, 14, 'mrezni_rack'),
+(206, 15, 'server_rack'),
+(208, 16, 'mrezni_rack'),
+(209, 17, 'server_rack'),
+(211, 18, 'mrezni_rack'),
+(212, 19, 'server_rack'),
+(213, 20, 'server_rack'),
+(214, 21, 'mrezni_rack'),
+(215, 22, 'server_rack');
 
 drop table rack;
 select *from zaposlenik;
