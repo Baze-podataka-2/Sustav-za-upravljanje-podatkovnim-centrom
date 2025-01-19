@@ -213,7 +213,39 @@ INSERT INTO credit(iznos, id_klijent_credit) VALUES
                                                         (510, 32),
                                                         (520, 33);
                                                         
+                                                        
+CREATE TABLE Dobavljaci (
+    id_dobavljac INT PRIMARY KEY AUTO_INCREMENT,
+    ime VARCHAR(100) NOT NULL,
+    oib VARCHAR(11) NOT NULL UNIQUE,
+    opis TEXT
+);
 
+INSERT INTO Dobavljaci (id_dobavljac, ime, oib, opis)
+VALUES
+(1, 'IT Solutions', '12345678901', 'Dobavljač IT opreme i softvera.'),
+(2, 'Tech Supply', '98765432109', 'Specijalizirani za mrežnu opremu.'),
+(3, 'Hardware Hub', '56473829101', 'Dobavljač hardverskih komponenti.'),
+(4, 'Network Builders', '45612378902', 'Dobavljač mrežne infrastrukture.'),
+(5, 'Cloud Providers', '78945612303', 'Specijalizirani za cloud tehnologije.'),
+(6, 'Secure Systems', '32165498706', 'Dobavljač sigurnosnih sustava.'),
+(7, 'Data Dynamics', '74185296307', 'Dobavljač podatkovnih rješenja.'),
+(8, 'Alpha Tech', '85274196308', 'Opća IT oprema i softver.'),
+(9, 'Beta Supplies', '96385274109', 'Nabava kablova i konektora.'),
+(10, 'Gamma Solutions', '14725836910', 'Specijalizirani za UPS sustave.'),
+(11, 'Delta Networks', '25836914711', 'Mrežne infrastrukture i servisi.'),
+(12, 'Zeta Systems', '36914725812', 'Backup i recovery rješenja.'),
+(13, 'Theta Supplies', '45678912313', 'Oprema za ventilaciju i hlađenje.'),
+(14, 'Omicron Hardware', '12378945614', 'Hardware specijalizacije.'),
+(15, 'Lambda Tech', '78912345615', 'Nabava server rack opreme.'),
+(16, 'Sigma Power', '45612378916', 'Napajanje i distribucija energije.'),
+(17, 'Omega Support', '32198765417', 'IT konzultacije i podrška.'),
+(18, 'Epsilon Hardware', '65432198718', 'Komponente za IT sustave.'),
+(19, 'Iota Systems', '98765412319', 'Infrastruktura i tehnologije.'),
+(20, 'Kappa Networks', '15975348620', 'Napredni mrežni sustavi.');       
+
+                                                 
+                                                        
 CREATE TABLE oprema ( 
  id INT PRIMARY KEY AUTO_INCREMENT,
  vrsta VARCHAR(255) NOT NULL,
@@ -1279,59 +1311,34 @@ VALUES
 
 
 
-CREATE TABLE Dobavljaci (
-    id_dobavljac INT PRIMARY KEY AUTO_INCREMENT,
-    ime VARCHAR(100) NOT NULL,
-    oib VARCHAR(11) NOT NULL UNIQUE,
-    opis TEXT
-);
-
 CREATE TABLE Narudzbe (
     id_narudzbe INT PRIMARY KEY AUTO_INCREMENT,
     id_dobavljac INT NOT NULL,
     datum DATE NOT NULL,
     opis TEXT,
-    id_oprema INT NOT NULL,
+    id_oprema INT,
     FOREIGN KEY (id_dobavljac) REFERENCES Dobavljaci(id_dobavljac) ON DELETE CASCADE,
     FOREIGN KEY (id_oprema) REFERENCES oprema(id) ON DELETE CASCADE
 );
+
+
 
 
 CREATE TABLE Licence (
     id_licenca INT PRIMARY KEY AUTO_INCREMENT,
     datum_pocetak DATE NOT NULL,
     datum_istek DATE NOT NULL,
-    vrsta INT NOT NULL
+    vrsta VARCHAR(255) NOT NULL
 );
 
-INSERT INTO Dobavljaci (id_dobavljac, ime, oib, opis)
-VALUES
-(1, 'IT Solutions', '12345678901', 'Dobavljač IT opreme i softvera.'),
-(2, 'Tech Supply', '98765432109', 'Specijalizirani za mrežnu opremu.'),
-(3, 'Hardware Hub', '56473829101', 'Dobavljač hardverskih komponenti.'),
-(4, 'Network Builders', '45612378902', 'Dobavljač mrežne infrastrukture.'),
-(5, 'Cloud Providers', '78945612303', 'Specijalizirani za cloud tehnologije.'),
-(6, 'Secure Systems', '32165498706', 'Dobavljač sigurnosnih sustava.'),
-(7, 'Data Dynamics', '74185296307', 'Dobavljač podatkovnih rješenja.'),
-(8, 'Alpha Tech', '85274196308', 'Opća IT oprema i softver.'),
-(9, 'Beta Supplies', '96385274109', 'Nabava kablova i konektora.'),
-(10, 'Gamma Solutions', '14725836910', 'Specijalizirani za UPS sustave.'),
-(11, 'Delta Networks', '25836914711', 'Mrežne infrastrukture i servisi.'),
-(12, 'Zeta Systems', '36914725812', 'Backup i recovery rješenja.'),
-(13, 'Theta Supplies', '45678912313', 'Oprema za ventilaciju i hlađenje.'),
-(14, 'Omicron Hardware', '12378945614', 'Hardware specijalizacije.'),
-(15, 'Lambda Tech', '78912345615', 'Nabava server rack opreme.'),
-(16, 'Sigma Power', '45612378916', 'Napajanje i distribucija energije.'),
-(17, 'Omega Support', '32198765417', 'IT konzultacije i podrška.'),
-(18, 'Epsilon Hardware', '65432198718', 'Komponente za IT sustave.'),
-(19, 'Iota Systems', '98765412319', 'Infrastruktura i tehnologije.'),
-(20, 'Kappa Networks', '15975348620', 'Napredni mrežni sustavi.');
+
+
 
 INSERT INTO Narudzbe (id_narudzbe, id_dobavljac, datum, opis, id_oprema)
 VALUES
 (1, 1, '2025-01-15', 'Nabava novih servera za podatkovni centar.', 10),
 (2, 2, '2025-01-18', 'Nabava mrežnih switch uređaja.', 12),
-(3, 3, '2025-01-20', 'Nabava rezervnih hard diskova.', 15);
+(3, 3, '2025-01-20', 'Nabava rezervnih hard diskova.', 15),
 (4, 4, '2025-01-22', 'Instalacija i konfiguracija mrežne opreme.', NULL),
 (5, 5, '2025-01-25', 'Nabava softvera za virtualizaciju.', NULL),
 (6, 6, '2025-01-27', 'Nabava sigurnosnih kamera.', 18),
