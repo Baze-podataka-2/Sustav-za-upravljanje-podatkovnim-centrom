@@ -276,7 +276,7 @@ SELECT * FROM usluge;
 
 DELIMITER //
 CREATE FUNCTION BrojDanaR(ID int) RETURNS VARCHAR(100)
-    DETERMINISTIC
+    DETERMINISTIC 
     BEGIN
         DECLARE br INT;
         DECLARE recenica VARCHAR(100);
@@ -289,9 +289,13 @@ DELIMITER ;
 
 SELECT * FROM usluge_klijenata;
 
+-- *********  Obavezno pokrenuti kako bi fetch recenice radio *********** --------------------
+  SELECT BrojDanaR(1) as recenica;           -- !!!!!             
+-- *********************************************************************
+
 -- Vraca broj dana koristenja usluge od strane klijenta sa ID 1
 
-    SELECT BrojDanaR(1);
+  
 
 -- 3. Funkcija BrojDana samo vraca INT u svrhu njezine inkomporacije u druge dijelove projekta
 DROP FUNCTION BrojDana;
