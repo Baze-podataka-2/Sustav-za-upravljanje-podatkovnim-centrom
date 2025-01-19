@@ -54,7 +54,7 @@ CREATE TABLE dugovanja(
     status VARCHAR(100)
 );
 
-
+CREATE VIEW klijenti_usluge_krediti AS
 SELECT 
     k.id_klijent AS id_klijent,
     k.ime AS ime_klijenta,
