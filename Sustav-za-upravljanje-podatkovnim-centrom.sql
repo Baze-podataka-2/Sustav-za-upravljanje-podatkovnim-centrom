@@ -3056,19 +3056,26 @@ BEGIN
         DELETE FROM Licence WHERE id_licenca = OLD.id_licenca;
     END IF;
 END;
+
 -- funkcija za provjeru isteka licenca
 DELIMITER //
-CREATE FUNCTION AktivnostLicence(id_licenca INT) 
-RETURNS VARCHAR(20)
-DETERMINISTIC
+CREATE PROCEDURE AktivnostLicence (
+    IN uneseni_id INT,
+    OUT status VARCHAR(20)
+)
 BEGIN
-    DECLARE status VARCHAR(20);
-    IF (SELECT datum_istek < CURDATE() FROM Licence WHERE id_licenca = id_licenca) THEN
-        SET status = 'Licenca istekla';
-    ELSE
-        SET status = 'Licenca važeća';
+    SELECT 
+        CASE 
+            WHEN datum_istek < CURDATE() THEN 'Licenca istekla'
+            ELSE 'Licenca važeća'
+        END
+    INTO status
+    FROM Licence
+    WHERE id_licenca = uneseni_id;
+
+    IF status IS NULL THEN
+        SET status = 'Licenca ne postoji';
     END IF;
-    RETURN status;
 END;
 //
 DELIMITER ;
