@@ -1301,7 +1301,7 @@ CREATE TABLE Licence (
     id_licenca INT PRIMARY KEY AUTO_INCREMENT,
     datum_pocetak DATE NOT NULL,
     datum_istek DATE NOT NULL,
-    vrsta ENUM('mrežni', 'mailovi', 'mreža', 'ssl') NOT NULL -- vidit zbog inserta
+    vrsta INT NOT NULL
 );
 
 INSERT INTO Dobavljaci (id_dobavljac, ime, oib, opis)
