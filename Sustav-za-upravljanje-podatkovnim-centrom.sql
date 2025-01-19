@@ -648,7 +648,7 @@ CREATE TABLE Logovi (
     FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
 );
 
-
+select * from rack;
 -- Server
 INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, naziv, kategorija) VALUES
 (1, 1, 1, 'Fujitsu', 'Web poslužitelj'),
@@ -693,6 +693,7 @@ INSERT INTO Monitoring (id_posluzitelj, vrsta) VALUES
 (14, 'Praćenje mrežnih portova'),
 (15, 'Praćenje usluga');
 
+
 -- Incidenti
 INSERT INTO Incidenti (datum, opis, id_posluzitelj, status) VALUES
 ('2025-01-01', 'Neočekivano ponovno pokretanje', 1, 'Riješen'),
@@ -729,6 +730,8 @@ INSERT INTO Logovi (id_posluzitelj, akcija, datum, user) VALUES
 (14, 'Otvaranje novog korisničkog računa', '2025-01-14 09:15:00', 'user_support'),
 (15, 'Ponovno učitavanje usluge', '2025-01-15 17:20:00', 'service_admin');
 
+
+select * from posluzitelj;
 
 
 -- Triger koji ce za svaki incident dodati log
@@ -2361,7 +2364,7 @@ VALUES
 (12, 'Protuprovalni', 3, 'Niska'),
 (80, 'Protuprovalni, Detektori pokreta', 15, 'Visoka');
 
-
+select *from  sigurnost_objekta;
 INSERT INTO Fizicki_smjestaj 
     (kontinent, drzava, regija, grad, hala, prostor_kat, vremenska_zona, id_sigurnost)
 VALUES 
@@ -2430,10 +2433,13 @@ VALUES
 (208, 18, 'mrezni_rack'),
 (209, 19, 'server_rack'),
 (211, 21, 'mrezni_rack'),
-(212, 22, 'server_rack');
+(212, 22, 'server_rack'),
+(213, 23, 'server_rack'),
+(214, 24, 'mrezni_rack'),
+(215, 25, 'server_rack');
 
-
-
+drop table rack;
+select *from zaposlenik;
 
 
 INSERT INTO Zaposlenik (ime, prezime, id_odjel, zanimanje)
