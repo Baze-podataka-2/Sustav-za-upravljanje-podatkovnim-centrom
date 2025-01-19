@@ -1959,6 +1959,7 @@ END;
 //
 DELIMITER ;
 
+
 -- pregled 
 set @status = '';
 call aktivnostlicence(98,@status);
