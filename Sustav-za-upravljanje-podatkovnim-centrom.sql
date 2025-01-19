@@ -2919,12 +2919,12 @@ CREATE TABLE Dobavljaci (
 
 CREATE TABLE Narudzbe (
     id_narudzbe INT PRIMARY KEY AUTO_INCREMENT,
-    id_dobavljac INT NOT NULL,
+    id_dobavljac INT DEFAULT NULL ,
     datum DATE NOT NULL,
     opis TEXT,
-    id_oprema INT NOT NULL,
+    id_oprema INT DEFAULT NULL,
     FOREIGN KEY (id_dobavljac) REFERENCES Dobavljaci(id_dobavljac) ON DELETE CASCADE,
-    FOREIGN KEY (id_oprema) REFERENCES Oprema(id_oprema) ON DELETE CASCADE
+    FOREIGN KEY (id_oprema) REFERENCES Oprema(id) ON DELETE CASCADE
 );
 
 
@@ -2939,116 +2939,122 @@ CREATE TABLE Licence (
 CREATE TABLE Odjel (
     id_odjel INT PRIMARY KEY AUTO_INCREMENT,
     naziv VARCHAR(100) NOT NULL,
-    id_smjestaj INT NOT NULL,
+    id_smjestaj INT DEFAULT NULL,
     FOREIGN KEY (id_smjestaj) REFERENCES Fizicki_smjestaj(id_smjestaj) ON DELETE CASCADE
 );
 
 
 
-INSERT INTO Dobavljaci (id_dobavljac, ime, oib, opis)
+INSERT INTO Dobavljaci (ime, oib, opis)
 VALUES
-(1, 'IT Solutions', '12345678901', 'Dobavljač IT opreme i softvera.'),
-(2, 'Tech Supply', '98765432109', 'Specijalizirani za mrežnu opremu.'),
-(3, 'Hardware Hub', '56473829101', 'Dobavljač hardverskih komponenti.'),
-(4, 'Network Builders', '45612378902', 'Dobavljač mrežne infrastrukture.'),
-(5, 'Cloud Providers', '78945612303', 'Specijalizirani za cloud tehnologije.'),
-(6, 'Secure Systems', '32165498706', 'Dobavljač sigurnosnih sustava.'),
-(7, 'Data Dynamics', '74185296307', 'Dobavljač podatkovnih rješenja.'),
-(8, 'Alpha Tech', '85274196308', 'Opća IT oprema i softver.'),
-(9, 'Beta Supplies', '96385274109', 'Nabava kablova i konektora.'),
-(10, 'Gamma Solutions', '14725836910', 'Specijalizirani za UPS sustave.'),
-(11, 'Delta Networks', '25836914711', 'Mrežne infrastrukture i servisi.'),
-(12, 'Zeta Systems', '36914725812', 'Backup i recovery rješenja.'),
-(13, 'Theta Supplies', '45678912313', 'Oprema za ventilaciju i hlađenje.'),
-(14, 'Omicron Hardware', '12378945614', 'Hardware specijalizacije.'),
-(15, 'Lambda Tech', '78912345615', 'Nabava server rack opreme.'),
-(16, 'Sigma Power', '45612378916', 'Napajanje i distribucija energije.'),
-(17, 'Omega Support', '32198765417', 'IT konzultacije i podrška.'),
-(18, 'Epsilon Hardware', '65432198718', 'Komponente za IT sustave.'),
-(19, 'Iota Systems', '98765412319', 'Infrastruktura i tehnologije.'),
-(20, 'Kappa Networks', '15975348620', 'Napredni mrežni sustavi.');
+( 'IT Solutions', '12345678901', 'Dobavljač IT opreme i softvera.'),
+('Tech Supply', '98765432109', 'Specijalizirani za mrežnu opremu.'),
+( 'Hardware Hub', '56473829101', 'Dobavljač hardverskih komponenti.'),
+( 'Network Builders', '45612378902', 'Dobavljač mrežne infrastrukture.'),
+( 'Cloud Providers', '78945612303', 'Specijalizirani za cloud tehnologije.'),
+( 'Secure Systems', '32165498706', 'Dobavljač sigurnosnih sustava.'),
+( 'Data Dynamics', '74185296307', 'Dobavljač podatkovnih rješenja.'),
+( 'Alpha Tech', '85274196308', 'Opća IT oprema i softver.'),
+( 'Beta Supplies', '96385274109', 'Nabava kablova i konektora.'),
+( 'Gamma Solutions', '14725836910', 'Specijalizirani za UPS sustave.'),
+( 'Delta Networks', '25836914711', 'Mrežne infrastrukture i servisi.'),
+( 'Zeta Systems', '36914725812', 'Backup i recovery rješenja.'),
+( 'Theta Supplies', '45678912313', 'Oprema za ventilaciju i hlađenje.'),
+( 'Omicron Hardware', '12378945614', 'Hardware specijalizacije.'),
+( 'Lambda Tech', '78912345615', 'Nabava server rack opreme.'),
+( 'Sigma Power', '45612378916', 'Napajanje i distribucija energije.'),
+( 'Omega Support', '32198765417', 'IT konzultacije i podrška.'),
+( 'Epsilon Hardware', '65432198718', 'Komponente za IT sustave.'),
+( 'Iota Systems', '98765412319', 'Infrastruktura i tehnologije.'),
+( 'Kappa Networks', '15975348620', 'Napredni mrežni sustavi.');
 
-INSERT INTO Narudzbe (id_narudzbe, id_dobavljac, datum, opis, id_oprema)
+INSERT INTO Narudzbe (id_dobavljac, datum, opis, id_oprema)
 VALUES
-(1, 1, '2025-01-15', 'Nabava novih servera za podatkovni centar.', 10),
-(2, 2, '2025-01-18', 'Nabava mrežnih switch uređaja.', 12),
-(3, 3, '2025-01-20', 'Nabava rezervnih hard diskova.', 15),
-(4, 4, '2025-01-22', 'Instalacija i konfiguracija mrežne opreme.', NULL),
-(5, 5, '2025-01-25', 'Nabava softvera za virtualizaciju.', NULL),
-(6, 6, '2025-01-27', 'Nabava sigurnosnih kamera.', 18),
-(7, 7, '2025-01-29', 'Proširenje sustava za backup.', 20),
-(8, 8, '2025-01-30', 'Kupnja novih procesora za servere.', 25),
-(9, 9, '2025-02-02', 'Nabava ventilacijskih modula.', 28),
-(10, 10, '2025-02-05', 'Instalacija UPS napajanja.', NULL),
-(11, 11, '2025-02-08', 'Dodavanje novih mrežnih adaptera.', 33),
-(12, 12, '2025-02-10', 'Proširenje kapaciteta za backup.', 35),
-(13, 13, '2025-02-12', 'Zamjena rashladnih sustava.', 38),
-(14, 14, '2025-02-14', 'Ažuriranje hardverskih komponenti.', 40),
-(15, 15, '2025-02-16', 'Instalacija dodatnih rack-ova.', NULL),
-(16, 16, '2025-02-18', 'Kupnja PDU jedinica.', 45),
-(17, 17, '2025-02-20', 'Nabava konzola za upravljanje.', 48),
-(18, 18, '2025-02-22', 'Testiranje novih naponskih modula.', 50),
-(19, 19, '2025-02-24', 'Zamjena mrežnih preklopnika.', 52),
-(20, 20, '2025-02-26', 'Dodavanje novih sigurnosnih uređaja.', NULL);
+( 1, '2025-01-15', 'Nabava novih servera za podatkovni centar.', 10),
+( 2, '2025-01-18', 'Nabava mrežnih switch uređaja.', 12),
+( 3, '2025-01-20', 'Nabava rezervnih hard diskova.', 15),
+( 4, '2025-01-22', 'Instalacija i konfiguracija mrežne opreme.', 23),
+( 5, '2025-01-25', 'Nabava softvera za virtualizaciju.', 22),
+( 6, '2025-01-27', 'Nabava sigurnosnih kamera.', 18),
+( 7, '2025-01-29', 'Proširenje sustava za backup.', 20),
+( 8, '2025-01-30', 'Kupnja novih procesora za servere.', 25),
+( 9, '2025-02-02', 'Nabava ventilacijskih modula.', 28),
+( 10, '2025-02-05', 'Instalacija UPS napajanja.', 26),
+( 11, '2025-02-08', 'Dodavanje novih mrežnih adaptera.', 33),
+( 12, '2025-02-10', 'Proširenje kapaciteta za backup.', 35),
+( 13, '2025-02-12', 'Zamjena rashladnih sustava.', 38),
+( 14, '2025-02-14', 'Ažuriranje hardverskih komponenti.', 40),
+( 15, '2025-02-16', 'Instalacija dodatnih rack-ova.', 54),
+( 16, '2025-02-18', 'Kupnja PDU jedinica.', 45),
+( 17, '2025-02-20', 'Nabava konzola za upravljanje.', 48),
+( 18, '2025-02-22', 'Testiranje novih naponskih modula.', 50),
+( 19, '2025-02-24', 'Zamjena mrežnih preklopnika.', 52),
+( 20, '2025-02-26', 'Dodavanje novih sigurnosnih uređaja.', 12);
 
 
-INSERT INTO Licence (id_licenca, datum_pocetak, datum_istek, vrsta)
+INSERT INTO Licence ( datum_pocetak, datum_istek, vrsta)
 VALUES
-(1, '2025-01-01', '2026-01-01', 'mrežni'),
-(2, '2025-02-01', '2026-02-01', 'mailovi'),
-(3, '2025-03-01', '2026-03-01', 'mreža'),
-(4, '2025-04-01', '2026-04-01', 'ssl'),
-(5, '2025-05-01', '2026-05-01', 'mrežni'),
-(6, '2025-06-01', '2026-06-01', 'mailovi'),
-(7, '2025-07-01', '2026-07-01', 'mreža'),
-(8, '2025-08-01', '2026-08-01', 'ssl'),
-(9, '2025-09-01', '2026-09-01', 'mrežni'),
-(10, '2025-10-01', '2026-10-01', 'mailovi'),
-(11, '2025-11-01', '2026-11-01', 'mreža'),
-(12, '2025-12-01', '2026-12-01', 'ssl'),
-(13, '2026-01-01', '2027-01-01', 'mrežni'),
-(14, '2026-02-01', '2027-02-01', 'mailovi'),
-(15, '2026-03-01', '2027-03-01', 'mreža'),
-(16, '2026-04-01', '2027-04-01', 'ssl'),
-(17, '2026-05-01', '2027-05-01', 'mrežni'),
-(18, '2026-06-01', '2027-06-01', 'mailovi'),
-(19, '2026-07-01', '2027-07-01', 'mreža'),
-(20, '2026-08-01', '2027-08-01', 'ssl');
+( '2025-01-01', '2026-01-01', 'mrežni'),
+( '2025-02-01', '2026-02-01', 'mailovi'),
+( '2025-03-01', '2026-03-01', 'mreža'),
+( '2025-04-01', '2026-04-01', 'ssl'),
+( '2025-05-01', '2026-05-01', 'mrežni'),
+( '2025-06-01', '2026-06-01', 'mailovi'),
+( '2025-07-01', '2026-07-01', 'mreža'),
+( '2025-08-01', '2026-08-01', 'ssl'),
+( '2025-09-01', '2026-09-01', 'mrežni'),
+( '2025-10-01', '2026-10-01', 'mailovi'),
+( '2025-11-01', '2026-11-01', 'mreža'),
+( '2025-12-01', '2026-12-01', 'ssl'),
+( '2026-01-01', '2027-01-01', 'mrežni'),
+( '2026-02-01', '2027-02-01', 'mailovi'),
+( '2026-03-01', '2027-03-01', 'mreža'),
+( '2026-04-01', '2027-04-01', 'ssl'),
+( '2026-05-01', '2027-05-01', 'mrežni'),
+( '2026-06-01', '2027-06-01', 'mailovi'),
+( '2026-07-01', '2027-07-01', 'mreža'),
+( '2026-08-01', '2027-08-01', 'ssl');
 
 
-INSERT INTO Odjel (id_odjel, naziv, id_smjestaj)
+INSERT INTO Odjel (naziv, id_smjestaj)
 VALUES
-(1, 'IT podrška', 1),
-(2, 'Mrežna administracija', 2),
-(3, 'Razvoj softvera', 3),
-(4, 'Sigurnosni tim', 4),
-(5, 'Operativno održavanje', 5),
-(6, 'Analiza podataka', 6),
-(7, 'R&D odjel', 7),
-(8, 'Upravljanje energijom', 8),
-(9, 'Planiranje i logistika', 9),
-(10, 'Projektni menadžment', 10),
-(11, 'Korisnička podrška', 11),
-(12, 'Testiranje sustava', 12),
-(13, 'Marketing', 13),
-(14, 'Prodaja', 14),
-(15, 'Financije', 15),
-(16, 'Održavanje infrastrukture', 16),
-(17, 'Interna revizija', 17),
-(18, 'Upravljanje rizikom', 18),
-(19, 'Sustavi kvalitete', 19),
-(20, 'Kontrola pristupa', 20);
+('IT podrška', 1),
+('Mrežna administracija', 2),
+('Razvoj softvera', 3),
+('Sigurnosni tim', 4),
+('Operativno održavanje', 5),
+('Analiza podataka', 6),
+('R&D odjel', 7),
+('Upravljanje energijom', 8),
+('Planiranje i logistika', 9),
+('Projektni menadžment', 10),
+('Korisnička podrška', 11),
+('Testiranje sustava', 12),
+('Marketing', 13),
+('Prodaja', 14),
+('Financije', 15),
+('Održavanje infrastrukture', 16),
+('Interna revizija', 17),
+('Upravljanje rizikom', 18),
+('Sustavi kvalitete', 19),
+('Kontrola pristupa', 20);
 
 
 
-
+-- pregled narudzbe po dobavljacu
 CREATE VIEW pregled_narudzbi_po_dobavljacu AS
 SELECT n.id_narudzbe, n.datum, n.opis AS narudzba_opis, d.ime AS dobavljac_ime
 FROM Narudzbe n
 JOIN Dobavljaci d ON n.id_dobavljac = d.id_dobavljac;
 
+select * From Dobavljaci;
+select * from Narudzbe;
+select * from pregled_narudzbi_po_dobavljacu;
+
 
 -- ako opis nije naveden automatski postavlja opis
+DELIMITER //
+
 CREATE TRIGGER opis_narudzbe
 BEFORE INSERT ON Narudzbe
 FOR EACH ROW
@@ -3057,22 +3063,50 @@ BEGIN
         SET NEW.opis = 'Nije naveden opis narudžbe.';
     END IF;
 END;
+//
+
+DELIMITER ;
+-- provjera
+INSERT INTO Narudzbe (id_dobavljac, datum, id_oprema) 
+VALUES (15, '2025-01-20', 2);
+SELECT * FROM Narudzbe;
+
+INSERT INTO Narudzbe (id_dobavljac, datum, opis, id_oprema) 
+VALUES (2, '2025-01-21', 'Opis', 3);
 
 
 
+-- pregled licenci
 CREATE VIEW pregled_licenci AS
 SELECT id_licenca, datum_pocetak, datum_istek, vrsta
 FROM Licence;
--- brisanje licenca ako je datum isteka prosao
 
-CREATE TRIGGER BrisanjeLicenca
-BEFORE DELETE ON Licence
-FOR EACH ROW
-BEGIN
-    IF OLD.datum_istek < CURRENT_DATE THEN
-        DELETE FROM Licence WHERE id_licenca = OLD.id_licenca;
-    END IF;
-END;
+
+select * from  pregled_licenci;
+-- pregled licenca po datumu isteka
+CREATE VIEW LicencePoIsteku AS
+SELECT 
+    id_licenca, 
+    datum_pocetak, 
+    datum_istek, 
+    vrsta
+FROM Licence
+ORDER BY datum_istek;
+
+select * from LicencePoIsteku;
+
+-- pogled po vrsti licenca
+CREATE VIEW VrstaLicence AS
+SELECT 
+    id_licenca, 
+    datum_pocetak, 
+    datum_istek, 
+    vrsta
+FROM Licence
+ORDER BY vrsta;
+
+select * from Vrstalicence;
+
 
 -- funkcija za provjeru isteka licenca
 DELIMITER //
@@ -3097,7 +3131,12 @@ END;
 //
 DELIMITER ;
 
-
+-- pregled 
+set @status = '';
+call aktivnostlicence(98,@status);
+INSERT INTO Licence (id_licenca, datum_pocetak, datum_istek, vrsta)
+VALUES (98, '2024-01-01','2025-01-01',1);
+select @status;
 
 
 -- Mark kraj
