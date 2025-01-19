@@ -3,8 +3,6 @@ CREATE DATABASE datacentar;
 USE datacentar;
 
 
--- Mario
-
 CREATE TABLE usluge (
     id_usluga INT PRIMARY KEY AUTO_INCREMENT,
     vrsta VARCHAR(40) UNIQUE,
@@ -214,143 +212,7 @@ INSERT INTO credit(iznos, id_klijent_credit) VALUES
                                                         (550, 31),
                                                         (510, 32),
                                                         (520, 33);
-
--- Mario KRAJ
-
--- --- --- --- --- --- --- --- --- --- ---
-
-
--- Ronan START
-
-
--- Kreiranje tablica
- CREATE TABLE Posluzitelj (
-    id_posluzitelj INT AUTO_INCREMENT PRIMARY KEY,
-    id_konfiguracija  INT DEFAULT NULL,
-    id_rack INT DEFAULT NULL,
-    id_smjestaj INT DEFAULT NULL,
-    naziv  VARCHAR(50) NOT NULL,
-    kategorija VARCHAR(50) NOT NULL,
-	FOREIGN KEY (id_konfiguracija) REFERENCES konfiguracija_uredjaja(id),
-    FOREIGN KEY (id_rack) REFERENCES Rack(id_rack),
-    FOREIGN KEY (id_smjestaj) REFERENCES Fizicki_smjestaj(id_smjestaj)
-);
-
-
-
-CREATE TABLE Monitoring (
-    id_monitoring INT AUTO_INCREMENT PRIMARY KEY,
-    id_posluzitelj INT DEFAULT NULL,
-    vrsta VARCHAR(50) NOT NULL,
-    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
-);
-
-CREATE TABLE Incidenti (
-    id_incidenta INT AUTO_INCREMENT PRIMARY KEY,
-    datum DATE NOT NULL,
-    opis TEXT NOT NULL,
-    id_posluzitelj INT DEFAULT NULL,
-    status VARCHAR(20) NOT NULL,
-    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
-);
-
-
-CREATE TABLE Logovi (
-    id_log INT AUTO_INCREMENT PRIMARY KEY,
-    id_posluzitelj INT DEFAULT NULL,
-    akcija VARCHAR(100) NOT NULL,
-    datum DATETIME NOT NULL,
-    user VARCHAR(50) NOT NULL,
-    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
-);
-
--- Server
-INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, naziv, kategorija) VALUES
-(1, 1, 1, 'Fujitsu', 'Web poslužitelj'),
-(2, 2, 2, 'Dell', 'Baza podataka'),
-(3, 3, 3, 'Lenovo', 'Aplikacijski poslužitelj'),
-(4, 4, 4, 'HP', 'Proxy poslužitelj'),
-(5, 5, 5, 'Fujitsu', 'Backup poslužitelj'),
-(6, 6, 6, 'Dell', 'DNS poslužitelj'),
-(7, 7, 7, 'Lenovo', 'Mail poslužitelj'),
-(8, 8, 8, 'HP', 'FTP poslužitelj'),
-(9, 9, 9, 'Fujitsu', 'Virtualizacijski poslužitelj'),
-(10, 10, 10, 'Dell', 'Streaming poslužitelj'),
-(11, 11, 11, 'Lenovo', 'VoIP poslužitelj'),
-(12, 12, 12, 'HP', 'IoT Gateway'),
-(13, 13, 13, 'Fujitsu', 'Load Balancer'),
-(14, 14, 14, 'Dell', 'Cache poslužitelj'),
-(15, 15, 15, 'Lenovo', 'Testni poslužitelj'),
-(16, 16, 16, 'HP', 'Analitički poslužitelj'),
-(17, 17, 17, 'Fujitsu', 'Web Proxy'),
-(18, 18, 18, 'Dell', 'Data Warehouse'),
-(19, 19, 19, 'Lenovo', 'CI/CD poslužitelj'),
-(20, 20, 20, 'HP', 'VPN poslužitelj'),
-(21, 21, 21, 'Fujitsu', 'Sigurnosni poslužitelj'),
-(22, 22, 22, 'Dell', 'CRM poslužitelj');
-
--- Monitoring
-INSERT INTO Monitoring (id_posluzitelj, vrsta) VALUES
-(1, 'Praćenje performansi'),
-(2, 'Praćenje sigurnosti'),
-(3, 'Praćenje mreže'),
-(4, 'Praćenje dostupnosti'),
-(5, 'Praćenje kapaciteta'),
-(6, 'Praćenje logova'),
-(7, 'Praćenje učitavanja'),
-(8, 'Praćenje propusnosti'),
-(9, 'Praćenje grešaka'),
-(10, 'Praćenje upotrebe diska'),
-(11, 'Praćenje odziva'),
-(12, 'Praćenje SSL certifikata'),
-(13, 'Praćenje CPU-a'),
-(14, 'Praćenje mrežnih portova'),
-(15, 'Praćenje usluga');
-
--- Incidenti
-INSERT INTO Incidenti (datum, opis, id_posluzitelj, status) VALUES
-('2025-01-01', 'Neočekivano ponovno pokretanje', 1, 'Riješen'),
-('2025-01-02', 'Visoka upotreba memorije', 2, 'U tijeku'),
-('2025-01-03', 'Problemi s mrežnom povezivošću', 3, 'Otvoreno'),
-('2025-01-04', 'Disk je gotovo pun', 4, 'Riješen'),
-('2025-01-05', 'Ažuriranje nije uspjelo', 5, 'U tijeku'),
-('2025-01-06', 'Neautorizirani pristup', 6, 'Otvoreno'),
-('2025-01-07', 'Hardverski kvar', 7, 'Riješen'),
-('2025-01-08', 'Povećano kašnjenje', 8, 'U tijeku'),
-('2025-01-09', 'Neispravan kabel', 9, 'Otvoreno'),
-('2025-01-10', 'Problemi s SSL certifikatom', 10, 'Riješen'),
-('2025-01-11', 'Problemi s DNS-om', 11, 'U tijeku'),
-('2025-01-12', 'Neispravni podaci u bazi', 12, 'Otvoreno'),
-('2025-01-13', 'Greška u aplikaciji', 13, 'Riješen'),
-('2025-01-14', 'Nedostupnost mreže', 14, 'Otvoreno'),
-('2025-01-15', 'Backup nije uspješan', 15, 'U tijeku');
-
--- Logovi
-INSERT INTO Logovi (id_posluzitelj, akcija, datum, user) VALUES
-(1, 'Ponovno pokretanje poslužitelja', '2025-01-01 12:00:00', 'admin'),
-(2, 'Ažuriranje postavki vatrozida', '2025-01-02 15:30:00', 'network_admin'),
-(3, 'Implementacija nove verzije aplikacije', '2025-01-03 09:00:00', 'devops_team'),
-(4, 'Provjera sigurnosnih kopija', '2025-01-04 10:00:00', 'backup_admin'),
-(5, 'Optimizacija baze podataka', '2025-01-05 14:45:00', 'db_admin'),
-(6, 'Dodavanje novog korisnika', '2025-01-06 11:00:00', 'hr_admin'),
-(7, 'Resetiranje lozinke', '2025-01-07 13:00:00', 'it_support'),
-(8, 'Ažuriranje softvera', '2025-01-08 16:00:00', 'sys_admin'),
-(9, 'Brisanje starih logova', '2025-01-09 08:30:00', 'cleanup_task'),
-(10, 'Konfiguracija mrežnih postavki', '2025-01-10 18:00:00', 'network_admin'),
-(11, 'Provjera mrežne dostupnosti', '2025-01-11 10:30:00', 'net_ops'),
-(12, 'Migracija podataka', '2025-01-12 22:00:00', 'migration_team'),
-(13, 'Prijenos podataka na backup server', '2025-01-13 03:00:00', 'backup_admin'),
-(14, 'Otvaranje novog korisničkog računa', '2025-01-14 09:15:00', 'user_support'),
-(15, 'Ponovno učitavanje usluge', '2025-01-15 17:20:00', 'service_admin');
-
-
--- Ronan END
-
-
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-
--- Adis START
+                                                        
 
 CREATE TABLE oprema ( 
  id INT PRIMARY KEY AUTO_INCREMENT,
@@ -399,43 +261,6 @@ CREATE TABLE konfiguracija_uredjaja (
     FOREIGN KEY (switch) REFERENCES oprema(id), 
     FOREIGN KEY (router) REFERENCES oprema(id)
 );
-
-
-CREATE TABLE pracenje_statusa_posluzitelja (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-    id_posluzitelj INT NOT NULL,
-    procesor_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
-    ram_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
-    ssd_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
-    temperatura_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
-    vrijeme_statusa TIMESTAMP DEFAULT NOW() NOT NULL,
-	FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
-);
-
-
-CREATE TABLE pracenje_statusa_racka (
-	id SERIAL PRIMARY KEY,
-    id_rack INT NOT NULL,
-    temperatura_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
-    popunjenost_status ENUM('Slobodno', 'Pun') NOT NULL,
-    pdu_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
-    ups_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
-    bandwith_status_switch VARCHAR(255) NOT NULL DEFAULT 'Standardni rack',
-    interface_status_router VARCHAR(255) NOT NULL DEFAULT 'Standardni rack',
-	vrijeme_statusa TIMESTAMP DEFAULT NOW() NOT NULL,
-    FOREIGN KEY (id_rack) REFERENCES Rack(id_rack)
-);
-
-
-CREATE TABLE potrosnja (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-    potrosnja_kw DECIMAL(10, 2) NOT NULL,
-    datum DATE NOT NULL
-);
-
-
-
--- PUNJENJE:
 
 -- Tablica oprema, punjeno redoslijedom radi lakseg razumijevanja rasporeda podataka. 
 -- Redoslijed takoder predstavlja jacinu opreme. Tako je prvi id te opreme najslabiji, a zadnji najjaci. Sto ce nam dodatno osigurati ispravan rad 
@@ -1034,17 +859,6 @@ VALUES
 (250, 125, 150, 225, 175, 200, 263, 288);
 
 
--- Adis END
-
-
-
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-
-
--- Marko START 
-
-DROP TABLE Sigurnost_objekta;
 
 CREATE TABLE Sigurnost_objekta (
     id_sigurnost INT PRIMARY KEY AUTO_INCREMENT,
@@ -1075,28 +889,6 @@ CREATE TABLE Rack (
     kategorija ENUM('server_rack','mrezni_rack') NOT NULL,
     CONSTRAINT fk_rack_fizicki 
        FOREIGN KEY (id_smjestaj) REFERENCES Fizicki_smjestaj(id_smjestaj)
-);
-
-
-
-CREATE TABLE Zaposlenik (
-    id_zaposlenik INT PRIMARY KEY AUTO_INCREMENT,
-    ime VARCHAR(50) NOT NULL,
-    prezime VARCHAR(50) NOT NULL,
-    id_odjel INT,
-    zanimanje VARCHAR(100) NOT NULL
-);
-
-CREATE TABLE Odrzavanje (
-    id_odrzavanja INT PRIMARY KEY AUTO_INCREMENT,
-    datum DATE NOT NULL,
-    opis TEXT NOT NULL,
-   id_posluzitelj INT NOT NULL,          
-    id_zaposlenik INT NOT NULL,
-    CONSTRAINT fk_odrzavanje_zaposlenik 
-        FOREIGN KEY (id_zaposlenik) 
-        REFERENCES Zaposlenik(id_zaposlenik)
-
 );
 
 INSERT INTO Sigurnost_objekta 
@@ -1208,6 +1000,199 @@ VALUES
 (22, 33, 22, 'server_rack');
 
 
+ CREATE TABLE Posluzitelj (
+    id_posluzitelj INT AUTO_INCREMENT PRIMARY KEY,
+    id_konfiguracija  INT DEFAULT NULL,
+    id_rack INT DEFAULT NULL,
+    id_smjestaj INT DEFAULT NULL,
+    naziv  VARCHAR(50) NOT NULL,
+    kategorija VARCHAR(50) NOT NULL,
+	FOREIGN KEY (id_konfiguracija) REFERENCES konfiguracija_uredjaja(id),
+    FOREIGN KEY (id_rack) REFERENCES Rack(id_rack),
+    FOREIGN KEY (id_smjestaj) REFERENCES Fizicki_smjestaj(id_smjestaj)
+);
+
+
+
+CREATE TABLE Monitoring (
+    id_monitoring INT AUTO_INCREMENT PRIMARY KEY,
+    id_posluzitelj INT DEFAULT NULL,
+    vrsta VARCHAR(50) NOT NULL,
+    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
+);
+
+CREATE TABLE Incidenti (
+    id_incidenta INT AUTO_INCREMENT PRIMARY KEY,
+    datum DATE NOT NULL,
+    opis TEXT NOT NULL,
+    id_posluzitelj INT DEFAULT NULL,
+    status VARCHAR(20) NOT NULL,
+    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
+);
+
+
+CREATE TABLE Logovi (
+    id_log INT AUTO_INCREMENT PRIMARY KEY,
+    id_posluzitelj INT DEFAULT NULL,
+    akcija VARCHAR(100) NOT NULL,
+    datum DATETIME NOT NULL,
+    user VARCHAR(50) NOT NULL,
+    FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
+);
+
+-- Server
+INSERT INTO Posluzitelj (id_konfiguracija, id_rack, id_smjestaj, naziv, kategorija) VALUES
+(1, 1, 1, 'Fujitsu', 'Web poslužitelj'),
+(2, 2, 2, 'Dell', 'Baza podataka'),
+(3, 3, 3, 'Lenovo', 'Aplikacijski poslužitelj'),
+(4, 4, 4, 'HP', 'Proxy poslužitelj'),
+(5, 5, 5, 'Fujitsu', 'Backup poslužitelj'),
+(6, 6, 6, 'Dell', 'DNS poslužitelj'),
+(7, 7, 7, 'Lenovo', 'Mail poslužitelj'),
+(8, 8, 8, 'HP', 'FTP poslužitelj'),
+(9, 9, 9, 'Fujitsu', 'Virtualizacijski poslužitelj'),
+(10, 10, 10, 'Dell', 'Streaming poslužitelj'),
+(11, 11, 11, 'Lenovo', 'VoIP poslužitelj'),
+(12, 12, 12, 'HP', 'IoT Gateway'),
+(13, 13, 13, 'Fujitsu', 'Load Balancer'),
+(14, 14, 14, 'Dell', 'Cache poslužitelj'),
+(15, 15, 15, 'Lenovo', 'Testni poslužitelj'),
+(16, 16, 16, 'HP', 'Analitički poslužitelj'),
+(17, 17, 17, 'Fujitsu', 'Web Proxy'),
+(18, 18, 18, 'Dell', 'Data Warehouse'),
+(19, 19, 19, 'Lenovo', 'CI/CD poslužitelj'),
+(20, 20, 20, 'HP', 'VPN poslužitelj'),
+(21, 21, 21, 'Fujitsu', 'Sigurnosni poslužitelj'),
+(22, 22, 22, 'Dell', 'CRM poslužitelj');
+
+-- Monitoring
+INSERT INTO Monitoring (id_posluzitelj, vrsta) VALUES
+(1, 'Praćenje performansi'),
+(2, 'Praćenje sigurnosti'),
+(3, 'Praćenje mreže'),
+(4, 'Praćenje dostupnosti'),
+(5, 'Praćenje kapaciteta'),
+(6, 'Praćenje logova'),
+(7, 'Praćenje učitavanja'),
+(8, 'Praćenje propusnosti'),
+(9, 'Praćenje grešaka'),
+(10, 'Praćenje upotrebe diska'),
+(11, 'Praćenje odziva'),
+(12, 'Praćenje SSL certifikata'),
+(13, 'Praćenje CPU-a'),
+(14, 'Praćenje mrežnih portova'),
+(15, 'Praćenje usluga');
+
+-- Incidenti
+INSERT INTO Incidenti (datum, opis, id_posluzitelj, status) VALUES
+('2025-01-01', 'Neočekivano ponovno pokretanje', 1, 'Riješen'),
+('2025-01-02', 'Visoka upotreba memorije', 2, 'U tijeku'),
+('2025-01-03', 'Problemi s mrežnom povezivošću', 3, 'Otvoreno'),
+('2025-01-04', 'Disk je gotovo pun', 4, 'Riješen'),
+('2025-01-05', 'Ažuriranje nije uspjelo', 5, 'U tijeku'),
+('2025-01-06', 'Neautorizirani pristup', 6, 'Otvoreno'),
+('2025-01-07', 'Hardverski kvar', 7, 'Riješen'),
+('2025-01-08', 'Povećano kašnjenje', 8, 'U tijeku'),
+('2025-01-09', 'Neispravan kabel', 9, 'Otvoreno'),
+('2025-01-10', 'Problemi s SSL certifikatom', 10, 'Riješen'),
+('2025-01-11', 'Problemi s DNS-om', 11, 'U tijeku'),
+('2025-01-12', 'Neispravni podaci u bazi', 12, 'Otvoreno'),
+('2025-01-13', 'Greška u aplikaciji', 13, 'Riješen'),
+('2025-01-14', 'Nedostupnost mreže', 14, 'Otvoreno'),
+('2025-01-15', 'Backup nije uspješan', 15, 'U tijeku');
+
+-- Logovi
+INSERT INTO Logovi (id_posluzitelj, akcija, datum, user) VALUES
+(1, 'Ponovno pokretanje poslužitelja', '2025-01-01 12:00:00', 'admin'),
+(2, 'Ažuriranje postavki vatrozida', '2025-01-02 15:30:00', 'network_admin'),
+(3, 'Implementacija nove verzije aplikacije', '2025-01-03 09:00:00', 'devops_team'),
+(4, 'Provjera sigurnosnih kopija', '2025-01-04 10:00:00', 'backup_admin'),
+(5, 'Optimizacija baze podataka', '2025-01-05 14:45:00', 'db_admin'),
+(6, 'Dodavanje novog korisnika', '2025-01-06 11:00:00', 'hr_admin'),
+(7, 'Resetiranje lozinke', '2025-01-07 13:00:00', 'it_support'),
+(8, 'Ažuriranje softvera', '2025-01-08 16:00:00', 'sys_admin'),
+(9, 'Brisanje starih logova', '2025-01-09 08:30:00', 'cleanup_task'),
+(10, 'Konfiguracija mrežnih postavki', '2025-01-10 18:00:00', 'network_admin'),
+(11, 'Provjera mrežne dostupnosti', '2025-01-11 10:30:00', 'net_ops'),
+(12, 'Migracija podataka', '2025-01-12 22:00:00', 'migration_team'),
+(13, 'Prijenos podataka na backup server', '2025-01-13 03:00:00', 'backup_admin'),
+(14, 'Otvaranje novog korisničkog računa', '2025-01-14 09:15:00', 'user_support'),
+(15, 'Ponovno učitavanje usluge', '2025-01-15 17:20:00', 'service_admin');
+
+
+
+CREATE TABLE pracenje_statusa_posluzitelja (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    id_posluzitelj INT NOT NULL,
+    procesor_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
+    ram_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
+    ssd_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
+    temperatura_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
+    vrijeme_statusa TIMESTAMP DEFAULT NOW() NOT NULL,
+	FOREIGN KEY (id_posluzitelj) REFERENCES Posluzitelj(id_posluzitelj)
+);
+
+-- Nalazi se insert kako tablica nebi bila prazna, no zgodnije je raditit inserte preko aplikacije kako bi 
+-- se lakse pratio od pocetka stvarni rad baze i kako ona reagira. Svakako inserti ce biti ubaceni prije kreiranih procedura i triggera
+-- kako bi se lakse pratila prava situacija.
+
+INSERT INTO pracenje_statusa_posluzitelja (id_posluzitelj, procesor_status, ram_status, ssd_status, temperatura_status, vrijeme_statusa)
+VALUES (16, 'Kritican', 'Visoko opterecenje', 'Kritican', 'Normalan', NOW());
+
+
+CREATE TABLE pracenje_statusa_racka (
+	id SERIAL PRIMARY KEY,
+    id_rack INT NOT NULL,
+    temperatura_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
+    popunjenost_status ENUM('Slobodno', 'Pun') NOT NULL,
+    pdu_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
+    ups_status ENUM('Normalan', 'Visoko opterecenje', 'Kritican') NOT NULL,
+    bandwith_status_switch VARCHAR(255) NOT NULL DEFAULT 'Standardni rack',
+    interface_status_router VARCHAR(255) NOT NULL DEFAULT 'Standardni rack',
+	vrijeme_statusa TIMESTAMP DEFAULT NOW() NOT NULL,
+    FOREIGN KEY (id_rack) REFERENCES Rack(id_rack)
+);
+
+-- Nalazi se insert kako tablica nebi bila prazna, no zgodnije je raditit inserte preko aplikacije kako bi 
+-- se lakse pratio od pocetka stvarni rad baze i kako ona reagira. Svakako inserti ce biti ubaceni prije kreiranih procedura i triggera
+-- kako bi se lakse pratila prava situacija.
+
+INSERT INTO pracenje_statusa_racka (id_rack, temperatura_status, popunjenost_status, pdu_status, ups_status, vrijeme_statusa)
+VALUES (3, 'Kritican', 'Slobodno', 'Kritican', 'Kritican', NOW());
+
+
+CREATE TABLE potrosnja (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    potrosnja_kw DECIMAL(10, 2) NOT NULL,
+    datum DATE NOT NULL
+);
+
+-- Tablica potrosnja nema inserta jer ona se puni na kraju dana.
+
+
+CREATE TABLE Zaposlenik (
+    id_zaposlenik INT PRIMARY KEY AUTO_INCREMENT,
+    ime VARCHAR(50) NOT NULL,
+    prezime VARCHAR(50) NOT NULL,
+    id_odjel INT,
+    zanimanje VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Odrzavanje (
+    id_odrzavanja INT PRIMARY KEY AUTO_INCREMENT,
+    datum DATE NOT NULL,
+    opis TEXT NOT NULL,
+   id_posluzitelj INT NOT NULL,          
+    id_zaposlenik INT NOT NULL,
+    CONSTRAINT fk_odrzavanje_zaposlenik 
+        FOREIGN KEY (id_zaposlenik) 
+        REFERENCES Zaposlenik(id_zaposlenik)
+
+);
+
+
+
+
 INSERT INTO Zaposlenik (id_zaposlenik, ime, prezime, id_odjel, zanimanje)
 VALUES
 (1,  'Ivan',    'Horvat', 1, 'Tehničar'),
@@ -1293,9 +1278,6 @@ VALUES
 (46, '2025-02-17', 'Testiranje redundancije mrežnih čvorova',      5,  26);
 
 
--- Marko END
-
--- Mark start
 
 CREATE TABLE Dobavljaci (
     id_dobavljac INT PRIMARY KEY AUTO_INCREMENT,
@@ -1321,17 +1303,6 @@ CREATE TABLE Licence (
     datum_istek DATE NOT NULL,
     vrsta ENUM('mrežni', 'mailovi', 'mreža', 'ssl') NOT NULL -- vidit zbog inserta
 );
-
-
-
-CREATE TABLE Odjel (
-    id_odjel INT PRIMARY KEY AUTO_INCREMENT,
-    naziv VARCHAR(100) NOT NULL,
-    id_smjestaj INT NOT NULL,
-    FOREIGN KEY (id_smjestaj) REFERENCES Fizicki_smjestaj(id_smjestaj) ON DELETE CASCADE
-);
-
-
 
 INSERT INTO Dobavljaci (id_dobavljac, ime, oib, opis)
 VALUES
@@ -1361,7 +1332,6 @@ VALUES
 (1, 1, '2025-01-15', 'Nabava novih servera za podatkovni centar.', 10),
 (2, 2, '2025-01-18', 'Nabava mrežnih switch uređaja.', 12),
 (3, 3, '2025-01-20', 'Nabava rezervnih hard diskova.', 15);
-/*
 (4, 4, '2025-01-22', 'Instalacija i konfiguracija mrežne opreme.', NULL),
 (5, 5, '2025-01-25', 'Nabava softvera za virtualizaciju.', NULL),
 (6, 6, '2025-01-27', 'Nabava sigurnosnih kamera.', 18),
@@ -1379,7 +1349,15 @@ VALUES
 (18, 18, '2025-02-22', 'Testiranje novih naponskih modula.', 50),
 (19, 19, '2025-02-24', 'Zamjena mrežnih preklopnika.', 52),
 (20, 20, '2025-02-26', 'Dodavanje novih sigurnosnih uređaja.', NULL);
-*/
+
+
+CREATE TABLE Odjel (
+    id_odjel INT PRIMARY KEY AUTO_INCREMENT,
+    naziv VARCHAR(100) NOT NULL,
+    id_smjestaj INT NOT NULL,
+    FOREIGN KEY (id_smjestaj) REFERENCES Fizicki_smjestaj(id_smjestaj) ON DELETE CASCADE
+);
+
 
 INSERT INTO Licence (id_licenca, datum_pocetak, datum_istek, vrsta)
 VALUES
