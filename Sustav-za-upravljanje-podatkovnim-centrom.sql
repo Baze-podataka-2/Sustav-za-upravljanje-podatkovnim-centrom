@@ -3059,19 +3059,20 @@ END;
 -- funkcija za provjeru isteka licenca
 DELIMITER //
 CREATE FUNCTION AktivnostLicence(id_licenca INT) 
-RETURNS BOOLEAN
+RETURNS VARCHAR(20)
 DETERMINISTIC
 BEGIN
-    DECLARE istekao BOOLEAN;
+    DECLARE status VARCHAR(20);
     IF (SELECT datum_istek < CURDATE() FROM Licence WHERE id_licenca = id_licenca) THEN
-        SET istekao = TRUE;
+        SET status = 'Licenca istekla';
     ELSE
-        SET istekao = FALSE;
+        SET status = 'Licenca važeća';
     END IF;
-    RETURN istekao;
+    RETURN status;
 END;
 //
 DELIMITER ;
+
 
 
 
