@@ -3023,4 +3023,56 @@ VALUES
 (20, 'Kontrola pristupa', 20);
 
 
+
+
+CREATE VIEW pregled_narudzbi_po_dobavljacu AS
+SELECT n.id_narudzbe, n.datum, n.opis AS narudzba_opis, d.ime AS dobavljac_ime
+FROM Narudzbe n
+JOIN Dobavljaci d ON n.id_dobavljac = d.id_dobavljac;
+
+
+-- ako opis nije naveden automatski postavlja opis
+CREATE TRIGGER opis_narudzbe
+BEFORE INSERT ON Narudzbe
+FOR EACH ROW
+BEGIN
+    IF NEW.opis IS NULL OR TRIM(NEW.opis) = '' THEN
+        SET NEW.opis = 'Nije naveden opis narudžbe.';
+    END IF;
+END;
+
+
+
+CREATE VIEW pregled_licenci AS
+SELECT id_licenca, datum_pocetak, datum_istek, vrsta
+FROM Licence;
+-- brisanje licenca ako je datum isteka prosao
+
+CREATE TRIGGER BrisanjeLicenca
+BEFORE DELETE ON Licence
+FOR EACH ROW
+BEGIN
+    IF OLD.datum_istek < CURRENT_DATE THEN
+        DELETE FROM Licence WHERE id_licenca = OLD.id_licenca;
+    END IF;
+END;
+-- funkcija za provjeru isteka licenca
+DELIMITER //
+CREATE FUNCTION AktivnostLicence(id_licenca INT) 
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    DECLARE istekao BOOLEAN;
+    IF (SELECT datum_istek < CURDATE() FROM Licence WHERE id_licenca = id_licenca) THEN
+        SET istekao = TRUE;
+    ELSE
+        SET istekao = FALSE;
+    END IF;
+    RETURN istekao;
+END;
+//
+DELIMITER ;
+
+
+
 -- Mark kraj
