@@ -430,7 +430,7 @@ DROP VIEW UkupniPrihodiUsluge;
 CREATE VIEW UkupniPrihodiUsluge AS
 SELECT
     usluge.vrsta AS 'Usluga:',
-    SUM(racuni_prema_klijentima.ukupan_iznos) AS 'Ukupni prihod:'
+    SUM(racuni_prema_klijentima.ukupan_iznos) AS 'Ukupni_prihod:'
 FROM
     racuni_prema_klijentima
 JOIN
@@ -441,7 +441,7 @@ GROUP BY
     usluge.vrsta;
 
 SELECT * FROM UkupniPrihodiUsluge;
-
+drop view UkupniPrihodiUsluge;
 SELECT * FROM racuni_prema_klijentima;
 
 
